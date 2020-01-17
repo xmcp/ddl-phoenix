@@ -3,7 +3,7 @@ import {message} from 'antd';
 import {get_json} from '../infrastructure/functions';
 
 // without trailing slash
-const SISTER_ROOT='http://pkuhelper.pku.edu.cn/ddl/backend';
+const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
 export const SISTER_API_VER='1';
 
 function token_param(start_symbol,token) {
