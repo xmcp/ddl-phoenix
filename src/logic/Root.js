@@ -1,10 +1,14 @@
 import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {do_refresh, get_token} from '../state/actions';
+import {Result, Button, Icon} from 'antd';
+
 import {App} from '../app/App';
-import {LoginPopup} from '../infrastructure/widgets';
 import {WelcomePage} from '../welcome/WelcomePage';
 import {SplashScreen} from '../welcome/SplashScreen';
+import {WithFooter} from '../app/Footer';
+import {LoginPopup} from '../infrastructure/widgets';
+
+import {do_refresh, get_token} from '../state/actions';
 
 function Root(props) {
     const dispatch=useDispatch();
@@ -31,7 +35,19 @@ function Root(props) {
         return (<App />);
 
     if(loading_status==='loading')
-        return (<div>loading</div>);
+        return (
+            <WithFooter>
+                <Result
+                    icon={<Icon type="loading" />}
+                    title="不咕计划"
+                    subTitle="少女刷夜中"
+                />
+            </WithFooter>
+        );
+
+    let refresh_btn=(
+        <Button key="refresh" type="primary" onClick={()=>dispatch(do_refresh())}>重试</Button>
+    );
 
     function on_got_token(token) {
         localStorage['TOKEN']=token;
@@ -42,18 +58,26 @@ function Root(props) {
 
     if(error==='PHOENIX_NO_DATA')
         return (
-            <div>
-                <p>phoenix no data</p>
-                <p><button onClick={()=>dispatch(do_refresh())}>refresh</button></p>
-            </div>
+            <WithFooter>
+                <Result
+                    icon={<Icon type="disconnect" />}
+                    status="error"
+                    title={"加载失败"}
+                    extra={[refresh_btn]}
+                />
+            </WithFooter>
         );
     else if(error==='PHOENIX_NO_TOKEN')
         return (
             <LoginPopup token_callback={on_got_token}>{(do_popup)=>(
-                <div>
-                    <p>phoenix no token</p>
-                    <p><button onClick={do_popup}>do popup</button></p>
-                </div>
+                <WithFooter>
+                    <Result
+                        status="info"
+                        title="不咕计划"
+                        subTitle="开源的在线 Deadline 管理工具"
+                        extra={<Button type="primary" onClick={do_popup}>用 PKU Helper 账号登录</Button>}
+                    />
+                </WithFooter>
             )}</LoginPopup>
         );
     else if(error==='AUTH_REQUIRED')
@@ -62,17 +86,24 @@ function Root(props) {
         return (<SplashScreen />);
     else if(error==='SISTER_ERROR')
         return (
-            <div>
-                <p>sister error: {error_msg}</p>
-                <p><button onClick={()=>dispatch(do_refresh())}>refresh</button></p>
-            </div>
+            <WithFooter>
+                <Result
+                    status="error"
+                    title={error_msg}
+                    extra={[refresh_btn]}
+                />
+            </WithFooter>
         );
-    else
+    else // unknown error
         return (
-            <div>
-                <p>unknown error: {error}</p>
-                <p>{error_msg}</p>
-            </div>
+            <WithFooter>
+                <Result
+                    status="error"
+                    title={error_msg}
+                    subTitle={'未知错误 '+error}
+                    extra={[refresh_btn]}
+                />
+            </WithFooter>
         );
 }
 

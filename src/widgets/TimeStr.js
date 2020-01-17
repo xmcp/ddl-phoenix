@@ -1,5 +1,6 @@
 import React from 'react';
 import TimeAgo from 'react-timeago';
+
 import chineseStrings from 'react-timeago/lib/language-strings/zh-CN';
 import buildFormatter from 'react-timeago/lib/formatters/buildFormatter';
 

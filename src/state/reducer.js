@@ -4,6 +4,7 @@ const INIT_STATE={
     local: {
         token: null,
         modal: {
+            visible: false,
             type: null,
             scope: null,
             itemid: null,
@@ -81,15 +82,28 @@ export function reduce(state=INIT_STATE,action) {
                 error: action.token ? 'PHOENIX_NO_DATA' : 'PHOENIX_NO_TOKEN',
             };
 
-        case 'set_modal':
+        case 'show_modal':
             return {
                 ...state,
                 local: {
                     ...state.local,
                     modal: {
+                        visible: true,
                         type: action.modal_type,
                         scope: action.modal_scope,
                         itemid: action.modal_itemid,
+                    },
+                },
+            };
+
+        case 'close_modal':
+            return {
+                ...state,
+                local: {
+                    ...state.local,
+                    modal: {
+                        ...state.local.modal,
+                        visible: false,
                     },
                 },
             };

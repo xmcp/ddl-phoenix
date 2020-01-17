@@ -1,5 +1,6 @@
 import {Icon} from 'antd';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export function IconForColorType(props) {
     return (
@@ -12,3 +13,6 @@ export function IconForColorType(props) {
         }[props.type]} className={props.className}/>
     )
 }
+IconForColorType.propTypes={
+    type: PropTypes.oneOf(['placeholder','done','ignored','highlight','todo']).isRequired
+};

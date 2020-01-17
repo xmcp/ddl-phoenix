@@ -1,13 +1,15 @@
 import React from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Icon, Menu, Dropdown} from 'antd';
 
 import {PoppableText} from '../widgets/PoppableText';
-import {useDispatch, useSelector} from 'react-redux';
-import {show_modal, do_refresh, get_token} from '../state/actions';
-import {Icon, Menu, Dropdown} from 'antd';
 import {ClickableText} from '../widgets/ClickableText';
 import {TimeStr} from '../widgets/TimeStr';
 
+import {show_modal, do_refresh, get_token} from '../state/actions';
+
 import './AppHeader.less';
+import fire_bird_logo from '../fire_bird_bw.png';
 
 export function AppHeader(props) {
     const dispatch=useDispatch();
@@ -26,21 +28,18 @@ export function AppHeader(props) {
                             </Menu.Item>
                             <Menu.Divider />
                             <Menu.Item>
-                                <a>
-                                    <Icon type="setting" /> 设置 (TODO)
-                                </a>
-                            </Menu.Item>
-                            <Menu.Item>
                                 <a onClick={()=>{
-                                    delete localStorage['TOKEN'];
-                                    dispatch(get_token());
+                                    if(window.confirm('将会注销网页版 PKU Helper')) {
+                                        delete localStorage['TOKEN'];
+                                        dispatch(get_token());
+                                    }
                                 }}>
                                     <Icon type="logout" /> 注销 PKU Helper
                                 </a>
                             </Menu.Item>
                         </Menu>}>
                             <ClickableText>
-                                <Icon type="user" /> {user.name} <Icon type="caret-down" />
+                                <Icon type="user" /> {user.name}
                             </ClickableText>
                         </Dropdown>
                     </div>
@@ -55,8 +54,10 @@ export function AppHeader(props) {
                         onClick: ()=>dispatch(show_modal('reorder','zone',null)),
                     },
                 ]}>
-                    <Icon type="menu" /> 不咕计划
+                    <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
+                    <Icon type="more" /> 不咕计划
                 </PoppableText>
+                &nbsp;&nbsp;
                 <ClickableText onClick={()=>dispatch(do_refresh(true))}>
                     <Icon type={{
                         'loading': 'loading',

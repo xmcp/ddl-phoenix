@@ -1,12 +1,35 @@
+@import '../vars';
+
 .legend span {
-  margin: .25rem;
-  opacity: .6;
-  font-size: .8em;
+    margin: .25rem;
+    opacity: .6;
+    font-size: .8em;
 }
 
 .zone-margin {
-  height: 1rem;
+    height: 1rem;
 }
 .project-margin {
-  height: .5rem;
+    height: .5rem;
+}
+
+.task-collapse-badge  {
+    transform: scale(.85) translateY(2px);
+    margin-right: .5em;
+}
+
+.task-collapse-label, .task-empty-label {
+    font-size: .8em;
+    vertical-align: .1em;
+}
+.task-collapse-label {
+    margin-left: -.25em;
+}
+.task-empty-label {
+    margin-left: .5em;
+}
+
+.task-list-collapsed {
+    white-space: nowrap;
+    overflow: hidden;
 }

@@ -11,7 +11,7 @@ export function get_token() {
 
 export function show_modal(type,scope,itemid) {
     return {
-        type: 'set_modal',
+        type: 'show_modal',
         modal_type: type,
         modal_scope: scope,
         modal_itemid: itemid,
@@ -19,7 +19,9 @@ export function show_modal(type,scope,itemid) {
 }
 
 export function close_modal() {
-    return show_modal(null,null,null);
+    return {
+        type: 'close_modal',
+    };
 }
 
 export function do_refresh(manual=false) {

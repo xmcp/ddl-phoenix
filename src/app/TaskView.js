@@ -1,12 +1,14 @@
-import {Icon, Tag} from 'antd';
-import {useSelector, useDispatch} from 'react-redux';
-import {colortype, colorize, completeness_name} from '../functions';
 import React from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {Icon, Tag, Tooltip} from 'antd';
+
+import {PoppableText} from '../widgets/PoppableText';
+import {IconForColorType} from '../widgets/IconForColorType';
+
+import {colortype, completeness_name, friendly_date} from '../functions';
+import {show_modal, do_update_completeness, do_update_task_direct_done} from '../state/actions';
 
 import './TaskView.less';
-import {PoppableText} from '../widgets/PoppableText';
-import {show_modal, do_update_completeness, do_update_task_direct_done} from '../state/actions';
-import {IconForColorType} from '../widgets/IconForColorType';
 
 function gen_menu_for_task(tid,task,dispatch) {
     let MENU_UPDATE={
@@ -36,19 +38,30 @@ function gen_menu_for_task(tid,task,dispatch) {
         ];
 }
 
+function DueTooltip(props) {
+    if(props.task.status==='active' && props.task.due)
+        return (
+            <Tooltip title={friendly_date(props.task.due,false)+' 截止'} mouseEnterDelay={0} overlayClassName="pointer-event-none">
+                {props.children}
+            </Tooltip>
+        );
+    else
+        return props.children;
+}
+
 export function TaskView(props) {
     const task=useSelector((state)=>state.task[props.tid]);
     const dispatch=useDispatch();
 
     let ctype=colortype(task);
-    let [bgcolor,fgcolor,bdcolor]=colorize(ctype);
-
     return (
         <PoppableText menu={gen_menu_for_task(props.tid,task,dispatch)}>
-            <Tag style={{backgroundColor: bgcolor, color: fgcolor, borderColor: bdcolor}} className="custom-ant-tag">
-                <IconForColorType type={ctype} className="task-badge-icon" />
-                {task.name}
-            </Tag>
+            <DueTooltip task={task}>
+                <Tag className={'custom-ant-tag task-color-'+ctype}>
+                    <IconForColorType type={ctype} className="task-badge-icon" />
+                    {task.name}
+                </Tag>
+            </DueTooltip>
         </PoppableText>
     );
 }

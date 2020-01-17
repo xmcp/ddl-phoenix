@@ -1,16 +1,18 @@
 import {message} from 'antd';
+
 import {get_json} from '../infrastructure/functions';
 
 const SISTER_ROOT='http://192.168.0.193:5000';
+export const SISTER_API_VER='1';
 
 function token_param(start_symbol,token) {
-    return token ? (start_symbol+'user_token='+token) : '';
+    return token ? (start_symbol+'user_token='+encodeURIComponent(token)) : '';
 }
 
 export function sister_call(endpoint,data=undefined,completed_callback=undefined) {
     return (dispatch,getState)=>{
         let token=getState().local.token;
-        let url=SISTER_ROOT+endpoint+token_param('?',token);
+        let url=SISTER_ROOT+endpoint+'?sister_ver='+encodeURIComponent(SISTER_API_VER)+token_param('&',token);
 
         let fetch_req;
         if(data===undefined)
@@ -46,7 +48,6 @@ export function sister_call(endpoint,data=undefined,completed_callback=undefined
                 });
                 if(completed_callback)
                     completed_callback();
-                throw e; // todo
                 return false; // not success
             });
     }

@@ -2,8 +2,6 @@ import React from 'react';
 import {Dropdown, Menu} from 'antd';
 import PropTypes from 'prop-types';
 
-import {ClickableText} from './ClickableText';
-
 export function PoppableText(props) {
     function menu_onclick({key}) {
         props.menu[parseInt(key)].onClick();

@@ -1,7 +1,15 @@
-@max-content-width: 1200px;
+@import '../vars';
 
 .pull-right {
     float: right;
+}
+
+.pointer-event-none {
+    pointer-events: none;
+}
+
+.have-hover-bg:hover {
+    background-color: #e7e7e7;
 }
 
 .width-container {
@@ -15,6 +23,9 @@
 .width-container-leftonly {
     padding-left: 1em;
 }
+.width-container-rightonly {
+    padding-right: 1em;
+}
 
 .app-main {
     line-height: 2em;
@@ -24,5 +35,8 @@
 @media screen and (min-width: @max-content-width) {
     .width-container-leftonly {
         margin-left: calc((100vw - @max-content-width) / 2);
+    }
+    .width-container-rightonly {
+        margin-right: calc((100vw - @max-content-width) / 2);
     }
 }
