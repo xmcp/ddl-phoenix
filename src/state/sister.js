@@ -33,23 +33,28 @@ export function sister_call(endpoint,data=undefined,completed_callback=undefined
 
         return fetch_req
             .then(get_json)
-            .then((json)=>{
-                dispatch({
-                    type: 'refresh_received',
-                    sister: json,
-                });
-                if(completed_callback)
-                    completed_callback();
-                return json.action_success;
-            })
             .catch((e)=>{
                 message.error('加载失败：'+e);
-                dispatch({
-                    type: 'network_failure',
-                });
+                return {error: 'PHOENIX_NETWORK_FAILURE'};
+            })
+            .then((json)=>{
+                let cmd={};
                 if(completed_callback)
-                    completed_callback();
-                return false; // not success
+                    cmd=completed_callback()||{};
+                if(json.error==='PHOENIX_NETWORK_FAILURE') {
+                    dispatch({
+                        type: 'network_failure',
+                    });
+                    return false;
+                }
+                else {
+                    dispatch({
+                        type: 'refresh_received',
+                        sister: json,
+                        ...cmd,
+                    });
+                    return json.action_success;
+                }
             });
     }
 }

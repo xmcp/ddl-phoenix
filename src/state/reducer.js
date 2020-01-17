@@ -1,14 +1,16 @@
 import {message} from 'antd';
 
+const EMPTY_MODAL={
+    visible: false,
+    type: null,
+    scope: null,
+    itemid: null,
+};
+
 const INIT_STATE={
     local: {
         token: null,
-        modal: {
-            visible: false,
-            type: null,
-            scope: null,
-            itemid: null,
-        },
+        modal: EMPTY_MODAL,
         loading: {
             status: 'done',
             last_update_time: null, // as Date type
@@ -60,6 +62,7 @@ export function reduce(state=INIT_STATE,action) {
                 local: {
                     ...state.local,
                     loading: process_bee_loading_status(state,action),
+                    modal: action.hide_modal ? EMPTY_MODAL : state.local.modal,
                 },
             };
 

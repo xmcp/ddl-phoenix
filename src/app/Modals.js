@@ -38,14 +38,15 @@ function ModalAdd(props) {
             .then(close_modal_if_success(dispatch));
     }
 
-    let modal_current=modal.visible && modal.type==='add';
+    if(modal.type!=='add') return (<Modal visible={false} />);
 
     return (
         <Modal
-            visible={modal_current}
+            visible={modal.visible}
             title={<span><Icon type="plus-square" /> 新建{scope_name(modal.scope)}</span>}
             onCancel={()=>dispatch(close_modal())}
             onOk={do_post}
+            destroyOnClose={true}
         >
             {modal.scope!=='zone' &&
                 <div>
@@ -54,7 +55,7 @@ function ModalAdd(props) {
                 </div>
             }
             <Input.TextArea
-                value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal_current} autoFocus={true}
+                value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
                 onPressEnter={(e)=>{if(e.ctrlKey) do_post()}}
             />
             <p>//todo: 批量添加</p>
@@ -112,21 +113,22 @@ function ModalUpdate(props) {
             set_delete_confirmed(true);
     }
 
-    let modal_current=modal.visible && modal.type==='update';
+    if(modal.type!=='update') return (<Modal visible={false} />);
 
     return (
         <Modal
-            visible={modal_current}
+            visible={modal.visible}
             title={<span><Icon type="edit" /> 编辑{scope_name(modal.scope)}</span>}
             onCancel={()=>dispatch(close_modal())}
             onOk={do_post}
+            destroyOnClose={true}
         >
             <div>
                 <Button type="danger" style={{width: '100px'}} onClick={do_delete}>
                     {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
                 </Button>
                 &nbsp;
-                <Input value={name} onChange={(e)=>set_name(e.target.value)} style={{width: 'calc(100% - 110px)'}} key={modal_current} autoFocus={true} />
+                <Input value={name} onChange={(e)=>set_name(e.target.value)} style={{width: 'calc(100% - 110px)'}} key={modal.visible} autoFocus={true} />
             </div>
             {modal.scope==='task' &&
                 <div>
@@ -196,14 +198,15 @@ function ModalReorder(props) {
             .then(close_modal_if_success(dispatch));
     }
 
-    let modal_current=modal.visible && modal.type==='reorder';
+    if(modal.type!=='reorder') return (<Modal visible={false} />);
 
     return (
         <Modal
-            visible={modal_current}
+            visible={modal.visible}
             title={<span><Icon type="appstore" /> 调整{scope_name(modal.scope)}顺序</span>}
             onCancel={()=>dispatch(close_modal())}
             onOk={do_post}
+            destroyOnClose={true}
         >
             {!!mod_list &&
                 <Reorder
@@ -214,6 +217,11 @@ function ModalReorder(props) {
                     template={ReorderListItem}
                     callback={reorder_callback}
                 />
+            }
+            {!!mod_list && mod_list.length===0 &&
+                <p>
+                    <Icon type="inbox" /> 没有{scope_name(modal.scope)}
+                </p>
             }
         </Modal>
     )

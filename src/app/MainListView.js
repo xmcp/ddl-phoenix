@@ -21,21 +21,25 @@ function SectionHeader(props) {
     let csname=scope_name(props.scope);
     let nsname=scope_name(ns);
 
+    let menu=[
+        {
+            children: (<span><Icon type="plus" /> 新建{nsname}</span>),
+            onClick: ()=>dispatch(show_modal('add',ns,props.id)),
+        },
+        {
+            children: (<span><Icon type="appstore" /> 调整{nsname}顺序</span>),
+            onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
+        },
+        {
+            children: (<span><Icon type="edit" /> 编辑{csname} “{props.item.name}”</span>),
+            onClick: ()=>dispatch(show_modal('update',cs,props.id)),
+        },
+    ];
+    if(props.item[ns+'_order'].length===0)
+        menu.splice(1,1);
+
     return (
-        <PoppableText menu={[
-            {
-                children: (<span><Icon type="plus" /> 新建{nsname}</span>),
-                onClick: ()=>dispatch(show_modal('add',ns,props.id)),
-            },
-            {
-                children: (<span><Icon type="appstore" /> 调整{nsname}顺序</span>),
-                onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
-            },
-            {
-                children: (<span><Icon type="edit" /> 编辑{csname} “{props.item.name}”</span>),
-                onClick: ()=>dispatch(show_modal('update',cs,props.id)),
-            },
-        ]}>
+        <PoppableText menu={menu}>
             <Icon type="more" /> {props.item.name}
         </PoppableText>
     )

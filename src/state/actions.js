@@ -53,7 +53,11 @@ export function do_splash_callback(splash_index,data) {
 
 export function do_interact(type,scope,data) {
     const hide=message.loading('正在更新……');
-    return sister_call('/'+type+'/'+scope,data,hide);
+    return sister_call('/'+type+'/'+scope,data,()=>{
+        hide();
+        if(type==='delete')
+            return {hide_modal: true};
+    });
 }
 
 export function do_update_completeness(tid,completeness) {
