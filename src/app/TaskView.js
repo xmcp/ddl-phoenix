@@ -65,7 +65,7 @@ export function TaskView(props) {
             <DueTooltip task={task}>
                 <Tag className={'custom-ant-tag task-color-'+ctype}>
                     <IconForColorType type={ctype} className="task-badge-icon" />
-                    {task.name}
+                    <span className="task-badge-label">{task.name}</span>
                 </Tag>
             </DueTooltip>
         </PoppableText>
