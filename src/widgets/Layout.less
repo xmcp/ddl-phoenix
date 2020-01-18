@@ -1,7 +1,16 @@
 @import '../vars';
 
+.l-only {
+    display: none;
+}
 .xl-only {
     display: none;
+}
+
+@media screen and (min-width: @l-breakpoint) {
+    .l-only {
+        display: unset;
+    }
 }
 
 @media screen and (min-width: @xl-breakpoint) {

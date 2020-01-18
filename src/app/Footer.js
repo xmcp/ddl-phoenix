@@ -10,10 +10,9 @@ export function Footer(props) {
 
     return (
         <div className="footer center">
-            <p>Project Fire Bird! by @xmcp</p>
             <p>
-                强行安利 <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">番組計画</a> /
-                美术协力 <a href="https://zh.moegirl.org/%E6%A8%B1%E5%B7%9D%E6%83%A0" target="_blank" rel="noopener noreferrer">Meguchi</a>
+                Project <b>Fire Bird!</b> by @xmcp,
+                inspired by <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">番組計画</a>
             </p>
             <p>
                 基于&nbsp;

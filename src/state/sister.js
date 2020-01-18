@@ -3,7 +3,8 @@ import {message} from 'antd';
 import {get_json} from '../infrastructure/functions';
 
 // without trailing slash
-const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
+//const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
+const SISTER_ROOT='http://192.168.0.193:5000';
 export const SISTER_API_VER='1';
 
 function token_param(start_symbol,token) {
@@ -12,7 +13,10 @@ function token_param(start_symbol,token) {
 
 export function sister_call(endpoint,data=undefined,completed_callback=undefined) {
     return (dispatch,getState)=>{
-        let token=getState().local.token;
+        let state=getState();
+        if(state.local.loading.status==='loading') return Promise.resolve();
+
+        let token=state.local.token;
         let url=SISTER_ROOT+endpoint+'?sister_ver='+encodeURIComponent(SISTER_API_VER)+token_param('&',token);
 
         let fetch_req;

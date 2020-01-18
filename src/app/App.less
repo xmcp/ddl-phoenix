@@ -16,15 +16,28 @@
     margin-left: auto;
     margin-right: auto;
     max-width: @max-content-width;
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .width-container-leftonly {
-    padding-left: 1em;
+    padding-left: 0;
 }
 .width-container-rightonly {
-    padding-right: 1em;
+    padding-right: 0;
+}
+
+@media screen and (min-width: @xl-breakpoint) {
+    .width-container-leftonly {
+        padding-left: 1em;
+    }
+    .width-container-rightonly {
+        padding-right: 1em;
+    }
+    .width-container {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
 }
 
 .app-main {
@@ -40,3 +53,4 @@
         margin-right: calc((100vw - @max-content-width) / 2);
     }
 }
+

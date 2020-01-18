@@ -24,18 +24,8 @@ export function close_modal() {
     };
 }
 
-export function do_refresh(manual=false) {
-    return (dispatch,getState)=>{
-        const loading_status=getState().local.loading.status;
-        if(loading_status!=='loading') {
-            dispatch({
-                type: 'start_loading',
-            });
-            setTimeout(()=>{
-                sister_call('/refresh')(dispatch,getState);
-            },manual?150:0);
-        }
-    }
+export function do_refresh() {
+    return sister_call('/refresh');
 }
 
 export function do_register(regcode) {

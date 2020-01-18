@@ -19,7 +19,7 @@ function gen_menu_for_task(tid,task,dispatch) {
         children: (<span><IconForColorType type={compl} /> {completeness_name(compl)}</span>),
         onClick: ()=>dispatch(do_update_completeness(tid,compl)),
     });
-    let compl_order=['todo','done','highlight','ignored'];
+    let compl_order=['done','todo','highlight','ignored'];
 
     if(task.status==='placeholder')
         return [
@@ -39,14 +39,20 @@ function gen_menu_for_task(tid,task,dispatch) {
 }
 
 function DueTooltip(props) {
+    let ctype_name=completeness_name(colortype(props.task));
+
     if(props.task.status==='active' && props.task.due)
         return (
-            <Tooltip title={friendly_date(props.task.due,false)+' 截止'} mouseEnterDelay={0} overlayClassName="pointer-event-none">
+            <Tooltip title={friendly_date(props.task.due,false)+' 截止，'+ctype_name} mouseEnterDelay={0} overlayClassName="pointer-event-none">
                 {props.children}
             </Tooltip>
         );
     else
-        return props.children;
+        return (
+            <Tooltip title={ctype_name} mouseEnterDelay={0} overlayClassName="pointer-event-none">
+                {props.children}
+            </Tooltip>
+        )
 }
 
 export function TaskView(props) {

@@ -24,13 +24,14 @@ export function prev_scope(scope) {
     }[scope]||null;
 }
 
-export function completeness_name(compl) {
+export function completeness_name(ctype) {
     return {
         done: '已完成',
         ignored: '忽略',
         highlight: '旗标',
         todo: '待办',
-    }[compl]||compl||'';
+        placeholder: '占位'
+    }[ctype]||ctype||'';
 }
 
 export function colortype(task) {

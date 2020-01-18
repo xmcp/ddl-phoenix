@@ -16,16 +16,18 @@ const TODO_COLLAPSED_LINES=3;
 
 function TodoTaskView(props) {
     return (
-        <p>
+        <p className="todo-task">
             <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" inline={true} />
-            <TaskView tid={props.task.id} />
+            <span className="todo-task-tag">
+                <TaskView tid={props.task.id} />
+            </span>
         </p>
     )
 }
 
 function TodoCatView(props) {
     return (
-        <SideHeaderLayout header={props.name}>
+        <SideHeaderLayout headerClassName="todo-cat-container" header={props.name}>
             {props.tasks.map((t)=>(
                 <TodoTaskView key={t.id} task={t} />
             ))}
@@ -101,7 +103,7 @@ export function TodoView(props) {
 
     return (
         <div>
-            <SideHeaderLayout header={<div>
+            <SideHeaderLayout headerClassName="todo-header-container" header={<div>
                 待办任务
                 <Badge count={todo_tasks.length} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
             </div>}>

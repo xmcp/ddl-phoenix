@@ -1,7 +1,7 @@
 @import '../vars';
 
 .legend span {
-    margin: .25rem;
+    margin-left: .5rem;
     opacity: .6;
     font-size: .8em;
 }
@@ -10,7 +10,16 @@
     height: 1rem;
 }
 .project-margin {
-    height: .5rem;
+    height: 1rem;
+}
+
+@media screen and (min-width: @xl-breakpoint) {
+    .zone-margin {
+        height: 1rem;
+    }
+    .project-margin {
+        height: .5rem;
+    }
 }
 
 .task-collapse-badge  {
@@ -29,7 +38,32 @@
     margin-left: .5em;
 }
 
+.task-list {
+    margin-left: .25em;
+}
+
 .task-list-collapsed {
     white-space: nowrap;
     overflow: hidden;
+}
+
+.zone-header-container, .todo-header-container {
+    font-weight: bold;
+    background: #eee;
+    position: sticky;
+    top: @header-height;
+    z-index: @header-z-index - 1;
+    padding-top: .25em;
+    padding-bottom: .25em;
+    margin-bottom: .5em;
+}
+
+@media screen and (min-width: @l-breakpoint) {
+    .zone-header-container, .todo-header-container {
+        font-weight: normal;
+        background: unset;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
 }

@@ -1,8 +1,8 @@
-@header-height: 3rem;
+@import '../vars';
 
 .header-row {
     position: fixed;
-    z-index: 100;
+    z-index: @header-z-index;
     top: 0;
     width: 100%;
     height: @header-height;
@@ -19,4 +19,20 @@
     height: @header-height;
     margin-right: .5em;
     vertical-align: top;
+}
+
+.header-refresh-icon {
+    animation: 200ms did-refresh;
+}
+
+@keyframes did-refresh {
+    from {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-.25em);
+    }
+    to {
+        transform: translateY(0);
+    }
 }

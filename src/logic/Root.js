@@ -60,7 +60,7 @@ function Root(props) {
         return (
             <WithFooter>
                 <Result
-                    icon={<Icon type="disconnect" />}
+                    icon={<Icon type="wifi" />}
                     status="error"
                     title={"加载失败"}
                     extra={[refresh_btn]}

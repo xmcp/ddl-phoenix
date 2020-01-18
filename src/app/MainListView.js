@@ -39,7 +39,7 @@ function SectionHeader(props) {
         menu.splice(1,1);
 
     return (
-        <PoppableText menu={menu}>
+        <PoppableText menu={menu} className={'section-header-'+props.scope}>
             <Icon type="more" /> {props.item.name}
         </PoppableText>
     )
@@ -51,17 +51,13 @@ function ProjectView(props) {
 
     const [expanded,set_expanded]=useState(false);
 
-    let start_idx=0;
     let cnt={done: 0, ignored: 0};
     if(!expanded)
-        while(start_idx<project.task_order.length) {
-            let ctype=colortype(tasks[project.task_order[start_idx]]);
-            if(ctype==='done' || ctype==='ignored') {
+        project.task_order.forEach((tid)=>{
+            let ctype=colortype(tasks[tid]);
+            if(ctype==='done' || ctype==='ignored')
                 cnt[ctype]++;
-                start_idx++;
-            } else
-                break;
-        }
+        });
 
     let task_collapse_badge_style={
         className: "task-collapse-badge",
@@ -69,11 +65,14 @@ function ProjectView(props) {
         offset: [2,-3],
     };
 
-    let tasks_to_display=expanded ? project.task_order : project.task_order.filter((tid,idx)=>(idx>=start_idx));
+    let tasks_to_display=expanded ? project.task_order : project.task_order.filter((tid)=>{
+        let ctype=colortype(tasks[tid]);
+        return !(ctype==='done' || ctype==='ignored');
+    });
 
     return (
         <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />}>
-            <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed'}>
+            <div className={'task-list '+(expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed')}>
                 {expanded ?
                     <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg">
                         <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
@@ -111,7 +110,7 @@ function ZoneView(props) {
     const zone=useSelector((state)=>state.zone[props.zid]);
 
     return (
-        <SideHeaderLayout header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
+        <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
             {zone.project_order.map((pid)=>(
                 <ProjectView key={pid} pid={pid} />
             ))}

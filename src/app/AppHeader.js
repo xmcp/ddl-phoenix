@@ -24,6 +24,9 @@ export function AppHeader(props) {
                     <div className="pull-right">
                         <Dropdown trigger={['click']} overlay={<Menu>
                             <Menu.Item disabled={true}>
+                                当前用户：{user.name}
+                            </Menu.Item>
+                            <Menu.Item disabled={true}>
                                 用户组：Ring {user.ring}
                             </Menu.Item>
                             <Menu.Divider />
@@ -39,7 +42,7 @@ export function AppHeader(props) {
                             </Menu.Item>
                         </Menu>}>
                             <ClickableText>
-                                <Icon type="user" /> {user.name}
+                                <Icon type="user" /> &nbsp;
                             </ClickableText>
                         </Dropdown>
                     </div>
@@ -54,23 +57,25 @@ export function AppHeader(props) {
                         onClick: ()=>dispatch(show_modal('reorder','zone',null)),
                     },
                 ]}>
-                    <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
+                    <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" title="美术协力 @Meguchi" />
                     <Icon type="more" /> 不咕计划
                 </PoppableText>
                 &nbsp;&nbsp;
-                <ClickableText onClick={()=>dispatch(do_refresh(true))}>
+                <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())}>
                     <Icon type={{
                         'loading': 'loading',
                         'done': 'sync',
                         'error': 'exclamation-circle'
-                    }[loading.status]} />
-                    &nbsp;
-                    {loading.status==='loading' ? '正在更新' :
-                        <span>
-                            <TimeStr time={loading.last_update_time} />
-                            &nbsp;更新
-                        </span>
-                    }
+                    }[loading.status]} className="header-refresh-icon" />
+                    <span className="l-only">
+                        &nbsp;
+                        {loading.status==='loading' ? '正在更新' :
+                            <span>
+                                <TimeStr time={loading.last_update_time} />
+                                &nbsp;更新
+                            </span>
+                        }
+                    </span>
                 </ClickableText>
             </div>
         </div>
