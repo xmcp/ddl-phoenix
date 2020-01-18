@@ -5,7 +5,7 @@ export const TIMEZONE='+08:00';
 export function scope_name(scope) {
     return {
         zone: '课程',
-        project: '项目',
+        project: '类别',
         task: '任务',
     }[scope]||scope||'';
 }

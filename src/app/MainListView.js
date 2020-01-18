@@ -132,7 +132,7 @@ export function MainListView(props) {
         <div>
             <div className="xl-only legend">
                 <SideHeaderLayout header={<span>课程</span>}>
-                    <SideHeaderLayout header={<span>项目</span>}>
+                    <SideHeaderLayout header={<span>类别</span>}>
                         <span>任务</span>
                     </SideHeaderLayout>
                 </SideHeaderLayout>
