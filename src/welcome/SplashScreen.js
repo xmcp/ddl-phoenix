@@ -6,7 +6,7 @@ import {WithFooter} from '../app/Footer';
 
 import {do_splash_callback} from '../state/actions';
 
-function SplashAlphaTest(props) {
+function SplashAnnounceChecker(props) {
     const dispatch=useDispatch();
 
     const [agree,set_agree]=useState(false);
@@ -18,15 +18,13 @@ function SplashAlphaTest(props) {
     return (
         <div className="width-container">
             <br />
-            <h1>Alpha 测试用户须知</h1>
-            <p>{props.handout.msg}</p>
+            <h1>{props.handout.title}</h1>
+            <div dangerouslySetInnerHTML={{__html: props.handout.instruction_html}} />
             <hr />
-            <p>本项目正在开发中，目前<b>对用户数据的可用性、完整性、保密性不做任何保证</b>。</p>
-            <p>如果继续使用，<b>您在本项目的数据有可能丢失或泄漏</b>。没有人对此负任何责任。</p>
-            <p>因此，在测试期间<b>请勿提交任何隐私或重要信息</b>。</p>
+            <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
             <hr />
             <p>
-                <Checkbox value={agree} onChange={(e)=>set_agree(e.target.checked)}>我同意</Checkbox>
+                <Checkbox value={agree} onChange={(e)=>set_agree(e.target.checked)}>{props.handout.check}</Checkbox>
                 <Button type="primary" onClick={do_post}>继续</Button>
             </p>
         </div>
@@ -36,15 +34,15 @@ function SplashAlphaTest(props) {
 export function SplashScreen(props) {
     const splash=useSelector((state)=>state.splash);
 
-    if(splash.index===0)
-        return (<SplashAlphaTest index={splash.index} handout={splash.handout} />);
+    if(splash.type==='announce_checker')
+        return (<SplashAnnounceChecker index={splash.index} handout={splash.handout} />);
     else
         return (
             <WithFooter>
                 <Result
                     status="error"
                     title="无法显示页面"
-                    subTitle={'未知 Splash Screen：'+splash.index}
+                    subTitle={'未知 Splash Screen：'+splash.type+' (#'+splash.index+')'}
                     extra={[
                         <Button onClick={()=>window.location.reload(true)}>刷新页面</Button>
                     ]}
