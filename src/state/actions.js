@@ -62,3 +62,13 @@ export function do_update_task_direct_done(tid) {
         id: tid,
     });
 }
+
+export function do_reset_splash_index() {
+    return sister_call('/profile/reset_splash_index',{});
+}
+
+export function do_update_settings(settings) {
+    return sister_call('/profile/update_settings', {
+        settings: settings
+    })
+}

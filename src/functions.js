@@ -82,3 +82,7 @@ export function friendly_date(ts,use_rel=true) {
 
     return ret;
 }
+
+export function dflt(val,default_value) {
+    return val===undefined? default_value: val;
+}

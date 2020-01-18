@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Modal, Input, Icon, Radio, Button, DatePicker} from 'antd';
+import {Modal, Input, Icon, Radio, Button, DatePicker, Checkbox} from 'antd';
 import Reorder from 'react-reorder';
 import moment from 'moment';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
-import {TIMEZONE, scope_name, colortype, prev_scope, moment_to_day} from '../functions';
-import {close_modal, do_interact} from '../state/actions';
+import {TIMEZONE, scope_name, colortype, prev_scope, moment_to_day, dflt} from '../functions';
+import {close_modal, do_interact, do_update_settings} from '../state/actions';
 
 import './Modals.less';
 
@@ -227,10 +227,46 @@ function ModalReorder(props) {
     )
 }
 
+function ModalSettings(props) {
+    const dispatch=useDispatch();
+    const modal=useSelector((state)=>state.local.modal);
+    const settings=useSelector((state)=>state.user.settings);
+
+    const [no_hover,set_no_hover]=useState(false);
+
+    useEffect(()=>{
+        set_no_hover(dflt(settings.no_hover,false));
+    },[modal]);
+
+    if(modal.type!=='settings') return (<Modal visible={false} />);
+
+    function do_post() {
+        dispatch(do_update_settings({
+            no_hover: no_hover,
+        }))
+            .then(close_modal_if_success(dispatch));
+    }
+
+    return (
+        <Modal
+            visible={modal.visible}
+            title={<span><Icon type="setting" /> 设置</span>}
+            onCancel={()=>dispatch(close_modal())}
+            onOk={do_post}
+            destroyOnClose={true}
+        >
+            <p><Checkbox checked={no_hover} onChange={(e)=>set_no_hover(e.target.checked)}>
+                用点击替代鼠标悬浮效果
+            </Checkbox></p>
+        </Modal>
+    );
+}
+
 export function Modals(props) {
     return [
         <ModalAdd key="add" />,
         <ModalUpdate key="update" />,
         <ModalReorder key="reorder" />,
+        <ModalSettings key="settings" />,
     ];
 }

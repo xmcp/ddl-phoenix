@@ -43,7 +43,7 @@ function DueTooltip(props) {
 
     if(props.task.status==='active' && props.task.due)
         return (
-            <Tooltip title={friendly_date(props.task.due,false)+' 截止，'+ctype_name} mouseEnterDelay={0} overlayClassName="pointer-event-none">
+            <Tooltip title={friendly_date(props.task.due,false)+' 截止，'+ctype_name} mouseEnterDelay={0} mouseLeaveDelay={0} overlayClassName="pointer-event-none">
                 {props.children}
             </Tooltip>
         );

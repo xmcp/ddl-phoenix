@@ -8,7 +8,7 @@ import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
 import {LoginPopup} from '../infrastructure/widgets';
 
-import {do_refresh, get_token} from '../state/actions';
+import {do_refresh, get_token, close_modal} from '../state/actions';
 
 function Root(props) {
     const dispatch=useDispatch();
@@ -27,8 +27,10 @@ function Root(props) {
     const loading_status=useSelector((state)=>state.local.loading.status);
 
     useEffect(()=>{
-        if(error==='PROCEED')
+        if(error==='PROCEED') {
+            dispatch(close_modal());
             dispatch(do_refresh());
+        }
     },[dispatch,error]);
 
     if(error===null)

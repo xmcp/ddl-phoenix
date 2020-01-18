@@ -23,13 +23,18 @@ function process_flash_msg(action) {
     if(action.sister && action.sister.backend)
         action.sister.backend.flash_msgs.forEach(([category,text])=>{
             console.log('flash msg',category,text);
+            let duration=(
+                text.length<=20 ? 2 : (
+                    category==='error' ? 10 : 5
+                )
+            );
             let fn={
                 message: message.info,
                 error: message.error,
                 warning: message.warning,
                 success: message.success,
             }[category]||message.info;
-            fn(text);
+            fn(text,duration);
         });
 }
 

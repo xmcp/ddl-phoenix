@@ -6,7 +6,7 @@ import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
 import {TimeStr} from '../widgets/TimeStr';
 
-import {show_modal, do_refresh, get_token} from '../state/actions';
+import {show_modal, do_refresh, get_token, do_reset_splash_index} from '../state/actions';
 
 import './AppHeader.less';
 import fire_bird_logo from '../fire_bird_bw.png';
@@ -31,6 +31,17 @@ export function AppHeader(props) {
                             </Menu.Item>
                             <Menu.Divider />
                             <Menu.Item>
+                                <a onClick={()=>dispatch(show_modal('settings',null,null))}>
+                                    <Icon type="setting" /> 设置
+                                </a>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <a onClick={()=>dispatch(do_reset_splash_index())}>
+                                    <Icon type="undo" /> 重新显示欢迎页面
+                                </a>
+                            </Menu.Item>
+                            <Menu.Divider />
+                            <Menu.Item>
                                 <a onClick={()=>{
                                     if(window.confirm('将会注销网页版 PKU Helper')) {
                                         delete localStorage['TOKEN'];
@@ -42,7 +53,7 @@ export function AppHeader(props) {
                             </Menu.Item>
                         </Menu>}>
                             <ClickableText>
-                                <Icon type="user" /> &nbsp;
+                                &nbsp; <Icon type="user" /> &nbsp;
                             </ClickableText>
                         </Dropdown>
                     </div>
