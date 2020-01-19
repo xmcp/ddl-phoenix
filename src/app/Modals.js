@@ -1,13 +1,15 @@
 import React, {useState, useEffect, useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Modal, Input, Icon, Radio, Button, DatePicker, Checkbox} from 'antd';
+import {Modal, Input, Icon, Radio, Button, Checkbox, Calendar, Row, Col, Popover} from 'antd';
 import Reorder from 'react-reorder';
 import moment from 'moment';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
-import {TIMEZONE, scope_name, colortype, prev_scope, moment_to_day, dflt} from '../functions';
+import {scope_name, colortype, prev_scope, moment_to_day, dflt, friendly_date} from '../functions';
+import {init_quicktype, proc_input, set_moment, is_quicktype_char, QuicktypeHelp} from '../logic/date_quicktype';
+import {magic_expand, MagicExpandHelp} from '../logic/magic_expand';
 import {close_modal, do_interact, do_update_settings} from '../state/actions';
 
 import './Modals.less';
@@ -38,6 +40,15 @@ function ModalAdd(props) {
             .then(close_modal_if_success(dispatch));
     }
 
+    function on_press_enter(e) {
+        if(e.ctrlKey) do_post();
+
+        // press enter at the only line: do magic expand
+        if(modal.scope==='task' && e.target.value.indexOf('\n')===-1/* && e.target.selectionStart===e.target.value.length*/) {
+            set_names(magic_expand(e.target.value));
+        }
+    }
+
     if(modal.type!=='add') return (<Modal visible={false} />);
 
     return (
@@ -51,14 +62,21 @@ function ModalAdd(props) {
             {modal.scope!=='zone' &&
                 <div>
                     <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<Icon type="edit" />} />
+                    {modal.scope==='task' &&
+                        <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
+                            <a>
+                                &nbsp;支持批量添加 <Icon type="question-circle" />
+                            </a>
+                        </Popover>
+                    }
+                    <br />
                     <br />
                 </div>
             }
             <Input.TextArea
                 value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
-                onPressEnter={(e)=>{if(e.ctrlKey) do_post()}}
+                onPressEnter={on_press_enter}
             />
-            <p>//todo: 批量添加</p>
         </Modal>
     )
 }
@@ -73,10 +91,7 @@ function ModalUpdate(props) {
     const [name,set_name]=useState('');
     const [delete_confirmed,set_delete_confirmed]=useState(false);
     const [status,set_status]=useState('');
-    const [due,set_due]=useState(null);
-    const due_moment=useMemo(()=>(
-        due===null ? null : moment.unix(due).utcOffset(TIMEZONE)
-    ),[due]);
+    const [due_quicktype,set_due_quicktype]=useState(init_quicktype(null));
 
     useEffect(()=>{ // on item update: restore name and status
         if(item===null) {
@@ -86,7 +101,7 @@ function ModalUpdate(props) {
             set_name(item.name);
             set_delete_confirmed(false);
             set_status('active');
-            set_due(item.due || null);
+            set_due_quicktype(init_quicktype(item.due || null));
         }
     },[modal]);
 
@@ -96,7 +111,7 @@ function ModalUpdate(props) {
             name: name,
             ... modal.scope==='task' ? {
                 status: status,
-                due: due,
+                due: due_quicktype.moment===null ? null : due_quicktype.moment.unix(),
             } : {},
         }))
             .then(close_modal_if_success(dispatch));
@@ -113,6 +128,48 @@ function ModalUpdate(props) {
             set_delete_confirmed(true);
     }
 
+    function on_select_date(date,_mode) {
+        set_due_quicktype(set_moment(date));
+    }
+
+    function calendar_header_render({value, type, onChange, onTypeChange}) {
+        return (
+            <div style={{textAlign: 'center'}}>
+                <Button type="link" onClick={()=>onChange(value.clone().add(-1,'month'))}>
+                    <Icon type="backward" />
+                </Button>
+                <Button type="link" onClick={()=>onChange(moment_to_day(moment()))}>
+                    {value.year()}年 {value.month()+1}月
+                </Button>
+                <Button type="link" onClick={()=>onChange(value.clone().add(+1,'month'))}>
+                    <Icon type="forward" />
+                </Button>
+            </div>
+        );
+    }
+
+    // handle keyboard event
+    useEffect(()=>{
+        if(modal.type!=='update' || !modal.visible) return;
+
+        function handler(e) {
+            // skip if we are in other inputs
+            if(['input','textarea'].indexOf(e.target.tagName.toLowerCase())!==-1 && !e.target.closest('.modal-update-quicktype-input'))
+                return;
+
+            if(is_quicktype_char(e.key)) {
+                console.log('got quicktype event',e);
+                set_due_quicktype(proc_input(due_quicktype,e.key.toLowerCase()==='backspace' ? '\b' : e.key.toLowerCase()));
+            } else if(e.key.toLowerCase()==='enter')
+                do_post();
+        }
+
+        document.addEventListener('keydown',handler);
+        return ()=>{
+            document.removeEventListener('keydown',handler);
+        }
+    },[modal,due_quicktype]);
+
     if(modal.type!=='update') return (<Modal visible={false} />);
 
     return (
@@ -124,29 +181,58 @@ function ModalUpdate(props) {
             destroyOnClose={true}
         >
             <div>
-                <Button type="danger" style={{width: '100px'}} onClick={do_delete}>
+                <Button type="danger" className="modal-btnpair-btn" onClick={do_delete}>
                     {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
                 </Button>
-                &nbsp;
-                <Input value={name} onChange={(e)=>set_name(e.target.value)} style={{width: 'calc(100% - 110px)'}} key={modal.visible} autoFocus={true} />
+                <Input className="modal-btnpair-input" value={name} onChange={(e)=>set_name(e.target.value)} key={modal.visible}
+                       autoFocus={modal.scope!=='task'} />
             </div>
+            <br />
             {modal.scope==='task' &&
-                <div>
-                    <br />
-                    <Radio.Group value={status} onChange={(e)=>set_status(e.target.value)}>
-                        <Radio.Button value="placeholder">
-                            <IconForColorType type="placeholder" /> 占位
-                        </Radio.Button>
-                        <Radio.Button value="active">
-                            <IconForColorType type="todo" /> 已布置
-                        </Radio.Button>
-                    </Radio.Group>
-                    &nbsp;
-                    <DatePicker value={due_moment} onChange={(m)=>set_due(m===null ? null : moment_to_day(m).unix())}
-                                disabled={status==='placeholder'} placeholder="截止时间" />
-                    <br />
-                    <p>//todo: 更好的日期选择</p>
-                </div>
+                <Row gutter={6}>
+                    <Col xs={24} sm={12}>
+                        <p>
+                            <Radio.Group value={status} onChange={(e)=>set_status(e.target.value)}>
+                                <Radio.Button value="placeholder">
+                                    <IconForColorType type="placeholder" /> 占位
+                                </Radio.Button>
+                                <Radio.Button value="active">
+                                    <IconForColorType type="todo" /> 已布置
+                                </Radio.Button>
+                            </Radio.Group>
+                        </p>
+                        <br />
+                        {status==='active' &&
+                            <div>
+                                <p style={{marginBottom: '.5em'}}>
+                                    <b>{due_quicktype.placeholder} &nbsp;</b>
+                                    {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}
+                                </p>
+                                <p>
+                                    <Input
+                                        value={' '+due_quicktype.buffer} className="modal-update-quicktype-input"
+                                        prefix={<Icon type="code" />}
+                                        suffix={
+                                            <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
+                                                <Icon type="question-circle" />
+                                            </Popover>
+                                        }
+                                    />
+                                </p>
+                            </div>
+                        }
+                    </Col>
+                    <Col xs={24} sm={12}>
+                        {status==='active' &&
+                            <div className="modal-update-calendar">
+                                <Calendar
+                                    value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment} onChange={on_select_date}
+                                    fullscreen={false} headerRender={calendar_header_render}
+                                />
+                            </div>
+                        }
+                    </Col>
+                </Row>
             }
         </Modal>
     );

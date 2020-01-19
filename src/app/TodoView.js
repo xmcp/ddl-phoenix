@@ -17,7 +17,7 @@ const TODO_COLLAPSED_LINES=3;
 function TodoTaskView(props) {
     return (
         <p className="todo-task">
-            <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" inline={true} />
+            <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" />
             <span className="todo-task-tag">
                 <TaskView tid={props.task.id} />
             </span>

@@ -25,7 +25,7 @@ export function ItemBreadcrumb(props) {
     let result=props.suffix!==undefined ? got.concat([props.suffix]) : got;
 
     return (
-        <div className={'item-breadcrumb'+(props.inline ? ' item-breadcrumb-inline' : '')}>
+        <span>
             {result.map((item,idx)=>(
                 <span key={idx} className="item-breadcrumb-item">
                     {item}{idx!==result.length-1 &&
@@ -33,12 +33,11 @@ export function ItemBreadcrumb(props) {
                     }
                 </span>
             ))}
-        </div>
+        </span>
     );
 }
 ItemBreadcrumb.propTypes={
     scope: PropTypes.oneOf(['zone','project','task',null]),
     id: PropTypes.number,
     suffix: PropTypes.node,
-    inline: PropTypes.bool,
 };
