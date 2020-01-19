@@ -72,7 +72,7 @@ function ProjectView(props) {
 
     return (
         <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />}>
-            <div className={'task-list '+(expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed')}>
+            <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed width-container-rightonly-padded'}>
                 {expanded ?
                     <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
                         <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
