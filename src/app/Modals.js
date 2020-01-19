@@ -191,16 +191,15 @@ function ModalUpdate(props) {
             {modal.scope==='task' &&
                 <Row gutter={6}>
                     <Col xs={24} sm={12}>
-                        <p>
-                            <Radio.Group value={status} onChange={(e)=>set_status(e.target.value)}>
-                                <Radio.Button value="placeholder">
-                                    <IconForColorType type="placeholder" /> 占位
-                                </Radio.Button>
-                                <Radio.Button value="active">
-                                    <IconForColorType type="todo" /> 已布置
-                                </Radio.Button>
-                            </Radio.Group>
-                        </p>
+                        <Radio.Group value={status} onChange={(e)=>set_status(e.target.value)}>
+                            <Radio.Button value="placeholder">
+                                <IconForColorType type="placeholder" /> 占位
+                            </Radio.Button>
+                            <Radio.Button value="active">
+                                <IconForColorType type="todo" /> 已布置
+                            </Radio.Button>
+                        </Radio.Group>
+                        <br />
                         <br />
                         {status==='active' &&
                             <div>
@@ -243,11 +242,11 @@ function ReorderListItem(props) {
         props.item.scope==='task' ? ('task-color-'+colortype(state.task[props.item.id])) : ''
     ));
 
-    return (
+    return useMemo(()=>(
         <div className={'reorder-list-item '+(colortype_cls)}>
             <ItemBreadcrumb scope={props.item.scope} id={props.item.id} />
         </div>
-    );
+    ),[props.item.scope,props.item.id]);
 }
 
 function ModalReorder(props) {

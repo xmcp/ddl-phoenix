@@ -38,13 +38,10 @@
     margin-left: .5em;
 }
 
-.task-list {
-    margin-left: .25em;
-}
-
 .task-list-collapsed {
     white-space: nowrap;
-    overflow: hidden;
+    overflow: auto;
+    .no-scrollbar-mixin();
 }
 
 .zone-header-container, .todo-header-container {
@@ -66,4 +63,12 @@
         padding-bottom: 0;
         margin-bottom: 0;
     }
+}
+
+.task-collapse-widget {
+    position: sticky;
+    left: 0;
+    z-index: 10;
+    background-color: fade(@body-background,85%);
+    padding: 0 .5em;
 }

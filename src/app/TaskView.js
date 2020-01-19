@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Icon, Tag, Tooltip} from 'antd';
 
@@ -60,7 +60,7 @@ export function TaskView(props) {
     const dispatch=useDispatch();
 
     let ctype=colortype(task);
-    return (
+    return useMemo(()=>(
         <PoppableText menu={gen_menu_for_task(props.tid,task,dispatch)}>
             <DueTooltip task={task}>
                 <Tag className={'custom-ant-tag task-color-'+ctype}>
@@ -69,5 +69,5 @@ export function TaskView(props) {
                 </Tag>
             </DueTooltip>
         </PoppableText>
-    );
+    ),[task]);
 }

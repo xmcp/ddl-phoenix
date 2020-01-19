@@ -13,7 +13,7 @@ import moment from 'moment';
 import zhCN from 'antd/es/locale/zh_CN';
 import 'moment/locale/zh-cn';
 
-import './index.css';
+import './index.less';
 
 let store=applyMiddleware(thunk)(createStore)(
     reduce,

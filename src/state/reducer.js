@@ -1,5 +1,7 @@
 import {message} from 'antd';
 
+import {shallowEqual} from 'react-redux';
+
 const EMPTY_MODAL={
     visible: false,
     type: null,
@@ -48,6 +50,26 @@ function process_bee_loading_status(state,action) {
     return action.sister.error ? loading_status('error',state.local.loading.last_update_time) : loading_status('done');
 }
 
+// to reduce re-renders between refresh
+function shallow_merge(obj_in,baseline,merge_keys,merge_id) {
+    let obj=Object.assign({},obj_in);
+    merge_keys.forEach((merge_key)=>{
+        if(!obj[merge_key] || !baseline[merge_key]) return;
+        let store={};
+
+        Object.values(baseline[merge_key]).forEach((item)=>{
+            store[item[merge_id]]=item;
+        });
+        Object.keys(obj[merge_key]).forEach((key)=>{
+            let item=obj[merge_key][key];
+            let baseline_item=store[item[merge_id]];
+            if(shallowEqual(item,baseline_item))
+                obj[merge_key][key]=baseline_item;
+        });
+    });
+    return obj;
+}
+
 export function reduce(state=INIT_STATE,action) {
     process_flash_msg(action);
 
@@ -63,7 +85,7 @@ export function reduce(state=INIT_STATE,action) {
 
         case 'refresh_received':
             return {
-                ...action.sister,
+                ...shallow_merge(action.sister,state,['zone','project','task'],'id'),
                 local: {
                     ...state.local,
                     loading: process_bee_loading_status(state,action),

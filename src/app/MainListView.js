@@ -74,10 +74,10 @@ function ProjectView(props) {
         <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />}>
             <div className={'task-list '+(expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed')}>
                 {expanded ?
-                    <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg">
+                    <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
                         <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
                     </ClickableText> :
-                    <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg">
+                    <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg task-collapse-widget">
                         <Icon type="fullscreen" />
                         {cnt.done>0 &&
                         <Badge count={cnt.done} {...task_collapse_badge_style} title={'已完成'+cnt.done+'项'}>

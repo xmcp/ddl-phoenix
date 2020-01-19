@@ -103,10 +103,12 @@ export function TodoView(props) {
 
     return (
         <div>
-            <SideHeaderLayout headerClassName="todo-header-container" header={<div>
-                待办任务
-                <Badge count={todo_tasks.length} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
-            </div>}>
+            <SideHeaderLayout headerClassName="todo-header-container" header={
+                <div>
+                    待办任务
+                    <Badge count={todo_tasks.length} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
+                </div>}
+            >
                 {cat_order.map(([sort_key,cat_name])=>(
                     cats[cat_name] ? <TodoCatView key={sort_key} name={cat_name} tasks={cats[cat_name]} /> : null
                 ))}
@@ -115,15 +117,15 @@ export function TodoView(props) {
                         <ClickableText onClick={()=>set_expanded(!expanded)} className="todo-collapse-switch have-hover-bg">
                             {expanded ?
                                 <span><Icon type="caret-up" /> 收起</span> :
-                                <span><Icon type="caret-down" />还有 {todo_tasks.length-TODO_COLLAPSED_LINES} 项</span>
+                                <span><Icon type="caret-down" /> 还有 {todo_tasks.length-TODO_COLLAPSED_LINES} 项</span>
                             }
                         </ClickableText>
                     </div>
                 }
+                <div className="width-container-rightonly">
+                    <div className="todo-task-bottom-line" />
+                </div>
             </SideHeaderLayout>
-            <div className="width-container-rightonly">
-                <div className="todo-task-bottom-line" />
-            </div>
         </div>
     );
 }

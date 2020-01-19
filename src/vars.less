@@ -1,6 +1,15 @@
+@body-background: #f7f7f7;
 @xl-side-width: 200px;
 @xl-breakpoint: 800px;
 @l-breakpoint: 500px;
 @max-content-width: 1200px;
 @header-height: 3rem;
 @header-z-index: 110;
+
+.no-scrollbar-mixin() {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
