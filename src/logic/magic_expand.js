@@ -10,7 +10,7 @@ export function MagicExpandHelp(props) {
                 <li><code>练习[3 5 10 14]</code></li>
                 <li><code>[Data Bomb Proxy] Lab</code></li>
             </ul>
-            <p>它们将会自动展开为多行（最多{MAX_EXPANSION_COUNT}行）。</p>
+            <p>按回车后将会自动展开为多行（最多{MAX_EXPANSION_COUNT}行）</p>
         </div>
     )
 }

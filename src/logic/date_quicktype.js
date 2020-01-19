@@ -87,7 +87,7 @@ function proc_key_shortcut(prev_state,ch) {
             nxt_prev_shortcut='';
         }
         nxt_moment.add(delta_days,'days');
-        return done_quicktype((nxt_prev_shortcut===''?'再':'')+'下一个星期'+WEEKDAY_NAME[WEEKDAY_SHORTCUT[ch]]);
+        return done_quicktype((nxt_prev_shortcut===''?'再':'')+'下个星期'+WEEKDAY_NAME[WEEKDAY_SHORTCUT[ch]]);
     } else if(ch===' ') {
         if(prev_state.prev_shortcut===' ') {
             nxt_moment.add(2,'weeks');

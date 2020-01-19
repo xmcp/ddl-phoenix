@@ -33,11 +33,36 @@ function SplashAnnounceChecker(props) {
     );
 }
 
+function SplashAnnounce(props) {
+    const dispatch=useDispatch();
+
+    function do_post() {
+        dispatch(do_splash_callback(props.index,{}));
+    }
+
+    return (
+        <div className="width-container">
+            <div style={{padding: '.5em'}}>
+                <br />
+                <h1>{props.handout.title}</h1>
+                <hr />
+                <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
+                <hr />
+                <p>
+                    <Button type="primary" onClick={do_post}>继续</Button>
+                </p>
+            </div>
+        </div>
+    );
+}
+
 export function SplashScreen(props) {
     const splash=useSelector((state)=>state.splash);
 
     if(splash.type==='announce_checker')
         return (<SplashAnnounceChecker index={splash.index} handout={splash.handout} />);
+    else if(splash.type==='announce')
+        return (<SplashAnnounce index={splash.index} handout={splash.handout} />);
     else
         return (
             <WithFooter>
