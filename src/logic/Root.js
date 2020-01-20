@@ -3,10 +3,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Result, Button, Icon} from 'antd';
 
 import {App} from '../app/App';
-import {WelcomePage} from '../welcome/WelcomePage';
+import {WelcomePage, AskTokenPage} from '../welcome/WelcomePage';
 import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
-import {LoginPopup} from '../infrastructure/widgets';
 
 import {do_refresh, get_token, close_modal} from '../state/actions';
 
@@ -70,18 +69,7 @@ function Root(props) {
             </WithFooter>
         );
     else if(error==='PHOENIX_NO_TOKEN')
-        return (
-            <LoginPopup token_callback={on_got_token}>{(do_popup)=>(
-                <WithFooter>
-                    <Result
-                        status="info"
-                        title="不咕计划"
-                        subTitle="开源的在线 Deadline 管理工具"
-                        extra={<Button type="primary" onClick={do_popup}>用 PKU Helper 账号登录</Button>}
-                    />
-                </WithFooter>
-            )}</LoginPopup>
-        );
+        return (<AskTokenPage on_got_token={on_got_token} />);
     else if(error==='AUTH_REQUIRED')
         return (<WelcomePage />);
     else if(error==='SPLASH_REQUIRED')

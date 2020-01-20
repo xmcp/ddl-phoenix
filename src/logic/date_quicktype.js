@@ -110,7 +110,13 @@ function proc_key_shortcut(prev_state,ch) {
         nxt_moment=(prev_state.moment||nxt_moment).clone().add(ch==='l'?1:-1,'day');
         return done_quicktype(ch==='l'?'→ 后一天':'← 前一天');
     } else if(ch==='n') {
-        return done_quicktype('今天');
+        if(prev_state.prev_shortcut==='n') {
+            nxt_moment.add(1,'day');
+            nxt_prev_shortcut='';
+            return done_quicktype('明天');
+        } else {
+            return done_quicktype('今天');
+        }
     } else
         return null;
 }
@@ -142,7 +148,7 @@ function parse_numeric_date(s) {
         let y=parseInt(s.substr(0,len-4)), m=parseInt(s.substr(len-4,2)), d=parseInt(s.substr(len-2,2));
 
         if(m<=0 || m>12) return null;
-        mom.year(y).month(m-1);
+        mom.year(y<100 ? (2000+y) : y).month(m-1);
 
         if(d<=0 || d>mom.endOf('month').date()) return null;
         mom.date(d);

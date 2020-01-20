@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Modal, Input, Icon, Radio, Button, Checkbox, Calendar, Row, Col, Popover} from 'antd';
 import Reorder from 'react-reorder';
@@ -135,6 +135,8 @@ function ModalUpdate(props) {
     const [status,set_status]=useState('');
     const [due_quicktype,set_due_quicktype]=useState(init_quicktype(null));
 
+    const quicktype_ref=useRef(null);
+
     useEffect(()=>{ // on item update: restore name and status
         if(item===null) {
             if(modal.visible && modal.type==='update') // item not found: modal should be closed
@@ -206,6 +208,8 @@ function ModalUpdate(props) {
             if(is_quicktype_char(e.key)) {
                 console.log('got quicktype event',e);
                 set_due_quicktype(proc_input(due_quicktype,e.key.toLowerCase()==='backspace' ? '\b' : e.key.toLowerCase()));
+                if(quicktype_ref.current)
+                    quicktype_ref.current.focus();
             } else if(e.key.toLowerCase()==='enter')
                 do_post();
         }
@@ -215,6 +219,11 @@ function ModalUpdate(props) {
             document.removeEventListener('keydown',handler);
         }
     },[modal,due_quicktype]);
+
+    const REFUSE_INPUT_PASSWORD=(
+        navigator.userAgent.indexOf('Chrome/')!==-1 ||
+        navigator.userAgent.indexOf('Firefox/')!==-1
+    );
 
     if(modal.type!=='update') return (<Modal visible={false} />);
 
@@ -263,8 +272,13 @@ function ModalUpdate(props) {
                                 </p>
                                 <p>
                                     <Input
-                                        value={' '+due_quicktype.buffer} className="modal-update-quicktype-input"
-                                        prefix={<Icon type="code" />}
+                                        value={' '} className="modal-update-quicktype-input" ref={quicktype_ref}
+                                        type={REFUSE_INPUT_PASSWORD ? 'text' : 'password'} autoComplete="off"
+                                        prefix={
+                                            <span>
+                                                <Icon type="code" /> {due_quicktype.buffer}
+                                            </span>
+                                        }
                                         suffix={
                                             <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
                                                 <Icon type="question-circle" />
