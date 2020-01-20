@@ -42,7 +42,7 @@ export function do_splash_callback(splash_index,data) {
 }
 
 export function do_interact(type,scope,data) {
-    const hide=message.loading('正在更新……');
+    const hide=message.loading('正在更新……',5);
     return sister_call('/'+type+'/'+scope,data,()=>{
         hide();
         if(type==='delete')
@@ -54,12 +54,6 @@ export function do_update_completeness(tid,completeness) {
     return sister_call('/update/complete', {
         id: tid,
         completeness: completeness,
-    });
-}
-
-export function do_update_task_direct_done(tid) {
-    return sister_call('/update/task_direct_done', {
-        id: tid,
     });
 }
 

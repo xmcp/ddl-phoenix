@@ -21,23 +21,51 @@ function close_modal_if_success(dispatch) {
     };
 }
 
+function SharingHelp(props) {
+    return (
+        <div>
+            <p>不咕计划支持以“类别”为粒度的分享功能。</p>
+            <br />
+            <p>分享给他人：</p>
+            <ul>
+                <li>在 “编辑类别” 对话框中勾选 “分享给其他用户” 即可启用分享功能。</li>
+                <li>启用后，在类别的下拉菜单中点击 “复制分享ID” 并发送给别人。</li>
+                <li><b style={{color: 'red'}}>如果你取消勾选 “分享给其他用户”，这个分享ID将失效，但已经导入的用户仍能继续使用。</b></li>
+                <li><b style={{color: 'red'}}>如果你取消分享后删除这个类别，所有导入了此ID的用户将失去这个类别的所有数据。</b></li>
+            </ul>
+            <p>导入他人的分享：</p>
+            <ul>
+                <li>在 “添加类别” 对话框中输入分享ID。</li>
+                <li>你将看到对方分享的内容。你可以独立标记自己的完成状态，但不能进行其他编辑。</li>
+                <li>如果你删除这个类别，将不会影响到别人。</li>
+            </ul>
+        </div>
+    );
+}
+
 function ModalAdd(props) {
     const dispatch=useDispatch();
     const modal=useSelector((state)=>state.local.modal);
 
     const [names,set_names]=useState('');
+    const [add_as_active,set_add_as_active]=useState(false);
 
     useEffect(()=>{
         set_names('');
+        set_add_as_active(false);
     },[modal]);
 
     function do_post() {
         let name_list=names.split(/\n/).map((n)=>n.trim()).filter((n)=>n);
-        dispatch(do_interact('add',modal.scope,{
-            parent_id: modal.itemid,
-            names: name_list,
-        }))
-            .then(close_modal_if_success(dispatch));
+        if(name_list.length)
+            dispatch(do_interact('add',modal.scope,{
+                parent_id: modal.itemid,
+                names: name_list,
+                ... modal.scope==='task' ? {
+                    active: add_as_active,
+                } : {},
+            }))
+                .then(close_modal_if_success(dispatch));
     }
 
     function on_press_enter(e) {
@@ -62,13 +90,6 @@ function ModalAdd(props) {
             {modal.scope!=='zone' &&
                 <div>
                     <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<Icon type="edit" />} />
-                    {modal.scope==='task' &&
-                        <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
-                            <a>
-                                &nbsp;支持批量添加 <Icon type="question-circle" />
-                            </a>
-                        </Popover>
-                    }
                     <br />
                     <br />
                 </div>
@@ -77,6 +98,26 @@ function ModalAdd(props) {
                 value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
                 onPressEnter={on_press_enter}
             />
+            <br />
+            <br />
+            {modal.scope==='project' &&
+                <p>
+                    <Popover title="用户间分享" content={<SharingHelp />} trigger="click">
+                        <a>输入分享ID来导入别人的列表 <Icon type="question-circle" /></a>
+                    </Popover>
+                </p>
+            }
+            {modal.scope==='task' &&
+                <p>
+                    <Checkbox checked={add_as_active} onChange={(e)=>set_add_as_active(e.target.checked)}>
+                        直接设为已布置
+                    </Checkbox>
+                    &nbsp;
+                    <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
+                        <a> 支持批量添加 <Icon type="question-circle" /></a>
+                    </Popover>
+                </p>
+            }
         </Modal>
     )
 }
@@ -90,6 +131,7 @@ function ModalUpdate(props) {
 
     const [name,set_name]=useState('');
     const [delete_confirmed,set_delete_confirmed]=useState(false);
+    const [shared,set_shared]=useState(false);
     const [status,set_status]=useState('');
     const [due_quicktype,set_due_quicktype]=useState(init_quicktype(null));
 
@@ -100,6 +142,7 @@ function ModalUpdate(props) {
         } else {
             set_name(item.name);
             set_delete_confirmed(false);
+            set_shared(!!item.share_hash);
             set_status('active');
             set_due_quicktype(init_quicktype(item.due || null));
         }
@@ -112,6 +155,9 @@ function ModalUpdate(props) {
             ... modal.scope==='task' ? {
                 status: status,
                 due: due_quicktype.moment===null ? null : due_quicktype.moment.unix(),
+            } : {},
+            ... modal.scope==='project' ? {
+                shared: shared,
             } : {},
         }))
             .then(close_modal_if_success(dispatch));
@@ -181,13 +227,21 @@ function ModalUpdate(props) {
             destroyOnClose={true}
         >
             <div>
-                <Button type="danger" className="modal-btnpair-btn" onClick={do_delete}>
+                <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={shared}>
                     {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
                 </Button>
                 <Input className="modal-btnpair-input" value={name} onChange={(e)=>set_name(e.target.value)} key={modal.visible}
                        autoFocus={modal.scope!=='task'} />
             </div>
             <br />
+            {modal.scope==='project' && !item.external &&
+                <p>
+                    <Checkbox checked={shared} onChange={(e)=>set_shared(e.target.checked)}>分享给其他用户</Checkbox>
+                    <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
+                        <a><Icon type="question-circle" /></a>
+                    </Popover>
+                </p>
+            }
             {modal.scope==='task' &&
                 <Row gutter={6}>
                     <Col xs={24} sm={12}>
@@ -257,13 +311,19 @@ function ModalReorder(props) {
         return ids.map((id)=>({id: id, scope: modal.scope}));
     }
 
-    const orig_list=useSelector((state)=>(
-        modal.type==='reorder' ? make_object(
-            modal.scope==='zone' ? state.zone_order :
-            modal.scope==='project' ? state.zone[modal.itemid].project_order :
-            modal.scope==='task' ? state.project[modal.itemid].task_order : null
-        ) : null
-    ));
+    const orig_list=useSelector((state)=> {
+        try {
+            return modal.type==='reorder' ? make_object(
+                modal.scope==='zone' ? state.zone_order :
+                modal.scope==='project' ? state.zone[modal.itemid].project_order :
+                modal.scope==='task' ? state.project[modal.itemid].task_order : null
+            ) : null
+        } catch(e) {
+            console.error('modal reorder key error');
+            console.trace(e);
+            return null;
+        }
+    });
 
     const [mod_list,set_mod_list]=useState([]);
 
@@ -276,11 +336,13 @@ function ModalReorder(props) {
     }
 
     function do_post() {
-        dispatch(do_interact('reorder',modal.scope,{
-            order: mod_list.map((({id})=>id)),
-            parent_id: modal.itemid,
-        }))
-            .then(close_modal_if_success(dispatch));
+        if(mod_list) {
+            dispatch(do_interact('reorder',modal.scope,{
+                order: mod_list.map((({id})=>id)),
+                parent_id: modal.itemid,
+            }))
+                .then(close_modal_if_success(dispatch));
+        }
     }
 
     if(modal.type!=='reorder') return (<Modal visible={false} />);

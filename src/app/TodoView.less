@@ -7,7 +7,8 @@
 
 .todo-collapse-switch {
     display: block;
-    padding: .25em 0;
+    padding: .25em;
+    margin: 0 .5em;
 }
 
 .todo-task-bottom-line {
@@ -23,6 +24,9 @@
 }
 
 @media screen and (min-width: @xl-breakpoint) {
+    .todo-collapse-switch {
+        margin: 0;
+    }
     .todo-task-bottom-line {
         border-bottom: 1px dashed rgba(0,0,0,.25);
         padding: 0;

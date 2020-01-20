@@ -26,7 +26,7 @@ export function prev_scope(scope) {
 
 export function completeness_name(ctype) {
     return {
-        done: '已完成',
+        done: '完成',
         ignored: '忽略',
         highlight: '旗标',
         todo: '待办',
@@ -35,8 +35,10 @@ export function completeness_name(ctype) {
 }
 
 export function colortype(task) {
-    if(task.status==='placeholder') return 'placeholder';
-    else return task.completeness;
+    if(task.completeness==='todo')
+        return task.status==='placeholder' ? 'placeholder' : 'todo';
+    else
+        return task.completeness;
 }
 
 export function moment_to_day(m) {
@@ -54,8 +56,15 @@ export function friendly_date(ts,use_rel=true) {
 
     let ret='';
 
-    if(use_rel && 0<=days_to_due && days_to_due<=7) { // rel format
+    if(use_rel && -7<=days_to_due && days_to_due<=7) { // rel format
         ret+={
+            '-7': '7天前',
+            '-6': '6天前',
+            '-5': '5天前',
+            '-4': '4天前',
+            '-3': '3天前',
+            '-2': '2天前',
+            '-1': '昨天',
             0: '今天',
             1: '明天',
             2: '2天后',

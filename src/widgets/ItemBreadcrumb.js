@@ -7,19 +7,25 @@ import './ItemBreadcrumb.less';
 
 export function ItemBreadcrumb(props) {
     let got=useSelector((state)=>{
-        if(props.scope==='zone') return [
-            state.zone[props.id].name
-        ];
-        else if(props.scope==='project') return [
-            state.zone[state.project[props.id].parent_id].name,
-            state.project[props.id].name
-        ];
-        else if(props.scope==='task') return [
-            state.zone[state.project[state.task[props.id].parent_id].parent_id].name,
-            state.project[state.task[props.id].parent_id].name,
-            state.task[props.id].name
-        ];
-        else return [];
+        try {
+            if(props.scope==='zone') return [
+                state.zone[props.id].name
+            ];
+            else if(props.scope==='project') return [
+                state.zone[state.project[props.id].parent_id].name,
+                state.project[props.id].name
+            ];
+            else if(props.scope==='task') return [
+                state.zone[state.project[state.task[props.id].parent_id].parent_id].name,
+                state.project[state.task[props.id].parent_id].name,
+                state.task[props.id].name
+            ];
+            else return [];
+        } catch(e) {
+            console.error('item breadcrumb key error');
+            console.trace(e);
+            return ['???'];
+        }
     });
 
     let result=props.suffix!==undefined ? got.concat([props.suffix]) : got;

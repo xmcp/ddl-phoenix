@@ -44,8 +44,9 @@ export function PoppableText(props) {
         if(e.cancelable) {
             if(!dropdown_visible) {
                 last_touch_end_ts.current=(+new Date());
-                if(no_hover) // otherwise touch screen device don't have click event
-                    set_dropdown_visible(true);
+                if(no_hover) { // otherwise touch screen device don't have click event
+                    on_vis_change(true);
+                }
             }
         }
     }

@@ -15,11 +15,13 @@ import './TodoView.less';
 const TODO_COLLAPSED_LINES=3;
 
 function TodoTaskView(props) {
+    const project_external=useSelector((state)=>state.project[props.task.parent_id].external);
+
     return (
         <p className="todo-task">
             <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" />
             <span className="todo-task-tag">
-                <TaskView tid={props.task.id} />
+                <TaskView tid={props.task.id} external={project_external} />
             </span>
         </p>
     )
@@ -47,7 +49,7 @@ export function TodoView(props) {
         return (
             <div className="width-container-rightonly">
                 <p>
-                    <Icon type="inbox" /> 无待办任务
+                    &nbsp;<Icon type="inbox" /> 无待办任务
                 </p>
                 <div className="todo-task-bottom-line" />
             </div>
