@@ -24,19 +24,17 @@ function close_modal_if_success(dispatch) {
 function SharingHelp(props) {
     return (
         <div>
-            <p>不咕计划支持以“类别”为粒度的分享功能。</p>
-            <br />
             <p>分享给他人：</p>
             <ul>
-                <li>在 “编辑类别” 对话框中勾选 “分享给其他用户” 即可启用分享功能。</li>
-                <li>启用后，在类别的下拉菜单中点击 “复制分享ID” 并发送给别人。</li>
-                <li><b style={{color: 'red'}}>如果你取消勾选 “分享给其他用户”，这个分享ID将失效，但已经导入的用户仍能继续使用。</b></li>
-                <li><b style={{color: 'red'}}>如果你取消分享后删除这个类别，所有导入了此ID的用户将失去这个类别的所有数据。</b></li>
+                <li>在 “编辑类别” 对话框中勾选 “分享给其他用户”。</li>
+                <li>保存后，在类别的下拉菜单中点击 “复制分享ID” 并发送给别人。</li>
+                <li><b style={{color: 'red'}}>如果你取消勾选 “分享给其他用户”，分享ID将失效，但已经导入的用户仍能继续使用。</b></li>
+                <li><b style={{color: 'red'}}>如果你取消分享后删除这个类别，导入了此ID的用户将失去这个类别的所有数据。</b></li>
             </ul>
             <p>导入他人的分享：</p>
             <ul>
                 <li>在 “添加类别” 对话框中输入分享ID。</li>
-                <li>你将看到对方分享的内容。你可以独立标记自己的完成状态，但不能进行其他编辑。</li>
+                <li>你将看到对方分享的内容，你可以标记自己的完成状态，但不能进行其他编辑。</li>
                 <li>如果你删除这个类别，将不会影响到别人。</li>
             </ul>
         </div>
@@ -204,6 +202,8 @@ function ModalUpdate(props) {
             // skip if we are in other inputs
             if(['input','textarea'].indexOf(e.target.tagName.toLowerCase())!==-1 && !e.target.closest('.modal-update-quicktype-input'))
                 return;
+            if(e.ctrlKey || e.altKey || e.metaKey)
+                return;
 
             if(is_quicktype_char(e.key)) {
                 console.log('got quicktype event',e);
@@ -226,6 +226,8 @@ function ModalUpdate(props) {
         <Modal
             visible={modal.visible}
             title={<span><Icon type="edit" /> 编辑{scope_name(modal.scope)}</span>}
+            width={modal.scope==='task' ? 700 : undefined}
+            centered={modal.scope==='task' && window.innerHeight<=750}
             onCancel={()=>dispatch(close_modal())}
             onOk={do_post}
             destroyOnClose={true}
@@ -237,60 +239,62 @@ function ModalUpdate(props) {
                 <Input className="modal-btnpair-input" value={name} onChange={(e)=>set_name(e.target.value)} key={modal.visible}
                        autoFocus={modal.scope!=='task'} />
             </div>
-            <br />
             {modal.scope==='project' && !item.external &&
                 <p>
+                    <br />
                     <Checkbox checked={shared} onChange={(e)=>set_shared(e.target.checked)}>分享给其他用户</Checkbox>
                     <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
                         <a><Icon type="question-circle" /></a>
                     </Popover>
                 </p>
             }
+            {modal.scope==='task' && <br />}
             {modal.scope==='task' &&
                 <Row gutter={6}>
-                    <Col xs={24} sm={12}>
+                    <Col xs={24} md={12}>
                         <Radio.Group value={status} onChange={(e)=>set_status(e.target.value)}>
                             <Radio.Button value="placeholder">
                                 <IconForColorType type="placeholder" /> 占位
                             </Radio.Button>
                             <Radio.Button value="active">
-                                <IconForColorType type="todo" /> 已布置
+                                <IconForColorType type="todo" />&nbsp;
+                                {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}
                             </Radio.Button>
                         </Radio.Group>
-                        <br />
-                        <br />
+                        &nbsp;
+                        {status==='active' && due_quicktype.moment!==null &&
+                            <Button onClick={()=>{set_due_quicktype(set_moment(null))}}>
+                                <Icon type="close-circle" />
+                            </Button>
+                        }
                         {status==='active' &&
                             <div>
-                                <p style={{marginBottom: '.5em'}}>
-                                    <b>{due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}</b>
-                                </p>
+                                <br />
                                 <p>
                                     <Input
-                                        value={' '} className="modal-update-quicktype-input" ref={quicktype_ref}
-                                        type="text" autoComplete="off"
+                                        value="" className="modal-update-quicktype-input" disabled={true}
                                         prefix={
                                             <span>
                                                 <Icon type="code" /> &nbsp;{due_quicktype.buffer || due_quicktype.placeholder}
                                             </span>
                                         }
                                         suffix={
-                                            <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
+                                            <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click" className="quicktype-help-btn">
                                                 <Icon type="question-circle" />
                                             </Popover>
                                         }
                                     />
                                 </p>
+                                <br />
                             </div>
                         }
                     </Col>
-                    <Col xs={24} sm={12}>
+                    <Col xs={24} md={12}>
                         {status==='active' &&
-                            <div className="modal-update-calendar">
-                                <Calendar
-                                    value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment} onChange={on_select_date}
-                                    fullscreen={false} headerRender={calendar_header_render}
-                                />
-                            </div>
+                            <Calendar
+                                value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment} onChange={on_select_date}
+                                fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
+                            />
                         }
                     </Col>
                 </Row>
