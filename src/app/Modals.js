@@ -220,11 +220,6 @@ function ModalUpdate(props) {
         }
     },[modal,due_quicktype]);
 
-    const REFUSE_INPUT_PASSWORD=(
-        navigator.userAgent.indexOf('Chrome/')!==-1 ||
-        navigator.userAgent.indexOf('Firefox/')!==-1
-    );
-
     if(modal.type!=='update') return (<Modal visible={false} />);
 
     return (
@@ -267,16 +262,15 @@ function ModalUpdate(props) {
                         {status==='active' &&
                             <div>
                                 <p style={{marginBottom: '.5em'}}>
-                                    <b>{due_quicktype.placeholder} &nbsp;</b>
-                                    {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}
+                                    <b>{due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}</b>
                                 </p>
                                 <p>
                                     <Input
                                         value={' '} className="modal-update-quicktype-input" ref={quicktype_ref}
-                                        type={REFUSE_INPUT_PASSWORD ? 'text' : 'password'} autoComplete="off"
+                                        type="text" autoComplete="off"
                                         prefix={
                                             <span>
-                                                <Icon type="code" /> {due_quicktype.buffer}
+                                                <Icon type="code" /> &nbsp;{due_quicktype.buffer || due_quicktype.placeholder}
                                             </span>
                                         }
                                         suffix={
