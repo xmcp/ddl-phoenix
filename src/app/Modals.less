@@ -1,10 +1,23 @@
+.reorder-list-container {
+    user-select: none;
+}
+
 .reorder-list-item {
     background-color: #fafafa;
-    padding: .1em .5em;
-    margin: .2em 0;
+    padding: .25em .5em;
+    margin: .25em .5em;
     border: 1px solid #aaa;
     border-radius: 5px;
     cursor: grabbing;
+}
+
+.dragged .reorder-list-item {
+    transform: translateX(-.5em);
+    border-color: #555;
+}
+
+.placeholder .reorder-list-item {
+    opacity: .1;
 }
 
 .modal-btnpair-btn {
