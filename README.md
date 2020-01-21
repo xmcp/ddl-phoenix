@@ -9,5 +9,6 @@ Online demo for PKU Helper users at https://pkuhelper.pku.edu.cn/ddl/
 3. Edit `src/welcomePage.example.js` to implement your token-based account system and registration system
 4. Rename `src/welcomePage.example.js` to `src/welcomePage.js`
 5. Edit `src/state/sister.js` and change `SISTER_ROOT` to the base URL of your backend server
-6. `npm run build`
-7. Host the `build/` folder
+6. Set `REACT_APP_BUILD_INFO` environment variable to the build version
+7. `npm run build`
+8. Host the `build/` folder
