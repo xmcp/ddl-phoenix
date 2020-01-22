@@ -23,7 +23,7 @@ function SectionHeader(props) {
     let nsname=scope_name(ns);
 
     let menu=[
-        ... props.item.external ? [] : [
+        ...(props.item.external ? [] : [
             {
                 children: (<span><Icon type="plus" /> 新建{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('add',ns,props.id)),
@@ -32,8 +32,8 @@ function SectionHeader(props) {
                 children: (<span><Icon type="appstore" /> 调整{nsname}顺序</span>),
                 onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
             },
-        ],
-        ... !props.item.share_hash ? [] : [
+        ]),
+        ...(!props.item.share_hash ? [] : [
             {
                 children: (<span><Icon type="share-alt" /> 复制分享 ID</span>),
                 onClick: ()=>{
@@ -41,7 +41,7 @@ function SectionHeader(props) {
                         message.success('复制成功',2);
                 },
             }
-        ],
+        ]),
         {
             children: (<span><Icon type="edit" /> 编辑{csname} “{props.item.name}”</span>),
             onClick: ()=>dispatch(show_modal('update',cs,props.id)),

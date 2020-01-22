@@ -85,5 +85,5 @@ export function TaskView(props) {
                 </Tag>
             </DueTooltip>
         </PoppableText>
-    ),[task]);
+    ),[task,ctype,dispatch,props.external,props.tid]);
 }

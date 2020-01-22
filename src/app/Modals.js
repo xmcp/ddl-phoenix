@@ -61,9 +61,9 @@ function ModalAdd(props) {
             dispatch(do_interact('add',modal.scope,{
                 parent_id: modal.itemid,
                 names: name_list,
-                ... modal.scope==='task' ? {
+                ...(modal.scope==='task' ? {
                     active: add_as_active,
-                } : {},
+                } : {}),
             }))
                 .then(close_modal_if_success(dispatch));
     }
@@ -158,19 +158,19 @@ function ModalUpdate(props) {
             set_status('active');
             set_due_quicktype(init_quicktype(item.due || null));
         }
-    },[modal]);
+    },[modal,item,dispatch]);
 
     function do_post() {
         dispatch(do_interact('update',modal.scope,{
             id: modal.itemid,
             name: name,
-            ... modal.scope==='task' ? {
+            ...(modal.scope==='task' ? {
                 status: status,
                 due: due_quicktype.moment===null ? null : due_quicktype.moment.unix(),
-            } : {},
-            ... modal.scope==='project' ? {
+            } : {}),
+            ...(modal.scope==='project' ? {
                 shared: shared,
-            } : {},
+            } : {}),
         }))
             .then(close_modal_if_success(dispatch));
     }
@@ -208,7 +208,7 @@ function ModalUpdate(props) {
 
     // handle keyboard event
     useEffect(()=>{
-        if(modal.type!=='update' || !modal.visible) return;
+        if(modal.type!=='update' || !modal.visible || status==='placeholder') return;
 
         function handler(e) {
             // skip if we are in other inputs
@@ -230,7 +230,7 @@ function ModalUpdate(props) {
         return ()=>{
             document.removeEventListener('keydown',handler);
         }
-    },[modal,due_quicktype]);
+    });
 
     if(modal.type!=='update') return (<Modal visible={false} />);
 
@@ -324,7 +324,7 @@ function ReorderListItem(props) {
         <div className={'reorder-list-item '+(colortype_cls)}>
             <ItemBreadcrumb scope={props.item.scope} id={props.item.id} />
         </div>
-    ),[props.item.scope,props.item.id]);
+    ),[props.item.scope,props.item.id,colortype_cls]);
 }
 
 function ModalReorder(props) {
@@ -349,10 +349,10 @@ function ModalReorder(props) {
         }
     });
 
-    const [mod_list,set_mod_list]=useState([]);
+    const [mod_list,set_mod_list]=useState(null); // null for unchanged
 
     useEffect(()=>{
-        set_mod_list(orig_list);
+        set_mod_list(null);
     },[modal]);
 
     function reorder_callback(event,item,index,newIndex,list) {
@@ -360,9 +360,10 @@ function ModalReorder(props) {
     }
 
     function do_post() {
-        if(mod_list) {
+        let list=mod_list||orig_list;
+        if(list) {
             dispatch(do_interact('reorder',modal.scope,{
-                order: mod_list.map((({id})=>id)),
+                order: list.map((({id})=>id)),
                 parent_id: modal.itemid,
             }))
                 .then(close_modal_if_success(dispatch));
@@ -380,18 +381,18 @@ function ModalReorder(props) {
             destroyOnClose={true}
         >
             <div className="reorder-list-container">
-                {!!mod_list &&
+                {!!orig_list &&
                     <Reorder
                         itemKey="id"
                         lock="horizontal"
                         holdTime={100}
-                        list={mod_list}
+                        list={mod_list||orig_list}
                         template={ReorderListItem}
                         callback={reorder_callback}
                     />
                 }
             </div>
-            {!!mod_list && mod_list.length===0 &&
+            {!!orig_list && orig_list.length===0 &&
                 <p>
                     <Icon type="inbox" /> 没有{scope_name(modal.scope)}
                 </p>
@@ -409,7 +410,7 @@ function ModalSettings(props) {
 
     useEffect(()=>{
         set_no_hover(dflt(settings.no_hover,false));
-    },[modal]);
+    },[modal,settings.no_hover]);
 
     if(modal.type!=='settings') return (<Modal visible={false} />);
 

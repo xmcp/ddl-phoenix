@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {Badge, Icon} from 'antd';
 import moment from 'moment';
@@ -39,9 +39,10 @@ function TodoCatView(props) {
 }
 
 export function TodoView(props) {
-    const todo_tasks=useSelector((state)=>
-        state.task ? Object.values(state.task).filter((t)=>t.status==='active' && ['done','ignored'].indexOf(t.completeness)===-1) : []
-    );
+    const tasks=useSelector((state)=>state.task);
+    const todo_tasks=useMemo(()=>(
+        tasks ? Object.values(tasks).filter((t)=>t.status==='active' && ['done','ignored'].indexOf(t.completeness)===-1) : []
+    ),[tasks]);
 
     const [expanded,set_expanded]=useState(false);
 

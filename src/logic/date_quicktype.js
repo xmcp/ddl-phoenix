@@ -165,7 +165,6 @@ export function proc_input(prev_state,ch) {
     if(res!==null) return res;
 
     // otherwise it is numeric input
-    let msg='';
     let nxt_buffer=prev_state.buffer;
 
     if(ch==='\b')

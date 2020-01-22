@@ -16,8 +16,8 @@ export function Footer(props) {
             </p>
             <p>
                 基于&nbsp;
-                <a href="https://www.gnu.org/licenses/gpl-3.0.zh-cn.html" target="_blank">GPLv3</a>
-                &nbsp;协议在 <a href="https://github.com/pkuhelper-web/phoenix" target="_blank">GitHub</a> 开源
+                <a href="https://www.gnu.org/licenses/gpl-3.0.zh-cn.html" target="_blank" rel="noopener noreferrer">GPLv3</a>
+                &nbsp;协议在 <a href="https://github.com/pkuhelper-web/phoenix" target="_blank" rel="noopener noreferrer">GitHub</a> 开源
             </p>
             <p>Phoenix {process.env.REACT_APP_BUILD_INFO||'---'},  Bee {backend_info||'---'}, Sister {SISTER_API_VER}</p>
         </div>

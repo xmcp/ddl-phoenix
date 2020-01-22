@@ -59,7 +59,7 @@ function parse_seg(s) {
         return [s];
     else {
         s=s.substr(1,s.length-2);
-        let splited,ret=[];
+        let splited;
 
         // [a b c]
 

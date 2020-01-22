@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {Dropdown, Menu, message} from 'antd';
+import React, {useState, useRef} from 'react';
+import {Dropdown, Menu} from 'antd';
 import PropTypes from 'prop-types';
 import {useSelector} from 'react-redux';
 import {dflt} from '../functions';
