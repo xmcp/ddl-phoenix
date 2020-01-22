@@ -14,6 +14,8 @@ import {close_modal, do_interact, do_update_settings} from '../state/actions';
 
 import './Modals.less';
 
+const DOUBLE_ENTER_THRESHOLD_MS=250;
+
 function close_modal_if_success(dispatch) {
     return (success)=>{
         if(success)
@@ -66,13 +68,22 @@ function ModalAdd(props) {
                 .then(close_modal_if_success(dispatch));
     }
 
+    const last_enter_ts=useRef(-DOUBLE_ENTER_THRESHOLD_MS);
+
     function on_press_enter(e) {
-        if(e.ctrlKey) do_post();
+        let last_enter=last_enter_ts.current;
+        last_enter_ts.current=(+new Date());
+        if(e.ctrlKey || last_enter_ts.current-last_enter<DOUBLE_ENTER_THRESHOLD_MS)
+            do_post();
 
         // press enter at the only line: do magic expand
         if(modal.scope==='task' && e.target.value.indexOf('\n')===-1/* && e.target.selectionStart===e.target.value.length*/) {
             set_names(magic_expand(e.target.value));
         }
+    }
+    function on_keypress(e) {
+        if(e.key.toLowerCase()!=='enter')
+            last_enter_ts.current=-DOUBLE_ENTER_THRESHOLD_MS;
     }
 
     if(modal.type!=='add') return (<Modal visible={false} />);
@@ -94,28 +105,29 @@ function ModalAdd(props) {
             }
             <Input.TextArea
                 value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
-                onPressEnter={on_press_enter}
+                onPressEnter={on_press_enter} onKeyPress={on_keypress}
             />
             <br />
             <br />
-            {modal.scope==='project' &&
-                <p>
+            <p>
+                连按两次 ↵ 提交 &nbsp;
+                {modal.scope==='project' &&
                     <Popover title="用户间分享" content={<SharingHelp />} trigger="click">
-                        <a>输入分享ID来导入别人的列表 <Icon type="question-circle" /></a>
+                        &nbsp;<a>输入分享ID来导入列表 <Icon type="question-circle" /></a>
                     </Popover>
-                </p>
-            }
-            {modal.scope==='task' &&
-                <p>
-                    <Checkbox checked={add_as_active} onChange={(e)=>set_add_as_active(e.target.checked)}>
-                        直接设为已布置
-                    </Checkbox>
-                    &nbsp;
-                    <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
-                        <a> 支持批量添加 <Icon type="question-circle" /></a>
-                    </Popover>
-                </p>
-            }
+                }
+                {modal.scope==='task' &&
+                    <span>
+                        &nbsp;
+                        <Checkbox checked={add_as_active} onChange={(e)=>set_add_as_active(e.target.checked)}>
+                            设为已布置
+                        </Checkbox>
+                        <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
+                            &nbsp;<a> 批量添加 <Icon type="question-circle" /></a>
+                        </Popover>
+                    </span>
+                }
+            </p>
         </Modal>
     )
 }
@@ -237,7 +249,7 @@ function ModalUpdate(props) {
                     {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
                 </Button>
                 <Input className="modal-btnpair-input" value={name} onChange={(e)=>set_name(e.target.value)} key={modal.visible}
-                       autoFocus={modal.scope!=='task'} />
+                       autoFocus={modal.scope!=='task'} onPressEnter={do_post} />
             </div>
             {modal.scope==='project' && !item.external &&
                 <p>

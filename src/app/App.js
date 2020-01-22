@@ -19,14 +19,14 @@ export function App(props) {
 
     return (
         <div>
-            <Modals key={timetag} />
+            <Modals key={'modals-'+timetag} />
             <AppHeader />
             <div className="skip-header width-container">
                 <StickyMsgsView />
             </div>
             <div className="width-container-leftonly app-main">
-                <TodoView key={timetag} />
-                <MainListView key={timetag} />
+                <TodoView key={'todo-view-'+timetag} />
+                <MainListView key={'main-list-view-'+timetag} />
             </div>
             <Footer />
         </div>

@@ -16,20 +16,22 @@ function SplashAnnounceChecker(props) {
     }
 
     return (
-        <div className="width-container">
-            <div style={{padding: '.5em'}}>
-                <br />
-                <h1>{props.handout.title}</h1>
-                <div dangerouslySetInnerHTML={{__html: props.handout.instruction_html}} />
-                <hr />
-                <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
-                <hr />
-                <p>
-                    <Checkbox value={agree} onChange={(e)=>set_agree(e.target.checked)}>{props.handout.check}</Checkbox>
-                    <Button type="primary" onClick={do_post}>继续</Button>
-                </p>
+        <WithFooter>
+            <div className="width-container">
+                <div style={{padding: '0 .5em'}}>
+                    <br />
+                    <h1>{props.handout.title}</h1>
+                    <div dangerouslySetInnerHTML={{__html: props.handout.instruction_html}} />
+                    <hr />
+                    <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
+                    <hr />
+                    <p>
+                        <Checkbox value={agree} onChange={(e)=>set_agree(e.target.checked)}>{props.handout.check}</Checkbox>
+                        <Button type="primary" onClick={do_post}>继续</Button>
+                    </p>
+                </div>
             </div>
-        </div>
+        </WithFooter>
     );
 }
 
@@ -41,18 +43,20 @@ function SplashAnnounce(props) {
     }
 
     return (
-        <div className="width-container">
-            <div style={{padding: '.5em'}}>
-                <br />
-                <h1>{props.handout.title}</h1>
-                <hr />
-                <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
-                <hr />
-                <p>
-                    <Button type="primary" onClick={do_post}>继续</Button>
-                </p>
+        <WithFooter>
+            <div className="width-container">
+                <div style={{padding: '0 .5em'}}>
+                    <br />
+                    <h1>{props.handout.title}</h1>
+                    <hr />
+                    <div dangerouslySetInnerHTML={{__html: props.handout.content_html}} />
+                    <hr />
+                    <p>
+                        <Button type="primary" onClick={do_post}>继续</Button>
+                    </p>
+                </div>
             </div>
-        </div>
+        </WithFooter>
     );
 }
 
