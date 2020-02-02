@@ -57,7 +57,7 @@ export function is_quicktype_char(c) {
 export function init_quicktype(ts) {
     return {
         buffer: '',
-        placeholder: '输入或选择日期',
+        placeholder: '',
         moment: ts===null ? null : moment_to_day(moment.unix(ts)), // moment or null
         prev_shortcut: '',
     }
@@ -169,7 +169,7 @@ export function proc_input(prev_state,ch) {
 
     if(ch==='\b')
         nxt_buffer=nxt_buffer.substr(0,nxt_buffer.length-1);
-    else if(/^[0-9]$/.test(ch))
+    else if(/^[0-9]$/.test(ch) && nxt_buffer.length<8)
         nxt_buffer+=ch;
     else // shouldn't happen
         ;
@@ -184,7 +184,7 @@ export function set_numeric_buffer(buf) {
 
     return {
         buffer: buf,
-        placeholder: m===null ? '输入日期无效' : '输入了日期',
+        placeholder: m===null ? (buf ? buf+'…?' : '') : buf,
         moment: m,
         prev_shortcut: '',
     }
@@ -195,7 +195,7 @@ export function set_moment(m) {
 
     return {
         buffer: '',
-        placeholder: '选择了日期',
+        placeholder: '',
         moment: m===null ? null : moment_to_day(m),
         prev_shortcut: '',
     }

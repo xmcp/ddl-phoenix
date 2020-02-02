@@ -109,7 +109,7 @@ function ModalAdd(props) {
             <Input.TextArea
                 value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
                 onPressEnter={on_press_enter} onKeyPress={on_keypress}
-                placeholder="每行一个名称"
+                placeholder={scope_name(modal.scope)+'名称（每行一个）'}
             />
             <br />
             {modal.scope==='task' &&
@@ -121,7 +121,7 @@ function ModalAdd(props) {
                     />
                     {!!task_due_first && names.indexOf('\n')!==-1 &&
                         <span>
-                            &nbsp;开始，间隔&nbsp;
+                            &nbsp;起每隔&nbsp;
                             <InputNumber
                                 value={task_due_delta} onChange={(v)=>set_task_due_delta(v)} min={0} max={999}
                                 className="modal-add-delta-number-input"
@@ -308,6 +308,14 @@ function ModalUpdate(props) {
                                     &nbsp; <Icon type="close-circle" /> &nbsp;
                                 </a>
                             }
+                            {due_quicktype.placeholder &&
+                                <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
+                                    <a>
+                                        &nbsp;{due_quicktype.placeholder}&nbsp;
+                                        <Icon type="question-circle" />
+                                    </a>
+                                </Popover>
+                            }
                         </p>
                         <br />
                     </Col>
@@ -415,9 +423,11 @@ function ModalSettings(props) {
     const settings=useSelector((state)=>state.user.settings);
 
     const [no_hover,set_no_hover]=useState(false);
+    const [hide_ignored,set_hide_ignored]=useState(false);
 
     useEffect(()=>{
         set_no_hover(dflt(settings.no_hover,false));
+        set_hide_ignored(dflt(settings.hide_ignored,false));
     },[modal,settings.no_hover]);
 
     if(modal.type!=='settings') return (<Modal visible={false} />);
@@ -425,6 +435,7 @@ function ModalSettings(props) {
     function do_post() {
         dispatch(do_update_settings({
             no_hover: no_hover,
+            hide_ignored: hide_ignored,
         }))
             .then(close_modal_if_success(dispatch));
     }
@@ -437,9 +448,14 @@ function ModalSettings(props) {
             onOk={do_post}
             destroyOnClose={true}
         >
-            <p><Checkbox checked={no_hover} onChange={(e)=>set_no_hover(e.target.checked)}>
-                用点击替代鼠标悬浮效果
-            </Checkbox></p>
+            <div className="settings-items">
+                <p><Checkbox checked={no_hover} onChange={(e)=>set_no_hover(e.target.checked)}>
+                    用点击替代鼠标悬浮效果
+                </Checkbox></p>
+                <p><Checkbox checked={hide_ignored} onChange={(e)=>set_hide_ignored(e.target.checked)}>
+                    不显示任务的“忽略”按钮
+                </Checkbox></p>
+            </div>
         </Modal>
     );
 }

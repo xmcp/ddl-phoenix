@@ -41,13 +41,10 @@ export function PoppableText(props) {
         }
     }
     function on_touch_end(e) {
-        if(e.cancelable) {
-            if(!dropdown_visible) {
-                last_touch_end_ts.current=(+new Date());
-                if(no_hover) { // otherwise touch screen device don't have click event
-                    on_vis_change(true);
-                }
-            }
+        if(!dropdown_visible) {
+            last_touch_end_ts.current=(+new Date());
+            if(no_hover && e.cancelable) // otherwise touch screen device don't have click event
+                on_vis_change(true);
         }
     }
 

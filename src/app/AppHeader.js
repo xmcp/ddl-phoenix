@@ -35,12 +35,12 @@ export function AppHeader(props) {
                                     <Icon type="setting" /> 设置
                                 </a>
                             </Menu.Item>
+                            <Menu.Divider />
                             <Menu.Item>
                                 <a onClick={()=>dispatch(do_reset_splash_index())}>
                                     <Icon type="undo" /> 重新显示欢迎页面
                                 </a>
                             </Menu.Item>
-                            <Menu.Divider />
                             <Menu.Item>
                                 <a onClick={()=>{
                                     if(window.confirm('将会注销网页版 PKU Helper')) {

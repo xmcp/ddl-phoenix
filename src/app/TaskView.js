@@ -5,12 +5,12 @@ import {Icon, Tag, Tooltip} from 'antd';
 import {PoppableText} from '../widgets/PoppableText';
 import {IconForColorType} from '../widgets/IconForColorType';
 
-import {colortype, completeness_name, friendly_date} from '../functions';
+import {colortype, completeness_name, friendly_date, dflt} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
 
 import './TaskView.less';
 
-function gen_menu_for_task(tid,task,is_external,dispatch) {
+function gen_menu_for_task(tid,task,is_external,settings,dispatch) {
     let MENU_UPDATE=(verb)=>({
         children: (<span><Icon type="edit" /> {verb} “{task.name}”</span>),
         onClick: ()=>dispatch(show_modal('update','task',tid)),
@@ -19,7 +19,9 @@ function gen_menu_for_task(tid,task,is_external,dispatch) {
         children: (<span><IconForColorType type={compl} /> {prefix}{completeness_name(compl)}</span>),
         onClick: ()=>dispatch(do_update_completeness(tid,compl)),
     });
-    let compl_order=['done','todo','highlight','ignored'];
+    let compl_order=['done','todo','highlight'];
+    if(!dflt(settings.hide_ignored,false))
+        compl_order.push('ignored');
 
     if(is_external)
         return (
@@ -71,11 +73,12 @@ function DueTooltip(props) {
 
 export function TaskView(props) {
     const task=useSelector((state)=>state.task[props.tid]);
+    const settings=useSelector((state)=>state.user.settings);
     const dispatch=useDispatch();
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <PoppableText menu={gen_menu_for_task(props.tid,task,props.external,dispatch)}>
+        <PoppableText menu={gen_menu_for_task(props.tid,task,props.external,settings,dispatch)}>
             <DueTooltip task={task}>
                 <Tag className={'custom-ant-tag task-color-'+ctype}>
                     <IconForColorType type={ctype} className="task-badge-icon" />

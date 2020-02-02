@@ -125,10 +125,10 @@ export function TodoView(props) {
                         </ClickableText>
                     </div>
                 }
-                <div className="width-container-rightonly">
-                    <div className="todo-task-bottom-line" />
-                </div>
             </SideHeaderLayout>
+            <div className="width-container-rightonly">
+                <div className="todo-task-bottom-line" />
+            </div>
         </div>
     );
 }
