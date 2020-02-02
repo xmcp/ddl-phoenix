@@ -54,11 +54,9 @@ function DueTooltip(props) {
                 {ctype_name}
             </p>
             <p>
-                {props.task.status==='placeholder' ? '尚未布置' :
-                    (props.task.due ?
-                        (friendly_date(props.task.due, false)+' 截止') :
-                        '无截止日期'
-                    )
+                {props.task.due ?
+                    (friendly_date(props.task.due, false)+' 截止') :
+                    '无截止日期'
                 }
             </p>
         </div>

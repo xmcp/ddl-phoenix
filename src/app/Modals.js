@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useMemo, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Modal, Input, Icon, Radio, Button, Checkbox, Calendar, Row, Col, Popover} from 'antd';
+import {Modal, Input, Icon, Radio, Button, Checkbox, Calendar, Row, Col, Popover, DatePicker, InputNumber} from 'antd';
 import Reorder from 'react-reorder';
 import moment from 'moment';
 
@@ -48,11 +48,13 @@ function ModalAdd(props) {
     const modal=useSelector((state)=>state.local.modal);
 
     const [names,set_names]=useState('');
-    const [add_as_active,set_add_as_active]=useState(false);
+    const [task_due_first,set_task_due_first]=useState(null);
+    const [task_due_delta,set_task_due_delta]=useState(7);
 
     useEffect(()=>{
         set_names('');
-        set_add_as_active(false);
+        set_task_due_first(null);
+        set_task_due_delta(7);
     },[modal]);
 
     function do_post() {
@@ -62,7 +64,8 @@ function ModalAdd(props) {
                 parent_id: modal.itemid,
                 names: name_list,
                 ...(modal.scope==='task' ? {
-                    active: add_as_active,
+                    task_due_first: task_due_first ? task_due_first.unix() : null,
+                    task_due_delta: task_due_delta,
                 } : {}),
             }))
                 .then(close_modal_if_success(dispatch));
@@ -106,8 +109,30 @@ function ModalAdd(props) {
             <Input.TextArea
                 value={names} onChange={(e)=>set_names(e.target.value)} autoSize={true} key={modal.visible} autoFocus={true}
                 onPressEnter={on_press_enter} onKeyPress={on_keypress}
+                placeholder="每行一个名称"
             />
             <br />
+            {modal.scope==='task' &&
+                <p>
+                    <br />
+                    <DatePicker
+                        onChange={(m)=>set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
+                        allowClear={true} placeholder="设置截止日期"
+                    />
+                    {!!task_due_first && names.indexOf('\n')!==-1 &&
+                        <span>
+                            &nbsp;开始，间隔&nbsp;
+                            <InputNumber
+                                value={task_due_delta} onChange={(v)=>set_task_due_delta(v)} min={0} max={999}
+                                className="modal-add-delta-number-input"
+                                onPressEnter={do_post}
+                            />
+                            &nbsp;天
+                        </span>
+                    }
+                    <br />
+                </p>
+            }
             <br />
             <p>
                 连按两次 ↵ 提交 &nbsp;
@@ -119,11 +144,8 @@ function ModalAdd(props) {
                 {modal.scope==='task' &&
                     <span>
                         &nbsp;
-                        <Checkbox checked={add_as_active} onChange={(e)=>set_add_as_active(e.target.checked)}>
-                            设为已布置
-                        </Checkbox>
                         <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
-                            &nbsp;<a> 批量添加 <Icon type="question-circle" /></a>
+                            &nbsp;<a> 支持批量添加 <Icon type="question-circle" /></a>
                         </Popover>
                     </span>
                 }
@@ -192,15 +214,19 @@ function ModalUpdate(props) {
 
     function calendar_header_render({value, type, onChange, onTypeChange}) {
         return (
-            <div style={{textAlign: 'center'}}>
+            <div className="custom-ant-calendar-title">
                 <Button type="link" onClick={()=>onChange(value.clone().add(-1,'month'))}>
-                    <Icon type="backward" />
+                    <Icon type="backward" />{value.clone().add(-1,'month').month()+1}
                 </Button>
-                <Button type="link" onClick={()=>onChange(moment_to_day(moment()))}>
-                    {value.year()}年 {value.month()+1}月
-                </Button>
+                {value.year()}年{value.month()+1}月
                 <Button type="link" onClick={()=>onChange(value.clone().add(+1,'month'))}>
-                    <Icon type="forward" />
+                    {value.clone().add(+1,'month').month()+1}<Icon type="forward" />
+                </Button>
+                <Button type="link" onClick={()=>onChange(moment_to_day(moment()).add(1,'day'))}>
+                    明天
+                </Button>
+                <Button type="link" onClick={()=>onChange(moment_to_day(moment()).add(1,'week'))}>
+                    下周
                 </Button>
             </div>
         );
@@ -269,45 +295,27 @@ function ModalUpdate(props) {
                                 <IconForColorType type="placeholder" /> 占位
                             </Radio.Button>
                             <Radio.Button value="active">
-                                <IconForColorType type="todo" />&nbsp;
-                                {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)}
+                                <IconForColorType type="todo" /> 已布置
                             </Radio.Button>
                         </Radio.Group>
-                        &nbsp;
-                        {status==='active' && due_quicktype.moment!==null &&
-                            <Button onClick={()=>{set_due_quicktype(set_moment(null))}}>
-                                <Icon type="close-circle" />
-                            </Button>
-                        }
-                        {status==='active' &&
-                            <div>
-                                <br />
-                                <p>
-                                    <Input
-                                        value="" className="modal-update-quicktype-input" disabled={true}
-                                        prefix={
-                                            <span>
-                                                <Icon type="code" /> &nbsp;{due_quicktype.buffer || due_quicktype.placeholder}
-                                            </span>
-                                        }
-                                        suffix={
-                                            <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click" className="quicktype-help-btn">
-                                                <Icon type="question-circle" />
-                                            </Popover>
-                                        }
-                                    />
-                                </p>
-                                <br />
-                            </div>
-                        }
+                        <p>
+                            <br />
+                            <b>
+                                {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(),false)+' 截止'}
+                            </b>
+                            {due_quicktype.moment!==null &&
+                                <a onClick={()=>{set_due_quicktype(set_moment(null))}}>
+                                    &nbsp; <Icon type="close-circle" /> &nbsp;
+                                </a>
+                            }
+                        </p>
+                        <br />
                     </Col>
                     <Col xs={24} md={12}>
-                        {status==='active' &&
-                            <Calendar
-                                value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment} onChange={on_select_date}
-                                fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
-                            />
-                        }
+                        <Calendar
+                            value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment} onChange={on_select_date}
+                            fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
+                        />
                     </Col>
                 </Row>
             }
