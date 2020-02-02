@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
 
-import {Modals} from './Modals';
+import {Modals} from '../modals/Modals';
 import {AppHeader} from './AppHeader';
 import {TodoView} from './TodoView';
 import {MainListView} from './MainListView';
