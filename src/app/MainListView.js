@@ -7,6 +7,7 @@ import {TaskView} from './TaskView';
 import {SideHeaderLayout} from '../widgets/Layout';
 import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
+import {MainListSortable} from '../widgets/MainListSortable';
 import {IconForColorType} from '../widgets/IconForColorType';
 
 import {scope_name, next_scope, colortype} from '../functions';
@@ -52,7 +53,7 @@ function SectionHeader(props) {
 
     return (
         <PoppableText menu={menu} className={'section-header-'+props.scope}>
-            <Icon type="more" /> {props.item.name}
+            <span className={'reorder-handle reorder-handle-'+props.scope}><Icon type="more" /> </span>{props.item.name}
             {props.item.external &&
                 <Tooltip title="来自其他用户的分享" className="project-icon-shared">
                     &nbsp;<Icon type="gift" />
@@ -94,42 +95,48 @@ function ProjectView(props) {
     });
 
     return (
-        <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />}>
-            {project.task_order.length===0 ?
-
-                <ClickableText onClick={()=>dispatch(show_modal('add','task',props.pid))} className="have-hover-bg task-collapse-widget">
-                    <Icon type="plus" /> 创建任务
-                </ClickableText> :
-
-                <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed width-container-rightonly-padded'}>
-                    {expanded ?
-                        <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
-                            <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
-                        </ClickableText> :
-                        <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg task-collapse-widget">
-                            <Icon type="fullscreen" />
-                            {cnt.done>0 &&
+        <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />} headerClassName="project-header-container">
+            <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed width-container-rightonly-padded'}>
+                {expanded ?
+                    <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
+                        <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
+                    </ClickableText> :
+                    <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg task-collapse-widget">
+                        <Icon type="drag" />
+                        {cnt.done>0 &&
                             <Badge count={cnt.done} {...task_collapse_badge_style} title={'已完成'+cnt.done+'项'}>
                                 <IconForColorType type="done" />
                             </Badge>
-                            }
-                            {cnt.ignored>0 &&
-                                <Badge count={cnt.ignored} {...task_collapse_badge_style}  title={'忽略'+cnt.done+'项'}>
-                                    <Icon type="stop" />
-                                </Badge>
-                            }
-                        </ClickableText>
-                    }
+                        }
+                        {cnt.ignored>0 &&
+                            <Badge count={cnt.ignored} {...task_collapse_badge_style}  title={'忽略'+cnt.done+'项'}>
+                                <Icon type="stop" />
+                            </Badge>
+                        }
+                    </ClickableText>
+                }
+                <MainListSortable
+                    scope="task" id={props.pid} subs={tasks_to_display}
+                    key={expanded} // https://github.com/SortableJS/react-sortablejs/issues/118
+                    underlying={{
+                        tag: "span",
+                        direction: 'horizontal',
+                        disabled: !expanded,
+                    }}
+                >
                     {tasks_to_display.map((tid)=>(
-                        <TaskView key={tid} tid={tid} external={project.external} />
+                        <TaskView key={tid} tid={tid} external={project.external} can_sort={expanded} />
                     ))}
-                    {tasks_to_display.length===0 &&
-                        <span className="task-empty-label">
-                            无待办任务
-                        </span>
-                    }
-                </div>
-            }
+                </MainListSortable>
+                {tasks_to_display.length===0 &&
+                    <span className="task-empty-label">
+                        无待办任务 &nbsp;
+                    </span>
+                }
+                <ClickableText onClick={()=>dispatch(show_modal('add','task',props.pid))}>
+                    <Icon type="plus" />
+                </ClickableText>
+            </div>
             <div className="project-margin" />
         </SideHeaderLayout>
     )
@@ -141,12 +148,14 @@ function ZoneView(props) {
 
     return (
         <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
-            {zone.project_order.map((pid)=>(
-                <ProjectView key={pid} pid={pid} />
-            ))}
+            <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
+                {zone.project_order.map((pid)=>(
+                    <ProjectView key={pid} pid={pid} />
+                ))}
+            </MainListSortable>
             {zone.project_order.length===0 &&
                 <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))}>
-                    <Icon type="plus" /> 创建类别
+                    <Icon type="plus" /> 新建类别
                 </ClickableText>
             }
             <div className="zone-margin" />
@@ -168,14 +177,14 @@ export function MainListView(props) {
                 </SideHeaderLayout>
                 <div className="project-margin" />
             </div>
-            {zone_order.map((zid)=>(
-                <ZoneView key={zid} zid={zid} />
-            ))}
-            {zone_order.length===0 &&
-                <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))}>
-                    <Icon type="plus" /> 创建课程
-                </ClickableText>
-            }
+            <MainListSortable scope="zone" id={null} subs={zone_order}>
+                {zone_order.map((zid)=>(
+                    <ZoneView key={zid} zid={zid} />
+                ))}
+            </MainListSortable>
+            <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))}>
+                <Icon type="plus" /> 新建课程
+            </ClickableText>
         </div>
     );
 }

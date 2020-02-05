@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {Dropdown, Menu} from 'antd';
 import PropTypes from 'prop-types';
 import {useSelector} from 'react-redux';
@@ -9,8 +9,14 @@ const STABLIZE_THRESHOLD_MS=100;
 export function PoppableText(props) {
     const [dropdown_visible,set_dropdown_visible]=useState(false);
     const settings=useSelector((state)=>state.user.settings);
+    const is_sorting=useSelector((state)=>state.local.main_list_sorting);
 
     let no_hover=dflt(settings.no_hover,false);
+
+    useEffect(()=>{
+        if(is_sorting)
+            set_dropdown_visible(false);
+    },[is_sorting]);
 
     function menu_onclick({key}) {
         props.menu[parseInt(key)].onClick();
@@ -53,7 +59,8 @@ export function PoppableText(props) {
         let ts=(+new Date());
         if(ts-last_vis_change_ts.current>=STABLIZE_THRESHOLD_MS) {
             last_vis_change_ts.current=ts;
-            set_dropdown_visible(v);
+            if(!(v && is_sorting)) // don't show dropdown when sorting
+                set_dropdown_visible(v);
         }
     }
 

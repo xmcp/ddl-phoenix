@@ -7,6 +7,7 @@ const EMPTY_MODAL={
     type: null,
     scope: null,
     itemid: null,
+    args: null,
 };
 
 const INIT_STATE={
@@ -17,6 +18,7 @@ const INIT_STATE={
             status: 'done',
             last_update_time: null, // as Date type
         },
+        main_list_sorting: false,
     },
     error: 'PHOENIX_NO_DATA',
 };
@@ -122,6 +124,7 @@ export function reduce(state=INIT_STATE,action) {
                         type: action.modal_type,
                         scope: action.modal_scope,
                         itemid: action.modal_itemid,
+                        args: action.modal_args,
                     },
                 },
             };
@@ -136,6 +139,15 @@ export function reduce(state=INIT_STATE,action) {
                         visible: false,
                     },
                 },
+            };
+
+        case 'set_main_list_sorting':
+            return {
+                ...state,
+                local: {
+                    ...state.local,
+                    main_list_sorting: action.sorting,
+                }
             };
 
         default:

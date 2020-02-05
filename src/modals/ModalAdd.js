@@ -83,25 +83,25 @@ export function ModalAdd(props) {
             />
             <br />
             {modal.scope==='task' &&
-            <p>
-                <br />
-                <DatePicker
-                    onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
-                    allowClear={true} placeholder="设置截止日期"
-                />
-                {!!task_due_first && names.indexOf('\n')!== -1 &&
-                <span>
-                            &nbsp;起每隔&nbsp;
-                    <InputNumber
-                        value={task_due_delta} onChange={(v) => set_task_due_delta(v)} min={0} max={999}
-                        className="modal-add-delta-number-input"
-                        onPressEnter={do_post}
+                <div>
+                    <br />
+                    <DatePicker
+                        onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
+                        allowClear={true} placeholder="设置截止日期"
                     />
-                    &nbsp;天
-                        </span>
-                }
-                <br />
-            </p>
+                    {!!task_due_first && names.indexOf('\n')!== -1 &&
+                    <span>
+                                &nbsp;起每隔&nbsp;
+                        <InputNumber
+                            value={task_due_delta} onChange={(v) => set_task_due_delta(v)} min={0} max={999}
+                            className="modal-add-delta-number-input"
+                            onPressEnter={do_post}
+                        />
+                        &nbsp;天
+                            </span>
+                    }
+                    <br />
+                </div>
             }
             <br />
             <p>

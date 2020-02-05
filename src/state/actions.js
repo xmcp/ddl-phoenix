@@ -9,12 +9,13 @@ export function get_token() {
     };
 }
 
-export function show_modal(type,scope,itemid) {
+export function show_modal(type,scope,itemid,args) {
     return {
         type: 'show_modal',
         modal_type: type,
         modal_scope: scope,
         modal_itemid: itemid,
+        modal_args: args||null,
     };
 }
 
@@ -65,4 +66,11 @@ export function do_update_settings(settings) {
     return sister_call('/profile/update_settings', {
         settings: settings
     })
+}
+
+export function main_list_sorting(sorting) {
+    return {
+        type: 'set_main_list_sorting',
+        sorting: sorting,
+    }
 }

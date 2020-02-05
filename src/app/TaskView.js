@@ -78,7 +78,10 @@ export function TaskView(props) {
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <PoppableText menu={gen_menu_for_task(props.tid,task,props.external,settings,dispatch)}>
+        <PoppableText
+            menu={gen_menu_for_task(props.tid,task,props.external,settings,dispatch)}
+            className={props.can_sort?'reorder-handle reorder-handle-task ':''}
+        >
             <DueTooltip task={task}>
                 <Tag className={'custom-ant-tag task-color-'+ctype}>
                     <IconForColorType type={ctype} className="task-badge-icon" />
@@ -86,5 +89,5 @@ export function TaskView(props) {
                 </Tag>
             </DueTooltip>
         </PoppableText>
-    ),[task,ctype,dispatch,props.external,props.tid]);
+    ),[task,ctype,dispatch,props.external,props.tid,props.can_sort]);
 }

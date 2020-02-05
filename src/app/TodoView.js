@@ -21,7 +21,7 @@ function TodoTaskView(props) {
         <p className="todo-task">
             <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" />
             <span className="todo-task-tag">
-                <TaskView tid={props.task.id} external={project_external} />
+                <TaskView tid={props.task.id} external={project_external} can_sort={false} />
             </span>
         </p>
     )
@@ -125,6 +125,7 @@ export function TodoView(props) {
                         </ClickableText>
                     </div>
                 }
+                <div className="todo-task-bottom-margin" />
             </SideHeaderLayout>
             <div className="width-container-rightonly">
                 <div className="todo-task-bottom-line" />

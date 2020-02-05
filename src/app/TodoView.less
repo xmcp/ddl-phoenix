@@ -1,7 +1,7 @@
 @import '../vars';
 
 .todo-task-badge {
-    vertical-align: -.35em !important;
+    vertical-align: -.25em !important;
     margin-left: .5em;
 }
 
@@ -11,8 +11,8 @@
     margin: 0 .5em;
 }
 
-.todo-task-bottom-line {
-    padding: 1rem 0;
+.todo-task-bottom-margin {
+    height: 1rem;
 }
 
 .todo-task-tag {
@@ -31,9 +31,11 @@
     .todo-collapse-switch {
         margin: 0;
     }
+    .todo-task-bottom-margin {
+        height: 0;
+    }
     .todo-task-bottom-line {
         border-bottom: 1px dashed rgba(0,0,0,.25);
-        padding: 0;
         margin: 1rem 0;
     }
     .todo-header-container, .todo-cat-container, .todo-task {

@@ -1,7 +1,7 @@
 import React, {useMemo, useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Modal, Icon} from 'antd';
-import Reorder from 'react-reorder';
+import {ReactSortable} from "react-sortablejs";
 
 import {close_modal_if_success} from './modal_common';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
@@ -46,12 +46,8 @@ export function ModalReorder(props) {
     const [mod_list, set_mod_list]=useState(null); // null for unchanged
 
     useEffect(() => {
-        set_mod_list(null);
+        set_mod_list(modal.args ? make_object(modal.args) : null);
     }, [modal]);
-
-    function reorder_callback(event, item, index, newIndex, list) {
-        set_mod_list(list);
-    }
 
     function do_post() {
         let list=mod_list || orig_list;
@@ -69,22 +65,25 @@ export function ModalReorder(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="appstore" /> 调整{scope_name(modal.scope)}顺序 <small
-                style={{opacity: .6}}> 按住并拖动</small></span>}
+            title={<span><Icon type="appstore" /> 调整{scope_name(modal.scope)}顺序</span>}
             onCancel={() => dispatch(close_modal())}
             onOk={do_post}
             destroyOnClose={true}
         >
             <div className="reorder-list-container">
                 {!!orig_list &&
-                <Reorder
-                    itemKey="id"
-                    lock="horizontal"
-                    holdTime={100}
-                    list={mod_list || orig_list}
-                    template={ReorderListItem}
-                    callback={reorder_callback}
-                />
+                    <ReactSortable
+                        list={mod_list || orig_list} setList={set_mod_list}
+                        ghostClass="reorder-list-ghost"
+                        dragClass="hidden-for-drag"
+                        animation={150}
+                        delay={120}
+                        delayOnTouchOnly={true}
+                    >
+                        {(mod_list || orig_list).map((item)=>(
+                            <ReorderListItem key={item.id} item={item} />
+                        ))}
+                    </ReactSortable>
                 }
             </div>
             {!!orig_list && orig_list.length===0 &&
