@@ -154,9 +154,11 @@ function ZoneView(props) {
                 ))}
             </MainListSortable>
             {zone.project_order.length===0 &&
-                <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))}>
-                    <Icon type="plus" /> 新建类别
-                </ClickableText>
+                <div className="project-header-container">
+                    <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
+                        <Icon type="plus" /> 新建类别
+                    </ClickableText>
+                </div>
             }
             <div className="zone-margin" />
         </SideHeaderLayout>
@@ -182,9 +184,11 @@ export function MainListView(props) {
                     <ZoneView key={zid} zid={zid} />
                 ))}
             </MainListSortable>
-            <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))}>
-                <Icon type="plus" /> 新建课程
-            </ClickableText>
+            <div className="zone-header-container">
+                <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))} className="section-header-zone">
+                    <Icon type="plus" /> 新建课程
+                </ClickableText>
+            </div>
         </div>
     );
 }
