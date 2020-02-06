@@ -26,7 +26,11 @@ export function close_modal() {
 }
 
 export function do_refresh() {
-    return sister_call('/refresh');
+    return sister_call('/refresh',undefined,()=>{
+        return {
+            manual_refresh: true,
+        };
+    });
 }
 
 export function do_register(regcode) {

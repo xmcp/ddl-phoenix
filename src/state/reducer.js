@@ -19,6 +19,7 @@ const INIT_STATE={
             last_update_time: null, // as Date type
         },
         main_list_sorting: false,
+        refresh_key: (+new Date()),
     },
     error: 'PHOENIX_NO_DATA',
 };
@@ -92,6 +93,7 @@ export function reduce(state=INIT_STATE,action) {
                     ...state.local,
                     loading: process_bee_loading_status(state,action),
                     modal: action.hide_modal ? EMPTY_MODAL : state.local.modal,
+                    refresh_key: action.manual_refresh ? (+new Date()) : state.local.refresh_key,
                 },
             };
 

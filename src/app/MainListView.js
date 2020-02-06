@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Icon, Badge, Tooltip, message} from 'antd';
 import copy from 'copy-to-clipboard';
@@ -74,24 +74,31 @@ function ProjectView(props) {
     const tasks=useSelector((state)=>state.task);
 
     const [expanded,set_expanded]=useState(false);
-
-    let cnt={done: 0, ignored: 0};
-    if(!expanded)
-        project.task_order.forEach((tid)=>{
-            let ctype=colortype(tasks[tid]);
-            if(ctype==='done' || ctype==='ignored')
-                cnt[ctype]++;
-        });
+    const refresh_key=useSelector((state)=>state.local.refresh_key)+(expanded?1:0);
 
     let task_collapse_badge_style={
         className: "task-collapse-badge",
-        style: { backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset' },
+        style: {backgroundColor: '#fff', color: '#999', boxShadow: '0 0 0 1px #d9d9d9 inset'},
         offset: [2,-3],
     };
 
+    let sticky_task=useRef({map: {}, key: refresh_key});
+    if(sticky_task.current.key!==refresh_key) {
+        sticky_task.current.map={};
+        sticky_task.current.key=refresh_key;
+    }
+
+    let cnt={done: 0, ignored: 0};
     let tasks_to_display=expanded ? project.task_order : project.task_order.filter((tid)=>{
         let ctype=colortype(tasks[tid]);
-        return !(ctype==='done' || ctype==='ignored');
+        let should_show=sticky_task.current.map[tid] || !(ctype==='done' || ctype==='ignored');
+
+        if(should_show)
+            sticky_task.current.map[tid]=true;
+        else
+            cnt[ctype]++;
+
+        return should_show;
     });
 
     return (
