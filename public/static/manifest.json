@@ -1,0 +1,20 @@
+{
+  "short_name": "不咕计划",
+  "name": "不咕计划",
+  "icons": [
+    {
+      "src": "fire_bird_240.png",
+      "sizes": "240x240",
+      "type": "image/png"
+    },
+    {
+      "src": "fire_bird_180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "../",
+  "display": "standalone",
+  "theme_color": "#d3d3d3",
+  "background_color": "#f9f9f9"
+}
