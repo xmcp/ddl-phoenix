@@ -50,7 +50,7 @@ function DueTooltip(props) {
     let ctype_name=completeness_name(ctype);
 
     let tooltip_text=(
-        <div>
+        <div className="due-tooltip">
             <p>
                 {props.task.complete_timestamp ? (friendly_date(props.task.complete_timestamp)+' ') : ''}
                 {ctype_name}

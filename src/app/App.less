@@ -30,6 +30,9 @@
 .width-container-rightonly {
     padding-right: 0;
 }
+.width-container-rightonly-padded {
+    padding-right: .5em;
+}
 
 @media screen and (min-width: @xl-breakpoint) {
     .width-container-leftonly {
@@ -58,7 +61,7 @@
         margin-right: calc((100vw - @max-content-width) / 2);
     }
     .width-container-rightonly-padded {
-        padding-right: calc((100vw - @max-content-width) / 2);
+        padding-right: calc(1em + (100vw - @max-content-width) / 2);
     }
 }
 
