@@ -55,6 +55,21 @@ function Root(props) {
         dispatch(get_token());
     }
 
+    function force_reload() {
+        if('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations()
+                .then((registrations)=>{
+                    for(let registration of registrations) {
+                        console.log('unregister',registration);
+                        registration.unregister();
+                    }
+                });
+        }
+        setTimeout(()=>{
+            window.location.reload(true);
+        },200);
+    }
+
     // below: deal with errors
 
     if(error==='PHOENIX_NO_DATA')
@@ -70,6 +85,20 @@ function Root(props) {
         );
     else if(error==='PHOENIX_NO_TOKEN')
         return (<AskTokenPage on_got_token={on_got_token} />);
+    else if(error==='SISTER_VER_MISMATCH')
+        return (
+            <WithFooter>
+                <Result
+                    icon={<Icon type="robot" />}
+                    status="error"
+                    title={"不支持当前版本"}
+                    subTitle={error_msg}
+                    extra={[
+                        <Button key="refresh" type="primary" onClick={force_reload}>刷新页面</Button>,
+                    ]}
+                />
+            </WithFooter>
+        );
     else if(error==='AUTH_REQUIRED')
         return (<WelcomePage />);
     else if(error==='SPLASH_REQUIRED')

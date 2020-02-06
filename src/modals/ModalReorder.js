@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Modal, Icon} from 'antd';
+import {Modal, Icon, Menu, Table} from 'antd';
 import {ReactSortable} from "react-sortablejs";
 
 import {close_modal_if_success} from './modal_common';
@@ -16,6 +16,18 @@ function ReorderListItem(props) {
 
     return useMemo(() => (
         <div className={'reorder-list-item '+(colortype_cls)}>
+            <ItemBreadcrumb scope={props.item.scope} id={props.item.id} />
+        </div>
+    ), [props.item.scope, props.item.id, colortype_cls]);
+}
+
+function DeleteListItem(props) {
+    const colortype_cls=useSelector((state) => (
+        props.item.scope==='task' ? ('task-color-'+colortype(state.task[props.item.id])) : ''
+    ));
+
+    return useMemo(() => (
+        <div className={'delete-list-item '+(colortype_cls)}>
             <ItemBreadcrumb scope={props.item.scope} id={props.item.id} />
         </div>
     ), [props.item.scope, props.item.id, colortype_cls]);
@@ -43,17 +55,33 @@ export function ModalReorder(props) {
         }
     });
 
+    const [tab,set_tab]=useState('reorder');
+
     const [mod_list, set_mod_list]=useState(null); // null for unchanged
+    const [del_ids,set_del_ids]=useState([]);
+
+    useEffect(() => {
+        set_tab('reorder');
+    },[modal]);
 
     useEffect(() => {
         set_mod_list(modal.args ? make_object(modal.args) : null);
-    }, [modal]);
+        set_del_ids([]);
+    }, [modal,tab]);
 
     function do_post() {
-        let list=mod_list || orig_list;
-        if(list) {
-            dispatch(do_interact('reorder', modal.scope, {
-                order: list.map((({id}) => id)),
+        if(tab==='reorder') {
+            let list=mod_list || orig_list;
+            if(list) {
+                dispatch(do_interact('reorder', modal.scope, {
+                    order: list.map((({id}) => id)),
+                    parent_id: modal.itemid,
+                }))
+                    .then(close_modal_if_success(dispatch));
+            }
+        } else if(tab==='delete') {
+            dispatch(do_interact('delete', modal.scope, {
+                ids: del_ids,
                 parent_id: modal.itemid,
             }))
                 .then(close_modal_if_success(dispatch));
@@ -65,31 +93,111 @@ export function ModalReorder(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="appstore" /> 调整{scope_name(modal.scope)}顺序</span>}
+            title={<span><Icon type="appstore" /> 整理{scope_name(modal.scope)}</span>}
             onCancel={() => dispatch(close_modal())}
             onOk={do_post}
             destroyOnClose={true}
+            bodyStyle={{
+                paddingTop: '.5em',
+            }}
+            okType={tab==='delete' ? 'danger' : 'primary'}
         >
-            <div className="reorder-list-container">
-                {!!orig_list &&
-                    <ReactSortable
-                        list={mod_list || orig_list} setList={set_mod_list}
-                        ghostClass="reorder-list-ghost"
-                        dragClass="hidden-for-drag"
-                        animation={150}
-                        delay={120}
-                        delayOnTouchOnly={true}
-                    >
-                        {(mod_list || orig_list).map((item)=>(
-                            <ReorderListItem key={item.id} item={item} />
-                        ))}
-                    </ReactSortable>
-                }
-            </div>
-            {!!orig_list && orig_list.length===0 &&
-            <p>
-                <Icon type="inbox" /> 没有{scope_name(modal.scope)}
-            </p>
+            <Menu selectedKeys={[tab]} onClick={(e)=>set_tab(e.key)}  mode="horizontal">
+                <Menu.Item key="reorder">
+                    <Icon type="swap" />&nbsp;
+                    调整顺序
+                </Menu.Item>
+                <Menu.Item key="delete">
+                    <Icon type="delete" />&nbsp;
+                    批量删除
+                </Menu.Item>
+            </Menu>
+            <br />
+            {tab==='reorder' &&
+                <div>
+                    <div className="reorder-list-container">
+                        {!!orig_list &&
+                            <ReactSortable
+                                list={mod_list || orig_list} setList={set_mod_list}
+                                ghostClass="reorder-list-ghost"
+                                dragClass="hidden-for-drag"
+                                animation={0}
+                                delay={100}
+                                delayOnTouchOnly={true}
+                            >
+                                {(mod_list || orig_list).map((item)=>(
+                                    <ReorderListItem key={item.id} item={item} />
+                                ))}
+                            </ReactSortable>
+                        }
+                    </div>
+                    {!!orig_list && orig_list.length===0 &&
+                        <p>
+                            <Icon type="inbox" /> 没有{scope_name(modal.scope)}
+                        </p>
+                    }
+                </div>
+            }
+            {tab==='delete' &&
+                <div>
+                    <Table
+                        columns={[
+                            {
+                                title: del_ids.length ? ('已选择 '+del_ids.length+' 个'+scope_name(modal.scope)) : '',
+                                dataIndex: 'id',
+                                render: (text,record)=>(
+                                    <DeleteListItem item={record} />
+                                ),
+                            }
+                        ]}
+                        dataSource={orig_list}
+                        pagination={false}
+                        size="small"
+                        rowSelection={{
+                            selectedRowKeys: del_ids,
+                            onChange: set_del_ids,
+                            hideDefaultSelections: true,
+                            selections: [
+                                {
+                                    key: 'all',
+                                    text: '全选',
+                                    onSelect: ()=>{
+                                        set_del_ids(orig_list.map(({id})=>id));
+                                    },
+                                },
+                                {
+                                    key: 'invert',
+                                    text: '反选',
+                                    onSelect: ()=>{
+                                        set_del_ids(orig_list.map(({id})=>id).filter((id)=>del_ids.indexOf(id)===-1));
+                                    },
+                                },
+                                {
+                                    key: 'none',
+                                    text: '清除',
+                                    onSelect: ()=>{
+                                        set_del_ids([]);
+                                    },
+                                },
+                            ],
+                        }}
+                        rowKey="id"
+                        onRow={(record)=>({
+                            onClick: ()=>{
+                                let new_del_ids=del_ids.slice();
+                                console.log(record);
+
+                                let idx=new_del_ids.indexOf(record.id);
+                                if(idx===-1)
+                                    new_del_ids.push(record.id);
+                                else
+                                    new_del_ids.splice(idx,1);
+
+                                set_del_ids(new_del_ids);
+                            },
+                        })}
+                    />
+                </div>
             }
         </Modal>
     )

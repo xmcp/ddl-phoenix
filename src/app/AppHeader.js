@@ -64,7 +64,7 @@ export function AppHeader(props) {
                         onClick: ()=>dispatch(show_modal('add','zone',null)),
                     },
                     {
-                        children: (<span><Icon type="appstore" /> 调整课程顺序</span>),
+                        children: (<span><Icon type="appstore" /> 整理课程</span>),
                         onClick: ()=>dispatch(show_modal('reorder','zone',null)),
                     },
                 ]}>

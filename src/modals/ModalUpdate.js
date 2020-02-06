@@ -56,7 +56,7 @@ export function ModalUpdate(props) {
     function do_delete() {
         if(delete_confirmed)
             dispatch(do_interact('delete', modal.scope, {
-                id: modal.itemid,
+                ids: [modal.itemid],
                 parent_id: item.parent_id,
             }))
                 .then(close_modal_if_success(dispatch));

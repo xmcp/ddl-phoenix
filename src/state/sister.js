@@ -3,9 +3,9 @@ import {message} from 'antd';
 import {get_json} from '../infrastructure/functions';
 
 // without trailing slash
-const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
-//const SISTER_ROOT='http://192.168.0.193:5000';
-export const SISTER_API_VER='2a';
+//const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
+const SISTER_ROOT='http://192.168.0.193:5000';
+export const SISTER_API_VER='2b';
 
 function token_param(start_symbol,token) {
     return token ? (start_symbol+'user_token='+encodeURIComponent(token)) : '';

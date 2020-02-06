@@ -26,11 +26,11 @@ function SectionHeader(props) {
     let menu=[
         ...(props.item.external ? [] : [
             {
-                children: (<span><Icon type="plus" /> 新建{nsname}</span>),
+                children: (<span><Icon type="plus" /> 新建子{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('add',ns,props.id)),
             },
             {
-                children: (<span><Icon type="appstore" /> 调整{nsname}顺序</span>),
+                children: (<span><Icon type="appstore" /> 整理{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
             },
         ]),
