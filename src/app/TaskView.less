@@ -1,26 +1,19 @@
-.custom-ant-tag {
-    font-size: 1em !important;
-    height: 2rem !important;
-    line-height: 2rem !important;
-    margin: 0;
-    padding-left: .5em;
-    padding-right: .5em;
-    vertical-align: -0.1rem;
-}
-
-.clickable-text .custom-ant-tag {
-    cursor: unset;
+.task-badge {
+    border-radius: 5px;
+    border: 1px solid;
+    margin: 0 .25em;
+    padding: 0 .5em;
+    line-height: 1.7em;
 }
 
 .task-badge-icon {
-    margin-right: .25rem;
-    font-size: .8em;
-    vertical-align: 0;
+    margin-right: .2em;
+    margin-left: -.1em;
+    transform: scale(.85);
 }
 
-.task-badge-label {
-    transform: translateY(-1px);
-    display: inline-block;
+.task-badge-icon svg {
+    overflow: visible; // fix clipping on mobile safari
 }
 
 .due-tooltip {

@@ -11,9 +11,19 @@
     cursor: grabbing;
 }
 
+.reorder-list-item:not(.reorder-list-ghost):hover {
+    filter: brightness(97%);
+}
+
 .reorder-list-ghost {
     transform: translateX(-.5em) !important;
-    filter: brightness(90%);
+    filter: brightness(85%);
+    animation: ghost-fadein .1s ease-out;
+}
+
+@keyframes ghost-fadein {
+    from {opacity: .3;}
+    to {opacity: 1;}
 }
 
 .modal-btnpair-btn {

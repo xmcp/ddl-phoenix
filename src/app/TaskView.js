@@ -1,6 +1,6 @@
 import React, {useMemo} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Icon, Tag, Tooltip} from 'antd';
+import {Icon, Tooltip} from 'antd';
 
 import {PoppableText} from '../widgets/PoppableText';
 import {IconForColorType} from '../widgets/IconForColorType';
@@ -80,13 +80,13 @@ export function TaskView(props) {
     return useMemo(()=>(
         <PoppableText
             menu={gen_menu_for_task(props.tid,task,props.external,settings,dispatch)}
-            className={props.can_sort?'reorder-handle reorder-handle-task ':''}
+            className={'no-padding'+(props.can_sort?' reorder-handle reorder-handle-task':'')}
         >
             <DueTooltip task={task}>
-                <Tag className={'custom-ant-tag task-color-'+ctype}>
+                <div className={'task-badge task-color-'+ctype}>
                     <IconForColorType type={ctype} className="task-badge-icon" />
                     <span className="task-badge-label">{task.name}</span>
-                </Tag>
+                </div>
             </DueTooltip>
         </PoppableText>
     ),[task,ctype,dispatch,props.external,props.tid,props.can_sort]);
