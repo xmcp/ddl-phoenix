@@ -5,10 +5,24 @@ import {get_json} from '../infrastructure/functions';
 // without trailing slash
 const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
 //const SISTER_ROOT='http://192.168.0.193:5000';
-export const SISTER_API_VER='2b';
+export const SISTER_API_VER='2c';
 
 function token_param(start_symbol,token) {
     return token ? (start_symbol+'user_token='+encodeURIComponent(token)) : '';
+}
+
+export function sister_fetch(endpoint,data,token) {
+    let url=SISTER_ROOT+endpoint+'?sister_ver='+encodeURIComponent(SISTER_API_VER)+token_param('&',token);
+    if(data===undefined)
+        return fetch(url);
+    else
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
 }
 
 export function sister_call(endpoint,data=undefined,completed_callback=undefined) {
@@ -16,26 +30,11 @@ export function sister_call(endpoint,data=undefined,completed_callback=undefined
         let state=getState();
         if(state.local.loading.status==='loading') return Promise.resolve();
 
-        let token=state.local.token;
-        let url=SISTER_ROOT+endpoint+'?sister_ver='+encodeURIComponent(SISTER_API_VER)+token_param('&',token);
-
-        let fetch_req;
-        if(data===undefined)
-            fetch_req=fetch(url);
-        else
-            fetch_req=fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-
         dispatch({
             type: 'start_loading',
         });
 
-        return fetch_req
+        return sister_fetch(endpoint,data,state.local.token)
             .then(get_json)
             .catch((e)=>{
                 message.error('加载失败：'+e,2);
