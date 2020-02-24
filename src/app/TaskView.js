@@ -61,10 +61,12 @@ function TaskViewDetails(props) {
                 <p>
                     {!props.external &&
                         <a style={{float: 'right'}}>
-                            <Icon type="edit" />
+                            {props.task.status==='placeholder' ?
+                                <span><Icon type="fire" /> 布置</span> :
+                                <span><Icon type="edit" /> 编辑</span>
+                            }
                         </a>
                     }
-                    {props.task.status==='placeholder' ? '未布置，' : ''}
                     {props.task.due ?
                         (friendly_date(props.task.due, false)+' 截止') :
                         '无截止日期'
@@ -74,7 +76,7 @@ function TaskViewDetails(props) {
                     <p className="task-view-details-desc">{props.task.desc}</p>
                 }
             </div>
-            <div className="task-view-details-complgroup">
+            <div className={'task-view-details-complgroup'+((!props.external && props.task.status==='placeholder') ? ' task-view-details-complgroup-faded' : '')}>
                 <Radio.Group value={props.task.completeness} onChange={(e)=>update_compl(e.target.value)}>
                     {compl_order.map((compl)=>(
                         <Radio.Button key={compl} value={compl} style={{paddingLeft: '9px', paddingRight: '9px'}}>
@@ -108,5 +110,5 @@ export function TaskView(props) {
                 </Popover>
             </WithDueTooltip>
         </span>
-    ),[task,show_popover,ctype,props.tid,props.can_sort]);
+    ),[task,show_popover,ctype,props.tid,props.can_sort,props.external]);
 }
