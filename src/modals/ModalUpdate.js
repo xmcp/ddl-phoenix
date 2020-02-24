@@ -19,7 +19,10 @@ export function ModalUpdate(props) {
 
     const [name, set_name]=useState('');
     const [delete_confirmed, set_delete_confirmed]=useState(false);
+    // project
     const [shared, set_shared]=useState(false);
+    // task
+    const [desc,set_desc]=useState('');
     const [status, set_status]=useState('');
     const [due_quicktype, set_due_quicktype]=useState(init_quicktype(null));
 
@@ -33,6 +36,7 @@ export function ModalUpdate(props) {
             set_name(item.name);
             set_delete_confirmed(false);
             set_shared(!!item.share_hash);
+            set_desc(item.desc||'');
             set_status('active');
             set_due_quicktype(init_quicktype(item.due || null));
         }
@@ -44,6 +48,7 @@ export function ModalUpdate(props) {
             name: name,
             ...(modal.scope==='task' ? {
                 status: status,
+                desc: desc||null,
                 due: due_quicktype.moment===null ? null : due_quicktype.moment.unix(),
             } : {}),
             ...(modal.scope==='project' ? {
@@ -100,6 +105,7 @@ export function ModalUpdate(props) {
                 return;
 
             if(is_quicktype_char(e.key)) {
+                e.preventDefault();
                 console.log('got quicktype event', e);
                 set_due_quicktype(proc_input(due_quicktype, e.key.toLowerCase()==='backspace' ? '\b' : e.key.toLowerCase()));
                 if(quicktype_ref.current)
@@ -108,9 +114,9 @@ export function ModalUpdate(props) {
                 do_post();
         }
 
-        document.addEventListener('keydown', handler);
+        document.addEventListener('keydown', handler, {passive: false});
         return () => {
-            document.removeEventListener('keydown', handler);
+            document.removeEventListener('keydown', handler, {passive: false});
         }
     });
 
@@ -135,57 +141,66 @@ export function ModalUpdate(props) {
                        autoFocus={modal.scope!=='task'} onPressEnter={do_post} />
             </div>
             {modal.scope==='project' && !item.external &&
-            <p>
-                <br />
-                <Checkbox checked={shared} onChange={(e) => set_shared(e.target.checked)}>分享给其他用户</Checkbox>
-                <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
-                    <a><Icon type="question-circle" /></a>
-                </Popover>
-            </p>
+                <p>
+                    <br />
+                    <Checkbox checked={shared} onChange={(e) => set_shared(e.target.checked)}>分享给其他用户</Checkbox>
+                    <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
+                        <a><Icon type="question-circle" /></a>
+                    </Popover>
+                </p>
             }
             {modal.scope==='task' && <br />}
             {modal.scope==='task' &&
-            <Row gutter={6}>
-                <Col xs={24} md={12}>
-                    <Radio.Group value={status} onChange={(e) => set_status(e.target.value)}>
-                        <Radio.Button value="placeholder">
-                            <IconForColorType type="placeholder" /> 占位
-                        </Radio.Button>
-                        <Radio.Button value="active">
-                            <IconForColorType type="todo" /> 已布置
-                        </Radio.Button>
-                    </Radio.Group>
-                    <p>
+                <Row gutter={6}>
+                    <Col xs={24} md={12}>
+                        <p>
+                            <Input.TextArea
+                                value={desc} onChange={(e)=>set_desc(e.target.value)}
+                                onPressEnter={(e)=>{if(e.ctrlKey) do_post()}}
+                                autoSize={{minRows: 1, maxRows: 5}}
+                                placeholder="（备注）" allowClear={true}
+                            />
+                        </p>
                         <br />
-                        <b>
-                            {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(), false)+' 截止'}
-                        </b>
-                        {due_quicktype.moment!==null &&
-                        <a onClick={() => {
-                            set_due_quicktype(set_moment(null))
-                        }}>
-                            &nbsp; <Icon type="close-circle" /> &nbsp;
-                        </a>
-                        }
-                        {due_quicktype.placeholder &&
-                        <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
-                            <a>
-                                &nbsp;{due_quicktype.placeholder}&nbsp;
-                                <Icon type="question-circle" />
-                            </a>
-                        </Popover>
-                        }
-                    </p>
-                    <br />
-                </Col>
-                <Col xs={24} md={12}>
-                    <Calendar
-                        value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment}
-                        onChange={on_select_date}
-                        fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
-                    />
-                </Col>
-            </Row>
+                        <Radio.Group value={status} onChange={(e) => set_status(e.target.value)}>
+                            <Radio.Button value="placeholder">
+                                <IconForColorType type="placeholder" /> 占位
+                            </Radio.Button>
+                            <Radio.Button value="active">
+                                <IconForColorType type="todo" /> 已布置
+                            </Radio.Button>
+                        </Radio.Group>
+                        <p>
+                            <br />
+                            <b>
+                                {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(), false)+' 截止'}
+                            </b>
+                            {due_quicktype.moment!==null &&
+                                <a onClick={() => {
+                                    set_due_quicktype(set_moment(null))
+                                }}>
+                                    &nbsp; <Icon type="close-circle" /> &nbsp;
+                                </a>
+                            }
+                            {due_quicktype.placeholder &&
+                                <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
+                                    <a>
+                                        &nbsp;{due_quicktype.placeholder}&nbsp;
+                                        <Icon type="question-circle" />
+                                    </a>
+                                </Popover>
+                            }
+                        </p>
+                        <br />
+                    </Col>
+                    <Col xs={24} md={12}>
+                        <Calendar
+                            value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment}
+                            onChange={on_select_date}
+                            fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
+                        />
+                    </Col>
+                </Row>
             }
         </Modal>
     );

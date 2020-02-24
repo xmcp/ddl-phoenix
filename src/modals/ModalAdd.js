@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, Icon, Input, DatePicker, InputNumber, Popover} from 'antd';
+import {Modal, Icon, Input, DatePicker, Popover, Select} from 'antd';
 
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 import {close_modal_if_success, SharingHelp} from './modal_common';
@@ -25,8 +25,8 @@ export function ModalAdd(props) {
         set_task_due_delta(7);
     }, [modal]);
 
-    function do_post() {
-        let name_list=names.split(/\n/).map((n) => n.trim()).filter((n) => n);
+    function do_post(ns) {
+        let name_list=ns.split(/\n/).map((n) => n.trim()).filter((n) => n);
         if(name_list.length)
             dispatch(do_interact('add', modal.scope, {
                 parent_id: modal.itemid,
@@ -44,12 +44,20 @@ export function ModalAdd(props) {
     function on_press_enter(e) {
         let last_enter=last_enter_ts.current;
         last_enter_ts.current=(+new Date());
-        if(e.ctrlKey || last_enter_ts.current-last_enter<DOUBLE_ENTER_THRESHOLD_MS)
-            do_post();
+        let expanded_names=null;
 
         // press enter at the only line: do magic expand
         if(modal.scope==='task' && e.target.value.indexOf('\n')=== -1/* && e.target.selectionStart===e.target.value.length*/) {
-            set_names(magic_expand(e.target.value));
+            expanded_names=magic_expand(e.target.value);
+            set_names(expanded_names);
+        }
+
+        // post when double enter or ctrl+enter
+        if(e.ctrlKey || last_enter_ts.current-last_enter<DOUBLE_ENTER_THRESHOLD_MS) {
+            if(expanded_names) // propagate new names manually because state hook is not updated yet
+                do_post(expanded_names);
+            else
+                do_post(names);
         }
     }
 
@@ -65,7 +73,7 @@ export function ModalAdd(props) {
             visible={modal.visible}
             title={<span><Icon type="plus-square" /> 新建{scope_name(modal.scope)}</span>}
             onCancel={() => dispatch(close_modal())}
-            onOk={do_post}
+            onOk={()=>do_post(names)}
             destroyOnClose={true}
         >
             {modal.scope!=='zone' &&
@@ -82,23 +90,30 @@ export function ModalAdd(props) {
                 placeholder={scope_name(modal.scope)+'名称（每行一个）'}
             />
             <br />
-            {modal.scope==='task' &&
+            {modal.scope==='task' && names.trim().indexOf('\n')!== -1 &&
                 <div>
                     <br />
                     <DatePicker
                         onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
-                        allowClear={true} placeholder="设置截止日期"
+                        allowClear={true} placeholder="（无截止日期）"
                     />
-                    {!!task_due_first && names.indexOf('\n')!== -1 &&
-                    <span>
-                                &nbsp;起每隔&nbsp;
-                        <InputNumber
-                            value={task_due_delta} onChange={(v) => set_task_due_delta(v)} min={0} max={999}
-                            className="modal-add-delta-number-input"
-                            onPressEnter={do_post}
-                        />
-                        &nbsp;天
-                            </span>
+                    {task_due_first ?
+                        <span>
+                            &nbsp;起每隔&nbsp;
+                            <Select
+                                value={task_due_delta}
+                                onChange={(v) => set_task_due_delta(v)} min={0} max={999}
+                                className="modal-add-delta-number-input"
+                            >
+                                <Select.Option value={0}>0天</Select.Option>
+                                <Select.Option value={1}>1天</Select.Option>
+                                <Select.Option value={7}>7天</Select.Option>
+                                <Select.Option value={14}>14天</Select.Option>
+                            </Select>
+                        </span> :
+                        <span>
+                            &nbsp; ← 批量设置
+                        </span>
                     }
                     <br />
                 </div>

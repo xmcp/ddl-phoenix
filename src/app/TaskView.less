@@ -1,4 +1,10 @@
+.task-view {
+    display: inline-block;
+    cursor: pointer;
+}
+
 .task-badge {
+    display: inline-block;
     border-radius: 5px;
     border: 1px solid;
     margin: 0 .25em;
@@ -20,3 +26,39 @@
     font-size: .9em;
     line-height: 1.3em;
 }
+
+.task-view-details {
+    width: 280px;
+}
+
+.task-details-custom-popover .ant-popover-title {
+    display: none;
+}
+
+.task-details-custom-popover .ant-popover-inner-content {
+    padding: unset;
+    margin: unset;
+}
+
+.task-view-details-statline {
+    padding: .5em 1em;
+}
+.task-view-details-statline-link:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}
+
+.task-view-details-desc {
+    max-height: 4em;
+    line-height: 1em;
+    padding-bottom: .5em;
+    margin-bottom: -.5em;
+    overflow: auto;
+    white-space: pre-line;
+}
+
+.task-view-details-complgroup {
+    text-align: center;
+    padding: .5em 0;
+}
+

@@ -11,8 +11,6 @@ export function PoppableText(props) {
     const settings=useSelector((state)=>state.user.settings);
     const is_sorting=useSelector((state)=>state.local.main_list_sorting);
 
-    let no_hover=dflt(settings.no_hover,false);
-
     useEffect(()=>{
         if(is_sorting)
             set_dropdown_visible(false);
@@ -37,8 +35,6 @@ export function PoppableText(props) {
     function on_click(_) {
         if((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS)
             return;
-        if(no_hover && !dropdown_visible)
-            return;
 
         // do real click
         if(props.menu.length) {
@@ -49,8 +45,6 @@ export function PoppableText(props) {
     function on_touch_end(e) {
         if(!dropdown_visible) {
             last_touch_end_ts.current=(+new Date());
-            if(no_hover && e.cancelable) // otherwise touch screen device don't have click event
-                on_vis_change(true);
         }
     }
 
@@ -65,7 +59,7 @@ export function PoppableText(props) {
     }
 
     return (
-        <Dropdown overlay={menu_elem} trigger={no_hover ? ['click'] : ['hover','click']} mouseEnterDelay={0} mouseLeaveDelay={0.1}
+        <Dropdown overlay={menu_elem} trigger={['hover','click']} mouseEnterDelay={0} mouseLeaveDelay={0.1}
                   visible={dropdown_visible} onVisibleChange={on_vis_change}>
             <span className={'clickable-text '+(props.className||'')} onTouchEnd={on_touch_end} onClick={on_click}>
                 {props.children}

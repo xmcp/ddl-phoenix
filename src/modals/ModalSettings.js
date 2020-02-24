@@ -12,20 +12,17 @@ export function ModalSettings(props) {
     const modal=useSelector((state) => state.local.modal);
     const settings=useSelector((state) => state.user.settings);
 
-    const [no_hover, set_no_hover]=useState(false);
-    const [hide_ignored, set_hide_ignored]=useState(false);
+    const [collapse_all_past, set_collapse_all_past]=useState(false);
 
     useEffect(() => {
-        set_no_hover(dflt(settings.no_hover, false));
-        set_hide_ignored(dflt(settings.hide_ignored, false));
-    }, [modal, settings.no_hover]);
+        set_collapse_all_past(dflt(settings.collapse_all_past, false));
+    }, [modal, settings.set_collapse_all_past]);
 
     if(modal.type!=='settings') return (<Modal visible={false} />);
 
     function do_post() {
         dispatch(do_update_settings({
-            no_hover: no_hover,
-            hide_ignored: hide_ignored,
+            collapse_all_past: collapse_all_past,
         }))
             .then(close_modal_if_success(dispatch));
     }
@@ -39,12 +36,13 @@ export function ModalSettings(props) {
             destroyOnClose={true}
         >
             <div className="settings-items">
-                <p><Checkbox checked={no_hover} onChange={(e) => set_no_hover(e.target.checked)}>
-                    用点击替代鼠标悬浮效果
-                </Checkbox></p>
-                <p><Checkbox checked={hide_ignored} onChange={(e) => set_hide_ignored(e.target.checked)}>
-                    不显示任务的“忽略”按钮
-                </Checkbox></p>
+                <p>
+                    <Checkbox checked={collapse_all_past} onChange={(e) => set_collapse_all_past(e.target.checked)}>
+                        折叠全部完成或忽略的任务
+                    </Checkbox>
+                    <br />
+                    <small>默认会展示最后一项完成或忽略的任务，来帮助你了解自己的完成进度</small>
+                </p>
             </div>
         </Modal>
     );

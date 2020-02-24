@@ -91,10 +91,27 @@ function Root(props) {
                 <Result
                     icon={<Icon type="robot" />}
                     status="error"
-                    title={"不支持当前版本"}
+                    title="不支持当前版本"
                     subTitle={error_msg}
                     extra={[
                         <Button key="refresh" type="primary" onClick={force_reload}>刷新页面</Button>,
+                    ]}
+                />
+            </WithFooter>
+        );
+    else if(error==='BACKEND_EXCEPTION')
+        return (
+            <WithFooter>
+                <Result
+                    icon={<Icon type="bug" />}
+                    status="error"
+                    title="后端异常（这是 Bug）"
+                    subTitle={error_msg}
+                    extra={[
+                        refresh_btn,
+                        <Button key="report-bug" href="https://github.com/pkuhelper-web/bee/issues" target="_blank">
+                            <Icon type="github" /> 反馈给开发者
+                        </Button>,
                     ]}
                 />
             </WithFooter>

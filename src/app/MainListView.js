@@ -10,7 +10,7 @@ import {ClickableText} from '../widgets/ClickableText';
 import {MainListSortable} from '../widgets/MainListSortable';
 import {IconForColorType} from '../widgets/IconForColorType';
 
-import {scope_name, next_scope, colortype} from '../functions';
+import {scope_name, next_scope, colortype, dflt} from '../functions';
 import {show_modal} from '../state/actions';
 
 import './MainListView.less';
@@ -72,6 +72,7 @@ function ProjectView(props) {
     const dispatch=useDispatch();
     const project=useSelector((state)=>state.project[props.pid]);
     const tasks=useSelector((state)=>state.task);
+    const settings=useSelector((state) => state.user.settings);
 
     const [expanded,set_expanded]=useState(false);
     const refresh_key=useSelector((state)=>state.local.refresh_key)+(expanded?1:0);
@@ -89,17 +90,47 @@ function ProjectView(props) {
     }
 
     let cnt={done: 0, ignored: 0};
-    let tasks_to_display=expanded ? project.task_order : project.task_order.filter((tid)=>{
-        let ctype=colortype(tasks[tid]);
-        let should_show=sticky_task.current.map[tid] || !(ctype==='done' || ctype==='ignored');
+    let tasks_to_display;
 
-        if(should_show)
-            sticky_task.current.map[tid]=true;
-        else
-            cnt[ctype]++;
+    if(expanded) {
+        tasks_to_display=project.task_order;
+    } else {
+        if(dflt(settings.collapse_all_past,false)) { // hide all
+            tasks_to_display=project.task_order.filter((tid)=>{
+                let ctype=colortype(tasks[tid]);
+                let should_show=sticky_task.current.map[tid] || !(ctype==='done' || ctype==='ignored');
 
-        return should_show;
-    });
+                if(should_show)
+                    sticky_task.current.map[tid]=true;
+                else
+                    cnt[ctype]++;
+
+                return should_show;
+            });
+        } else { // hide prefix
+            let task_start_idx=0;
+            for(;task_start_idx<project.task_order.length;task_start_idx++) {
+                let tid=project.task_order[task_start_idx];
+                let ctype=colortype(tasks[tid]);
+                let should_show=sticky_task.current.map[tid] || !(ctype==='done' || ctype==='ignored');
+
+                if(should_show)
+                    break;
+                else
+                    cnt[ctype]++;
+            }
+            if(task_start_idx) {
+                task_start_idx--;
+                cnt[colortype(tasks[project.task_order[task_start_idx]])]--;
+            }
+            tasks_to_display=project.task_order.filter((tid,idx)=>{
+                if(idx>task_start_idx)
+                    sticky_task.current.map[tid]=true;
+
+                return idx>=task_start_idx;
+            });
+        }
+    }
 
     return (
         <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />} headerClassName="project-header-container">

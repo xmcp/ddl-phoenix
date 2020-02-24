@@ -6,7 +6,7 @@ export function MagicExpandHelp(props) {
             <p>可以输入这样的内容：</p>
             <ul>
                 <li><code>Week [1-16]</code></li>
-                <li><code>第[八-十五]章习题</code></li>
+                <li><code>第【八-十五】章习题</code></li>
                 <li><code>练习[3 5 10 14]</code></li>
                 <li><code>[Data Bomb Proxy] Lab</code></li>
             </ul>
@@ -16,7 +16,7 @@ export function MagicExpandHelp(props) {
 }
 
 const MAX_EXPANSION_COUNT=50;
-const BRACKET_PATTERN=/(\[[^\]]+])/;
+const BRACKET_PATTERN=/([\[【][^\]]+[\]】])/;
 const CHI_PATTERN=/^(?:([一二三四五六七八九])?十([一二三四五六七八九])?|([一二三四五六七八九零]))$/;
 const NUM_PATTERN=/^\d{1,2}$/;
 const CHINUM={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'零':0};
@@ -55,7 +55,10 @@ function range(a,b) {
 }
 
 function parse_seg(s) {
-    if(s.charAt(0)!=='[' || s.charAt(s.length-1)!==']')
+    if(!(
+        (s.charAt(0)==='[' && s.charAt(s.length-1)===']') ||
+        (s.charAt(0)==='【' && s.charAt(s.length-1)==='】')
+    ))
         return [s];
     else {
         s=s.substr(1,s.length-2);
