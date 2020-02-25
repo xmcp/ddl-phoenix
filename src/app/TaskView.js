@@ -120,7 +120,8 @@ export function TaskView(props) {
             // simulate click if is touched
             may_set_card_mode((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS ? 2 : 1);
         } else {
-            may_set_card_mode(0);
+            // no `may` here because we want to skip threshold test
+            set_card_mode(0);
         }
     }
     function on_popover_visible_change(v) {
@@ -129,7 +130,7 @@ export function TaskView(props) {
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <span className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')} onTouchEnd={on_touch_end}>
+        <span className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')} onTouchEndCapture={on_touch_end}>
             <WithDueTooltip
                 task={task}
                 visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
