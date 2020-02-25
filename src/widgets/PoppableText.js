@@ -8,7 +8,6 @@ const STABLIZE_THRESHOLD_MS=100;
 
 export function PoppableText(props) {
     const [dropdown_visible,set_dropdown_visible]=useState(false);
-    const settings=useSelector((state)=>state.user.settings);
     const is_sorting=useSelector((state)=>state.local.main_list_sorting);
 
     useEffect(()=>{

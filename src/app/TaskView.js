@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, {useMemo, useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Icon, Tooltip, Popover, Radio} from 'antd';
 
@@ -8,6 +8,8 @@ import {colortype, completeness_name, friendly_date} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
 
 import './TaskView.less';
+
+const STABLIZE_THRESHOLD_MS=100;
 
 function WithDueTooltip(props) {
     let ctype=colortype(props.task);
@@ -31,8 +33,10 @@ function WithDueTooltip(props) {
     return (
         <Tooltip
             title={tooltip_text} trigger="hover"
+            visible={props.visible} onVisibleChange={props.onVisibleChange}
             overlayClassName="pointer-event-none" autoAdjustOverflow={false}
             mouseEnterDelay={0} mouseLeaveDelay={0}
+            onTouchEnd={props.onTouchEnd}
         >
             {props.children}
         </Tooltip>
@@ -52,6 +56,11 @@ function TaskViewDetails(props) {
             })
     }
 
+    let ui_compl_value=props.task.completeness;
+    // invite user to activte task
+    if(!props.external && props.task.status==='placeholder' && ui_compl_value==='todo')
+        ui_compl_value='_placeholder';
+
     return (
         <div className="task-view-details">
             <div
@@ -60,12 +69,10 @@ function TaskViewDetails(props) {
             >
                 <p>
                     {!props.external &&
-                        <a style={{float: 'right'}}>
-                            {props.task.status==='placeholder' ?
-                                <span><Icon type="fire" /> 布置</span> :
-                                <span><Icon type="edit" /> 编辑</span>
-                            }
-                        </a>
+                        <a style={{float: 'right'}}><Icon type="edit" /></a>
+                    }
+                    {props.task.status==='placeholder' &&
+                        '未布置，'
                     }
                     {props.task.due ?
                         (friendly_date(props.task.due, false)+' 截止') :
@@ -76,8 +83,8 @@ function TaskViewDetails(props) {
                     <p className="task-view-details-desc">{props.task.desc}</p>
                 }
             </div>
-            <div className={'task-view-details-complgroup'+((!props.external && props.task.status==='placeholder') ? ' task-view-details-complgroup-faded' : '')}>
-                <Radio.Group value={props.task.completeness} onChange={(e)=>update_compl(e.target.value)}>
+            <div className="task-view-details-complgroup">
+                <Radio.Group value={ui_compl_value} onChange={(e)=>update_compl(e.target.value)}>
                     {compl_order.map((compl)=>(
                         <Radio.Button key={compl} value={compl} style={{paddingLeft: '9px', paddingRight: '9px'}}>
                             <IconForColorType type={compl} /> {completeness_name(compl)}
@@ -91,16 +98,39 @@ function TaskViewDetails(props) {
 
 export function TaskView(props) {
     const task=useSelector((state)=>state.task[props.tid]);
-    const [show_popover,set_show_popover]=useState(false);
+    const [card_mode,set_card_mode]=useState(0); // 0: hidden, 1: tooltip, 2: tooltip+popover
+
+    let last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
+
+    function on_touch_end() {
+        last_touch_end_ts.current=(+new Date());
+    }
+
+    function on_tooltip_visible_change(v) {
+        if(card_mode>1) return;
+        if(v) {
+            // simulate click if is touched
+            set_card_mode((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS ? 2 : 1);
+        } else {
+            set_card_mode(0);
+        }
+    }
+    function on_popover_visible_change(v) {
+        set_card_mode(v ? 2 : 0);
+    }
 
     let ctype=colortype(task);
     return useMemo(()=>(
         <span className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')}>
-            <WithDueTooltip task={task}>
+            <WithDueTooltip
+                task={task}
+                visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
+                onTouchEnd={on_touch_end}
+            >
                 <Popover
                     title="任务属性" trigger="click" placement="bottom"
-                    content={<TaskViewDetails tid={props.tid} external={props.external} task={task} hide={()=>set_show_popover(false)} />}
-                    visible={show_popover} onVisibleChange={set_show_popover}
+                    content={<TaskViewDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
+                    visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
                     overlayClassName="task-details-custom-popover"
                 >
                     <span className={'task-badge task-color-'+ctype}>
@@ -110,5 +140,5 @@ export function TaskView(props) {
                 </Popover>
             </WithDueTooltip>
         </span>
-    ),[task,show_popover,ctype,props.tid,props.can_sort,props.external]);
+    ),[task,card_mode,ctype,props.tid,props.can_sort,props.external]);
 }
