@@ -101,31 +101,38 @@ export function TaskView(props) {
     const [card_mode,set_card_mode]=useState(0); // 0: hidden, 1: tooltip, 2: tooltip+popover
 
     let last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    let last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
 
     function on_touch_end() {
         last_touch_end_ts.current=(+new Date());
+    }
+
+    function may_set_card_mode(m) {
+        if((+new Date())-last_vis_change_ts.current>STABLIZE_THRESHOLD_MS) {
+            last_vis_change_ts.current=(+new Date());
+            set_card_mode(m);
+        }
     }
 
     function on_tooltip_visible_change(v) {
         if(card_mode>1) return;
         if(v) {
             // simulate click if is touched
-            set_card_mode((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS ? 2 : 1);
+            may_set_card_mode((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS ? 2 : 1);
         } else {
-            set_card_mode(0);
+            may_set_card_mode(0);
         }
     }
     function on_popover_visible_change(v) {
-        set_card_mode(v ? 2 : 0);
+        may_set_card_mode(v ? 2 : 0);
     }
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <span className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')}>
+        <span className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')} onTouchEnd={on_touch_end}>
             <WithDueTooltip
                 task={task}
                 visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
-                onTouchEnd={on_touch_end}
             >
                 <Popover
                     title="任务属性" trigger="click" placement="bottom"
