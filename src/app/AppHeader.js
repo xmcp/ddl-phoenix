@@ -69,7 +69,8 @@ export function AppHeader(props) {
                     },
                 ]}>
                     <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" title="美术协力 @Meguchi" />
-                    <Icon type="more" /> 不咕计划
+                    <Icon type="more" />
+                    <span className="l-only"> 不咕计划</span>
                 </PoppableText>
                 &nbsp;&nbsp;
                 <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())}>
@@ -78,15 +79,13 @@ export function AppHeader(props) {
                         'done': 'sync',
                         'error': 'exclamation-circle'
                     }[loading.status]} className="header-refresh-icon" />
-                    <span className="l-only">
-                        &nbsp;
-                        {loading.status==='loading' ? '正在更新' :
-                            <span>
-                                <TimeStr time={loading.last_update_time} />
-                                &nbsp;更新
-                            </span>
-                        }
-                    </span>
+                    &nbsp;
+                    {loading.status==='loading' ? '正在更新' :
+                        <span>
+                            <TimeStr time={loading.last_update_time} />
+                            &nbsp;更新
+                        </span>
+                    }
                 </ClickableText>
             </div>
         </div>

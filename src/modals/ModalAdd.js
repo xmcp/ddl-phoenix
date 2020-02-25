@@ -95,9 +95,10 @@ export function ModalAdd(props) {
                     <br />
                     <DatePicker
                         onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
-                        allowClear={true} placeholder="（无截止日期）"
+                        allowClear={true} placeholder="批量设置截止日期"
+                        format="YYYY-MM-DD (ddd)"
                     />
-                    {task_due_first ?
+                    {!!task_due_first &&
                         <span>
                             &nbsp;起每隔&nbsp;
                             <Select
@@ -110,9 +111,6 @@ export function ModalAdd(props) {
                                 <Select.Option value={7}>7天</Select.Option>
                                 <Select.Option value={14}>14天</Select.Option>
                             </Select>
-                        </span> :
-                        <span>
-                            &nbsp; ← 批量设置
                         </span>
                     }
                     <br />
