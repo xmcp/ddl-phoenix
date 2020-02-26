@@ -9,6 +9,7 @@ import moment from 'moment';
 import {init_quicktype, set_moment, is_quicktype_char, proc_input, QuicktypeHelp} from '../logic/date_quicktype';
 import {moment_to_day, scope_name, friendly_date} from '../functions';
 import {close_modal, do_interact} from '../state/actions';
+import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
 export function ModalUpdate(props) {
     const dispatch=useDispatch();
@@ -140,9 +141,11 @@ export function ModalUpdate(props) {
                 <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={shared}>
                     {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
                 </Button>
-                <Input className="modal-btnpair-input" value={name} onChange={(e) => set_name(e.target.value)}
-                       key={modal.visible}
-                       autoFocus={modal.scope!=='task'} onPressEnter={do_post} />
+                <Input
+                    className="modal-btnpair-input" value={name} onChange={(e) => set_name(e.target.value)}
+                    key={modal.visible} autoFocus={modal.scope!=='task'} onPressEnter={do_post}
+                    addonBefore={modal.scope!=='zone' && <ItemBreadcrumb scope={modal.scope} id={modal.itemid} hide_last={true} />}
+                />
             </div>
             {modal.scope==='project' && !item.external &&
                 <p>

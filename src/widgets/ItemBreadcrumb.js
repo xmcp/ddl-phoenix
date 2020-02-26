@@ -34,7 +34,10 @@ export function ItemBreadcrumb(props) {
         <span>
             {result.map((item,idx)=>(
                 <span key={idx} className="item-breadcrumb-item">
-                    {item}{idx!==result.length-1 &&
+                    {(idx!==result.length-1 || !props.hide_last) &&
+                        item
+                    }
+                    {idx!==result.length-1 &&
                         <span className="item-breadcrumb-symbol"><Icon type="right" /></span>
                     }
                 </span>
@@ -46,4 +49,5 @@ ItemBreadcrumb.propTypes={
     scope: PropTypes.oneOf(['zone','project','task',null]),
     id: PropTypes.number,
     suffix: PropTypes.node,
+    hide_last: PropTypes.bool,
 };

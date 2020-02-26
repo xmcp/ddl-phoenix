@@ -77,11 +77,11 @@ export function ModalAdd(props) {
             destroyOnClose={true}
         >
             {modal.scope!=='zone' &&
-            <div>
-                <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<Icon type="edit" />} />
-                <br />
-                <br />
-            </div>
+                <div>
+                    <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<Icon type="edit" />} />
+                    <br />
+                    <br />
+                </div>
             }
             <Input.TextArea
                 value={names} onChange={(e) => set_names(e.target.value)} autoSize={true} key={modal.visible}
@@ -120,14 +120,14 @@ export function ModalAdd(props) {
             <p>
                 连按两次 ↵ 提交 &nbsp;
                 {modal.scope==='project' &&
-                <Popover title="用户间分享" content={<SharingHelp />} trigger="click">
-                    &nbsp;<a>输入分享ID来导入列表 <Icon type="question-circle" /></a>
-                </Popover>
+                    <Popover title="用户间分享" content={<SharingHelp />} trigger="click">
+                        &nbsp;<a>输入分享ID来导入列表 <Icon type="question-circle" /></a>
+                    </Popover>
                 }
                 {modal.scope==='task' &&
-                <span>
+                    <span>
                         &nbsp;
-                    <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
+                        <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
                             &nbsp;<a> 支持批量添加 <Icon type="question-circle" /></a>
                         </Popover>
                     </span>
