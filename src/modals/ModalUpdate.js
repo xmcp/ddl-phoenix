@@ -37,7 +37,7 @@ export function ModalUpdate(props) {
             set_delete_confirmed(false);
             set_shared(!!item.share_hash);
             set_desc(item.desc||'');
-            set_status('active');
+            set_status(item.status||'active');
             set_due_quicktype(init_quicktype(item.due || null));
         }
     }, [modal, item, dispatch]);
@@ -95,12 +95,17 @@ export function ModalUpdate(props) {
 
     // handle keyboard event
     useEffect(() => {
-        if(modal.type!=='update' || !modal.visible || status==='placeholder') return;
+        if(modal.type!=='update' || !modal.visible) return;
 
         function handler(e) {
+            console.log(e.key);
             // skip if we are in other inputs
-            if(['input', 'textarea'].indexOf(e.target.tagName.toLowerCase())!== -1 && !e.target.closest('.modal-update-quicktype-input'))
+            if(['input', 'textarea'].indexOf(e.target.tagName.toLowerCase())!==-1)
                 return;
+
+            if(e.key.toLowerCase()==='enter')
+                do_post();
+
             if(e.ctrlKey || e.altKey || e.metaKey)
                 return;
 
@@ -110,8 +115,7 @@ export function ModalUpdate(props) {
                 set_due_quicktype(proc_input(due_quicktype, e.key.toLowerCase()==='backspace' ? '\b' : e.key.toLowerCase()));
                 if(quicktype_ref.current)
                     quicktype_ref.current.focus();
-            } else if(e.key.toLowerCase()==='enter')
-                do_post();
+            }
         }
 
         document.addEventListener('keydown', handler, {passive: false});

@@ -130,7 +130,10 @@ export function TaskView(props) {
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <span key={ctype} className={'task-view '+(props.can_sort?'reorder-handle reorder-handle-task':'')} onTouchEndCapture={on_touch_end}>
+        <span
+            key={ctype} onTouchEndCapture={on_touch_end}
+            className={'task-view task-view-mode-'+card_mode+(props.can_sort?' reorder-handle reorder-handle-task':'')}
+        >
             <WithDueTooltip
                 task={task}
                 visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
