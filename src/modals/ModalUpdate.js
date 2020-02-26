@@ -139,7 +139,7 @@ export function ModalUpdate(props) {
         >
             <div>
                 <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={shared}>
-                    {delete_confirmed ? '确认删除' : <span><Icon type="delete" /> 删除</span>}
+                    {delete_confirmed ? '删除' : <Icon type="delete" />}
                 </Button>
                 <Input
                     className="modal-btnpair-input" value={name} onChange={(e) => set_name(e.target.value)}

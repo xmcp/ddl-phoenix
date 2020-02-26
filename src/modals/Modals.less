@@ -1,3 +1,5 @@
+@import "../vars";
+
 .reorder-list-container {
     user-select: none;
 }
@@ -27,14 +29,32 @@
 }
 
 .modal-btnpair-btn {
-    width: 100px;
+    width: 50px;
     margin-right: 5px;
+    padding: 0;
 }
 .modal-btnpair-input {
-    width: calc(100% - 110px);
+    width: calc(100% - 55px);
 }
 .modal-btnpair-input .ant-input-group-addon {
-    padding-right: .5em;
+    padding-left: .5em;
+    padding-right: 0;
+    max-width: 6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: .8em;
+}
+.modal-btnpair-input .ant-input {
+    padding-left: .5em;
+}
+
+@media screen and (min-width: @l-breakpoint) {
+    .modal-btnpair-input .ant-input-group-addon {
+        max-width: unset;
+        font-size: unset;
+        padding-right: .25em;
+    }
 }
 
 .modal-add-delta-number-input {
