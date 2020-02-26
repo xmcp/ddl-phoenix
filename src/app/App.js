@@ -37,7 +37,7 @@ export function App(props) {
 
     return (
         <div>
-            <Modals key={'modals-'+timetag} />
+            <Modals />
             <AppHeader />
             <div className="skip-header width-container">
                 <StickyMsgsView />
