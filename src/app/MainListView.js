@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Icon, Badge, Tooltip, message, Modal} from 'antd';
+import {Badge, Tooltip, message, Modal} from 'antd';
 import copy from 'copy-to-clipboard';
 
 import {TaskView} from './TaskView';
@@ -14,6 +14,19 @@ import {scope_name, next_scope, colortype, dflt} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
 
 import './MainListView.less';
+import {
+    PlusOutlined,
+    AppstoreOutlined,
+    ShareAltOutlined,
+    DoubleRightOutlined,
+    EditOutlined,
+    GiftOutlined,
+    WifiOutlined,
+    VerticalAlignMiddleOutlined,
+    DragOutlined,
+    StopOutlined,
+    MoreOutlined
+} from '@ant-design/icons';
 
 function SectionHeader(props) {
     const dispatch=useDispatch();
@@ -32,29 +45,30 @@ function SectionHeader(props) {
     let menu=[
         ...(props.item.external ? [] : [
             {
-                children: (<span><Icon type="plus" /> 新建子{nsname}</span>),
+                children: (<span><PlusOutlined /> 新建子{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('add',ns,props.id)),
             },
             {
-                children: (<span><Icon type="appstore" /> 整理{nsname}</span>),
+                children: (<span><AppstoreOutlined /> 整理{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
                 _key: 'reorder',
             },
         ]),
         ...((cs!=='project' || !props.item.share_hash) ? [] : [
             {
-                children: (<span><Icon type="share-alt" /> 复制分享 ID</span>),
+                children: (<span><ShareAltOutlined /> 复制分享 ID</span>),
                 onClick: ()=>{
                     if(copy(props.item.name.replace(/\n/,' ')+'@@'+props.item.share_hash))
-                        message.success('复制成功',2);
+                        message.success('已复制',2);
                 },
             }
         ]),
         ...(!active_subtasks.length ? [] : [
             {
-                children: (<span><Icon type="double-right" /> 完成所有待办任务</span>),
+                children: (<span><DoubleRightOutlined /> 完成所有待办任务</span>),
                 onClick: ()=>{
                     Modal.confirm({
+                        icon: (<DoubleRightOutlined />),
                         title: `将 ${active_subtasks.length} 个待办任务标为完成`,
                         content: (
                             <ul>
@@ -65,6 +79,8 @@ function SectionHeader(props) {
                                 ))}
                             </ul>
                         ),
+                        okText: (<span>确定<span style={{display: 'none'}}>.</span></span>), // https://github.com/ant-design/ant-design/issues/21692
+                        cancelText: (<span>取消<span style={{display: 'none'}}>.</span></span>),
                         onOk() {
                             dispatch(do_update_completeness(active_subtasks.map((task)=>task.id),'done'));
                         },
@@ -74,7 +90,7 @@ function SectionHeader(props) {
             }
         ]),
         {
-            children: (<span><Icon type="edit" /> 编辑{csname} “{props.item.name}”</span>),
+            children: (<span><EditOutlined /> 编辑{csname} “{props.item.name}”</span>),
             onClick: ()=>dispatch(show_modal('update',cs,props.id)),
         },
     ];
@@ -83,19 +99,19 @@ function SectionHeader(props) {
 
     return (
         <PoppableText menu={menu} className={'section-header-'+props.scope}>
-            <span className={'reorder-handle reorder-handle-'+props.scope}><Icon type="more" /> </span>{props.item.name}
+            <span className={'reorder-handle reorder-handle-'+props.scope}><MoreOutlined /> </span>{props.item.name}
             {props.item.external &&
                 <Tooltip title="来自其他用户的分享" className="project-icon-shared">
-                    &nbsp;<Icon type="gift" />
+                    &nbsp;<GiftOutlined />
                 </Tooltip>
             }
             {!!props.item.share_hash &&
                 <Tooltip title="分享给其他用户" className="project-icon-sharing">
-                    &nbsp;<Icon type="wifi" />
+                    &nbsp;<WifiOutlined />
                 </Tooltip>
             }
         </PoppableText>
-    )
+    );
 }
 
 function ProjectView(props) {
@@ -167,10 +183,10 @@ function ProjectView(props) {
             <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed width-container-rightonly-padded'}>
                 {expanded ?
                     <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
-                        <Icon type="vertical-align-middle" /> <span className="task-collapse-label">收起</span>
+                        <VerticalAlignMiddleOutlined /> <span className="task-collapse-label">收起</span>
                     </ClickableText> :
                     <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg task-collapse-widget">
-                        <Icon type="drag" />
+                        <DragOutlined />
                         {cnt.done>0 &&
                             <Badge count={cnt.done} {...task_collapse_badge_style} title={'已完成'+cnt.done+'项'}>
                                 <IconForColorType type="done" />
@@ -178,7 +194,7 @@ function ProjectView(props) {
                         }
                         {cnt.ignored>0 &&
                             <Badge count={cnt.ignored} {...task_collapse_badge_style}  title={'忽略'+cnt.done+'项'}>
-                                <Icon type="stop" />
+                                <StopOutlined />
                             </Badge>
                         }
                     </ClickableText>
@@ -202,12 +218,12 @@ function ProjectView(props) {
                     </span>
                 }
                 <ClickableText onClick={()=>dispatch(show_modal('add','task',props.pid))}>
-                    <Icon type="plus" />
+                    <PlusOutlined />
                 </ClickableText>
             </div>
             <div className="project-margin" />
         </SideHeaderLayout>
-    )
+    );
 }
 
 function ZoneView(props) {
@@ -225,14 +241,14 @@ function ZoneView(props) {
                 {zone.project_order.length===0 &&
                     <div className="project-header-container">
                         <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
-                            <Icon type="plus" /> 新建类别
+                            <PlusOutlined /> 新建类别
                         </ClickableText>
                     </div>
                 }
             </SideHeaderLayout>
             <div className="zone-margin" />
         </div>
-    )
+    );
 }
 
 export function MainListView(props) {
@@ -256,7 +272,7 @@ export function MainListView(props) {
             </MainListSortable>
             <div className="zone-header-container">
                 <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))} className="section-header-zone">
-                    <Icon type="plus" /> 新建课程
+                    <PlusOutlined /> 新建课程
                 </ClickableText>
             </div>
         </div>

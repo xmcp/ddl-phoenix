@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Icon, Modal, Input, Checkbox, Popover, Row, Col, Radio, Calendar} from 'antd';
+import {Button, Modal, Input, Checkbox, Popover, Row, Col, Radio, Calendar} from 'antd';
 
 import {close_modal_if_success, SharingHelp} from './modal_common';
 import {IconForColorType} from '../widgets/IconForColorType';
@@ -10,6 +10,15 @@ import {init_quicktype, set_moment, is_quicktype_char, proc_input, QuicktypeHelp
 import {moment_to_day, scope_name, friendly_date} from '../functions';
 import {close_modal, do_interact} from '../state/actions';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
+
+import {
+    BackwardOutlined,
+    ForwardOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    QuestionCircleOutlined,
+    CloseCircleOutlined
+} from '@ant-design/icons';
 
 export function ModalUpdate(props) {
     const dispatch=useDispatch();
@@ -78,11 +87,11 @@ export function ModalUpdate(props) {
         return (
             <div className="custom-ant-calendar-title">
                 <Button type="link" onClick={() => onChange(value.clone().add(-1, 'month'))}>
-                    <Icon type="backward" />{value.clone().add(-1, 'month').month()+1}
+                    <BackwardOutlined />{value.clone().add(-1, 'month').month()+1}
                 </Button>
                 {value.year()}年{value.month()+1}月
                 <Button type="link" onClick={() => onChange(value.clone().add(+1, 'month'))}>
-                    {value.clone().add(+1, 'month').month()+1}<Icon type="forward" />
+                    {value.clone().add(+1, 'month').month()+1}<ForwardOutlined />
                 </Button>
                 <Button type="link" onClick={() => onChange(moment_to_day(moment()).add(1, 'day'))}>
                     明天
@@ -130,7 +139,7 @@ export function ModalUpdate(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="edit" /> 编辑{scope_name(modal.scope)}</span>}
+            title={<span><EditOutlined /> 编辑{scope_name(modal.scope)}</span>}
             width={modal.scope==='task' ? 700 : undefined}
             centered={modal.scope==='task' && window.innerHeight<=750}
             onCancel={() => dispatch(close_modal())}
@@ -139,7 +148,7 @@ export function ModalUpdate(props) {
         >
             <div>
                 <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={shared}>
-                    {delete_confirmed ? '删除' : <Icon type="delete" />}
+                    {delete_confirmed ? '删除' : <DeleteOutlined />}
                 </Button>
                 <Input
                     className="modal-btnpair-input" value={name} onChange={(e) => set_name(e.target.value)}
@@ -152,7 +161,7 @@ export function ModalUpdate(props) {
                     <br />
                     <Checkbox checked={shared} onChange={(e) => set_shared(e.target.checked)}>分享给其他用户</Checkbox>
                     <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
-                        <a><Icon type="question-circle" /></a>
+                        <a><QuestionCircleOutlined /></a>
                     </Popover>
                 </p>
             }
@@ -186,14 +195,14 @@ export function ModalUpdate(props) {
                                 <a onClick={() => {
                                     set_due_quicktype(set_moment(null))
                                 }}>
-                                    &nbsp; <Icon type="close-circle" /> &nbsp;
+                                    &nbsp; <CloseCircleOutlined /> &nbsp;
                                 </a>
                             }
                             {due_quicktype.placeholder &&
                                 <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
                                     <a>
                                         &nbsp;{due_quicktype.placeholder}&nbsp;
-                                        <Icon type="question-circle" />
+                                        <QuestionCircleOutlined />
                                     </a>
                                 </Popover>
                             }

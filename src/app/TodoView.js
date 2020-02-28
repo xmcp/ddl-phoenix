@@ -1,6 +1,6 @@
 import React, {useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
-import {Badge, Icon} from 'antd';
+import {Badge} from 'antd';
 import moment from 'moment';
 
 import {TaskView} from './TaskView';
@@ -11,6 +11,7 @@ import {ClickableText} from '../widgets/ClickableText';
 import {moment_to_day, days_to, friendly_date} from '../functions';
 
 import './TodoView.less';
+import {InboxOutlined, CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
 
 const TODO_COLLAPSED_LINES=3;
 
@@ -50,7 +51,7 @@ export function TodoView(props) {
         return (
             <div className="width-container-rightonly">
                 <p>
-                    &nbsp;<Icon type="inbox" /> 无待办任务
+                    &nbsp;<InboxOutlined /> 无待办任务
                 </p>
                 <div className="todo-task-bottom-line" />
             </div>
@@ -119,8 +120,8 @@ export function TodoView(props) {
                     <div className="width-container-rightonly">
                         <ClickableText onClick={()=>set_expanded(!expanded)} className="todo-collapse-switch have-hover-bg">
                             {expanded ?
-                                <span><Icon type="caret-up" /> 收起</span> :
-                                <span><Icon type="caret-down" /> 还有 {todo_tasks.length-TODO_COLLAPSED_LINES} 项</span>
+                                <span><CaretUpOutlined /> 收起</span> :
+                                <span><CaretDownOutlined /> 还有 {todo_tasks.length-TODO_COLLAPSED_LINES} 项</span>
                             }
                         </ClickableText>
                     </div>

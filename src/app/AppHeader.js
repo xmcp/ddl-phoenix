@@ -1,6 +1,6 @@
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Icon, Menu, Dropdown} from 'antd';
+import {Menu, Dropdown} from 'antd';
 
 import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
@@ -10,6 +10,7 @@ import {show_modal, do_refresh, get_token, do_reset_splash_index} from '../state
 
 import './AppHeader.less';
 import fire_bird_logo from '../fire_bird_bw.png';
+import {SettingOutlined, UserOutlined, PlusOutlined, AppstoreOutlined, MoreOutlined, LoadingOutlined, SyncOutlined, ExclamationCircleOutlined, LogoutOutlined, UndoOutlined} from '@ant-design/icons';
 
 export function AppHeader(props) {
     const dispatch=useDispatch();
@@ -32,13 +33,13 @@ export function AppHeader(props) {
                             <Menu.Divider />
                             <Menu.Item>
                                 <a onClick={()=>dispatch(show_modal('settings',null,null))}>
-                                    <Icon type="setting" /> 设置
+                                    <SettingOutlined /> 设置
                                 </a>
                             </Menu.Item>
                             <Menu.Divider />
                             <Menu.Item>
                                 <a onClick={()=>dispatch(do_reset_splash_index())}>
-                                    <Icon type="undo" /> 重新显示欢迎页面
+                                    <UndoOutlined /> 重新显示欢迎页面
                                 </a>
                             </Menu.Item>
                             <Menu.Item>
@@ -48,37 +49,37 @@ export function AppHeader(props) {
                                         dispatch(get_token());
                                     }
                                 }}>
-                                    <Icon type="logout" /> 注销 PKU Helper
+                                    <LogoutOutlined /> 注销 PKU Helper
                                 </a>
                             </Menu.Item>
                         </Menu>}>
                             <ClickableText>
-                                &nbsp; <Icon type="user" /> &nbsp;
+                                &nbsp; <UserOutlined /> &nbsp;
                             </ClickableText>
                         </Dropdown>
                     </div>
                 }
                 <PoppableText menu={[
                     {
-                        children: (<span><Icon type="plus" /> 新建课程</span>),
+                        children: (<span><PlusOutlined /> 新建课程</span>),
                         onClick: ()=>dispatch(show_modal('add','zone',null)),
                     },
                     {
-                        children: (<span><Icon type="appstore" /> 整理课程</span>),
+                        children: (<span><AppstoreOutlined /> 整理课程</span>),
                         onClick: ()=>dispatch(show_modal('reorder','zone',null)),
                     },
                 ]}>
                     <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" title="美术协力 @Meguchi" />
-                    <Icon type="more" />
+                    <MoreOutlined />
                     <span className="l-only"> 不咕计划</span>
                 </PoppableText>
                 &nbsp;&nbsp;
                 <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())}>
-                    <Icon type={{
-                        'loading': 'loading',
-                        'done': 'sync',
-                        'error': 'exclamation-circle'
-                    }[loading.status]} className="header-refresh-icon" />
+                    {{
+                        loading: <LoadingOutlined />,
+                        done: <SyncOutlined className="header-refresh-icon" />,
+                        error: <ExclamationCircleOutlined className="header-refresh-icon" />,
+                    }[loading.status]}
                     &nbsp;
                     {loading.status==='loading' ? '正在更新' :
                         <span>

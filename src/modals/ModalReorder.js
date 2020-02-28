@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Modal, Icon, Menu, Table} from 'antd';
+import {Modal, Menu, Table} from 'antd';
 import {ReactSortable} from "react-sortablejs";
 
 import {close_modal_if_success} from './modal_common';
@@ -8,6 +8,8 @@ import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
 import {colortype, scope_name} from '../functions';
 import {do_interact, close_modal} from '../state/actions';
+
+import {AppstoreOutlined, SwapOutlined, DeleteOutlined, InboxOutlined} from '@ant-design/icons';
 
 function ReorderListItem(props) {
     const colortype_cls=useSelector((state) => (
@@ -93,7 +95,7 @@ export function ModalReorder(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="appstore" /> 整理{scope_name(modal.scope)}</span>}
+            title={<span><AppstoreOutlined /> 整理{scope_name(modal.scope)}</span>}
             onCancel={() => dispatch(close_modal())}
             onOk={do_post}
             destroyOnClose={true}
@@ -104,11 +106,11 @@ export function ModalReorder(props) {
         >
             <Menu selectedKeys={[tab]} onClick={(e)=>set_tab(e.key)}  mode="horizontal">
                 <Menu.Item key="reorder">
-                    <Icon type="swap" />&nbsp;
+                    <SwapOutlined /> &nbsp;
                     调整顺序
                 </Menu.Item>
                 <Menu.Item key="delete">
-                    <Icon type="delete" />&nbsp;
+                    <DeleteOutlined /> &nbsp;
                     批量删除
                 </Menu.Item>
             </Menu>
@@ -133,7 +135,7 @@ export function ModalReorder(props) {
                     </div>
                     {!!orig_list && orig_list.length===0 &&
                         <p>
-                            <Icon type="inbox" /> 没有{scope_name(modal.scope)}
+                            <InboxOutlined /> 没有{scope_name(modal.scope)}
                         </p>
                     }
                 </div>
@@ -200,5 +202,5 @@ export function ModalReorder(props) {
                 </div>
             }
         </Modal>
-    )
+    );
 }

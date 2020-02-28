@@ -1,9 +1,9 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
-import {Icon} from 'antd';
 import PropTypes from 'prop-types';
 
 import './ItemBreadcrumb.less';
+import {RightOutlined} from '@ant-design/icons';
 
 export function ItemBreadcrumb(props) {
     let got=useSelector((state)=>{
@@ -38,7 +38,7 @@ export function ItemBreadcrumb(props) {
                         item
                     }
                     {idx!==result.length-1 &&
-                        <span className="item-breadcrumb-symbol"><Icon type="right" /></span>
+                        <span className="item-breadcrumb-symbol"><RightOutlined /></span>
                     }
                 </span>
             ))}

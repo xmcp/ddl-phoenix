@@ -1,16 +1,24 @@
-import {Icon} from 'antd';
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {
+    SmallDashOutlined,
+    CheckSquareOutlined,
+    StopOutlined,
+    FlagOutlined,
+    ClockCircleOutlined
+} from '@ant-design/icons';
+
 export function IconForColorType(props) {
+    let Widget={
+        placeholder: SmallDashOutlined,
+        done: CheckSquareOutlined,
+        ignored: StopOutlined,
+        highlight: FlagOutlined,
+        todo: ClockCircleOutlined,
+    }[props.type];
     return (
-        <Icon type={{
-            placeholder: 'small-dash',
-            done: 'check-square',
-            ignored: 'stop',
-            highlight: 'flag',
-            todo: 'clock-circle',
-        }[props.type]} className={props.className}/>
+        <Widget className={props.className}/>
     )
 }
 IconForColorType.propTypes={

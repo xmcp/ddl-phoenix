@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, Icon, Checkbox} from 'antd';
+import {Modal, Checkbox} from 'antd';
 
 import {close_modal_if_success} from './modal_common';
 
 import {dflt} from '../functions';
 import {do_update_settings, close_modal} from '../state/actions';
+
+import {SettingOutlined} from '@ant-design/icons';
 
 export function ModalSettings(props) {
     const dispatch=useDispatch();
@@ -30,7 +32,7 @@ export function ModalSettings(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="setting" /> 设置</span>}
+            title={<span><SettingOutlined /> 设置</span>}
             onCancel={() => dispatch(close_modal())}
             onOk={do_post}
             destroyOnClose={true}

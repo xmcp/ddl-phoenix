@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, Icon, Input, DatePicker, Popover, Select} from 'antd';
+import {Modal, Input, DatePicker, Popover, Select} from 'antd';
 
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 import {close_modal_if_success, SharingHelp} from './modal_common';
@@ -8,6 +8,8 @@ import {close_modal_if_success, SharingHelp} from './modal_common';
 import {magic_expand, MagicExpandHelp} from '../logic/magic_expand';
 import {scope_name, prev_scope, moment_to_day} from '../functions';
 import {do_interact, close_modal} from '../state/actions';
+
+import {PlusSquareOutlined, EditOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
 const DOUBLE_ENTER_THRESHOLD_MS=250;
 
@@ -71,14 +73,14 @@ export function ModalAdd(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><Icon type="plus-square" /> 新建{scope_name(modal.scope)}</span>}
+            title={<span><PlusSquareOutlined /> 新建{scope_name(modal.scope)}</span>}
             onCancel={() => dispatch(close_modal())}
             onOk={()=>do_post(names)}
             destroyOnClose={true}
         >
             {modal.scope!=='zone' &&
                 <div>
-                    <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<Icon type="edit" />} />
+                    <ItemBreadcrumb scope={prev_scope(modal.scope)} id={modal.itemid} suffix={<EditOutlined />} />
                     <br />
                     <br />
                 </div>
@@ -121,18 +123,18 @@ export function ModalAdd(props) {
                 连按两次 ↵ 提交 &nbsp;
                 {modal.scope==='project' &&
                     <Popover title="用户间分享" content={<SharingHelp />} trigger="click">
-                        &nbsp;<a>输入分享ID来导入列表 <Icon type="question-circle" /></a>
+                        &nbsp;<a>输入分享ID来导入列表 <QuestionCircleOutlined /></a>
                     </Popover>
                 }
                 {modal.scope==='task' &&
                     <span>
                         &nbsp;
                         <Popover title="批量添加" content={<MagicExpandHelp />} trigger="click">
-                            &nbsp;<a> 支持批量添加 <Icon type="question-circle" /></a>
+                            &nbsp;<a> 支持批量添加 <QuestionCircleOutlined /></a>
                         </Popover>
                     </span>
                 }
             </p>
         </Modal>
-    )
+    );
 }

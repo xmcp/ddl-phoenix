@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Result, Button, Icon} from 'antd';
+import {Result, Button} from 'antd';
 
 import {App} from '../app/App';
 import {WelcomePage, AskTokenPage} from '../welcome/WelcomePage';
@@ -8,6 +8,8 @@ import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
 
 import {do_refresh, get_token, close_modal} from '../state/actions';
+
+import {LoadingOutlined, WifiOutlined, RobotOutlined, BugOutlined, GithubOutlined} from '@ant-design/icons';
 
 function Root(props) {
     const dispatch=useDispatch();
@@ -39,7 +41,7 @@ function Root(props) {
         return (
             <WithFooter>
                 <Result
-                    icon={<Icon type="loading" />}
+                    icon={<LoadingOutlined />}
                     title="不咕计划"
                     subTitle="少女刷夜中"
                 />
@@ -76,7 +78,7 @@ function Root(props) {
         return (
             <WithFooter>
                 <Result
-                    icon={<Icon type="wifi" />}
+                    icon={<WifiOutlined />}
                     status="error"
                     title={"加载失败"}
                     extra={[refresh_btn]}
@@ -89,7 +91,7 @@ function Root(props) {
         return (
             <WithFooter>
                 <Result
-                    icon={<Icon type="robot" />}
+                    icon={<RobotOutlined />}
                     status="error"
                     title="不支持当前版本"
                     subTitle={error_msg}
@@ -103,14 +105,14 @@ function Root(props) {
         return (
             <WithFooter>
                 <Result
-                    icon={<Icon type="bug" />}
+                    icon={<BugOutlined />}
                     status="error"
                     title="后端异常（这是 Bug）"
                     subTitle={error_msg}
                     extra={[
                         refresh_btn,
                         <Button key="report-bug" href="https://github.com/pkuhelper-web/bee/issues" target="_blank">
-                            <Icon type="github" /> 反馈给开发者
+                            <GithubOutlined /> 反馈给开发者
                         </Button>,
                     ]}
                 />

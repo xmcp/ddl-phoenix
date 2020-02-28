@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Icon, Tooltip, Popover, Radio} from 'antd';
+import {Tooltip, Popover, Radio} from 'antd';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 
@@ -8,6 +8,7 @@ import {colortype, completeness_name, friendly_date} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
 
 import './TaskView.less';
+import {EditOutlined} from '@ant-design/icons';
 
 const STABLIZE_THRESHOLD_MS=100;
 
@@ -69,7 +70,7 @@ function TaskViewDetails(props) {
             >
                 <p>
                     {!props.external &&
-                        <a style={{float: 'right'}}><Icon type="edit" /></a>
+                        <a style={{float: 'right'}}><EditOutlined /></a>
                     }
                     {props.task.status==='placeholder' &&
                         '未布置，'
