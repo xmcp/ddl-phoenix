@@ -23,8 +23,8 @@
 }
 
 .due-tooltip {
-    font-size: .9em;
-    line-height: 1.3em;
+    font-size: .92em;
+    line-height: 1.6em;
 }
 
 .task-view-mode-2 {
@@ -65,4 +65,45 @@
     text-align: center;
     padding: .5em 0;
     user-select: none;
+}
+
+.task-view-complbtn {
+    padding-left: 9px;
+    padding-right: 9px;
+    border-color: hsl(0, 0%, 70%) !important;
+    box-shadow: unset !important;
+}
+.task-view-complbtn::before {
+    display: none !important; // reset .ant-radio-button-wrapper
+}
+.task-view-complbtn:hover {
+    filter: drop-shadow(0 0 1px rgba(0,0,0,.3)) saturate(200%) brightness(97%);
+}
+.task-view-complbtn-selected {
+    font-weight: bold;
+}
+
+.task-view-complbtn-todo {
+    color: hsl(210, 90%, 43%) !important;
+}
+.task-view-complbtn-todo.task-view-complbtn-selected {
+    background-color: hsl(210, 100%, 93%) !important;
+}
+.task-view-complbtn-highlight {
+    color: hsl(30, 100%, 44%) !important;
+}
+.task-view-complbtn-highlight.task-view-complbtn-selected {
+    background-color: hsl(30, 100%, 92%) !important;
+}
+.task-view-complbtn-done {
+    color: hsl(110, 30%, 44%) !important;
+}
+.task-view-complbtn-done.task-view-complbtn-selected {
+    background-color: hsl(110, 60%, 95%) !important;
+}
+.task-view-complbtn-ignored {
+    color: hsl(0, 0%, 50%) !important;
+}
+.task-view-complbtn-ignored.task-view-complbtn-selected {
+    background-color: hsl(0, 0%, 94%) !important;
 }

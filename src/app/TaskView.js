@@ -13,21 +13,22 @@ import {EditOutlined} from '@ant-design/icons';
 const STABLIZE_THRESHOLD_MS=100;
 
 function WithDueTooltip(props) {
+    /*
     let ctype=colortype(props.task);
     let ctype_name=completeness_name(ctype);
 
+        <p>
+            {props.task.complete_timestamp ? (friendly_date(props.task.complete_timestamp)+' ') : ''}
+            {ctype_name}
+        </p>
+     */
+
     let tooltip_text=(
         <div className="due-tooltip">
-            <p>
-                {props.task.complete_timestamp ? (friendly_date(props.task.complete_timestamp)+' ') : ''}
-                {ctype_name}
-            </p>
-            <p>
-                {props.task.due ?
-                    (friendly_date(props.task.due, false)+' 截止') :
-                    '无截止日期'
-                }
-            </p>
+            {props.task.due ?
+                (friendly_date(props.task.due, false)+' 截止') :
+                '无截止日期'
+            }
         </div>
     );
 
@@ -87,7 +88,7 @@ function TaskViewDetails(props) {
             <div className="task-view-details-complgroup">
                 <Radio.Group value={ui_compl_value} onChange={(e)=>update_compl(e.target.value)}>
                     {compl_order.map((compl)=>(
-                        <Radio.Button key={compl} value={compl} style={{paddingLeft: '9px', paddingRight: '9px'}}>
+                        <Radio.Button key={compl} value={compl} className={'task-view-complbtn task-view-complbtn-'+compl+(compl===ui_compl_value ? ' task-view-complbtn-selected' : '')}>
                             <IconForColorType type={compl} /> {completeness_name(compl)}
                         </Radio.Button>
                     ))}
