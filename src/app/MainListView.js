@@ -1,6 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Icon, Badge, Tooltip, message} from 'antd';
+import {Icon, Badge, Tooltip, message, Modal} from 'antd';
 import copy from 'copy-to-clipboard';
 
 import {TaskView} from './TaskView';
@@ -11,7 +11,7 @@ import {MainListSortable} from '../widgets/MainListSortable';
 import {IconForColorType} from '../widgets/IconForColorType';
 
 import {scope_name, next_scope, colortype, dflt} from '../functions';
-import {show_modal} from '../state/actions';
+import {show_modal, do_update_completeness} from '../state/actions';
 
 import './MainListView.less';
 
@@ -23,6 +23,12 @@ function SectionHeader(props) {
     let csname=scope_name(props.scope);
     let nsname=scope_name(ns);
 
+    let active_subtasks=useSelector((state)=>(
+        props.scope!=='project' ? [] : props.item.task_order
+            .map((tid)=>state.task[tid])
+            .filter((task)=>task.status==='active' && task.completeness==='todo')
+    ));
+
     let menu=[
         ...(props.item.external ? [] : [
             {
@@ -32,9 +38,10 @@ function SectionHeader(props) {
             {
                 children: (<span><Icon type="appstore" /> 整理{nsname}</span>),
                 onClick: ()=>dispatch(show_modal('reorder',ns,props.id)),
+                _key: 'reorder',
             },
         ]),
-        ...(!props.item.share_hash ? [] : [
+        ...((cs!=='project' || !props.item.share_hash) ? [] : [
             {
                 children: (<span><Icon type="share-alt" /> 复制分享 ID</span>),
                 onClick: ()=>{
@@ -43,13 +50,36 @@ function SectionHeader(props) {
                 },
             }
         ]),
+        ...(!active_subtasks.length ? [] : [
+            {
+                children: (<span><Icon type="double-right" /> 完成所有待办任务</span>),
+                onClick: ()=>{
+                    Modal.confirm({
+                        title: `将 ${active_subtasks.length} 个待办任务标为完成`,
+                        content: (
+                            <ul>
+                                {active_subtasks.map((task)=>(
+                                    <li key={task.id}>
+                                        {task.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        ),
+                        onOk() {
+                            dispatch(do_update_completeness(active_subtasks.map((task)=>task.id),'done'));
+                        },
+                        onCancel() {},
+                    });
+                },
+            }
+        ]),
         {
             children: (<span><Icon type="edit" /> 编辑{csname} “{props.item.name}”</span>),
             onClick: ()=>dispatch(show_modal('update',cs,props.id)),
         },
     ];
-    if(props.item[ns+'_order'].length===0)
-        menu.splice(1,1);
+    if(props.item[ns+'_order'].length===0) // empty
+        menu=menu.filter((menuitem)=>menuitem._key!=='reorder'); // remove reorder
 
     return (
         <PoppableText menu={menu} className={'section-header-'+props.scope}>
@@ -163,7 +193,7 @@ function ProjectView(props) {
                     }}
                 >
                     {tasks_to_display.map((tid)=>(
-                        <TaskView key={tid} tid={tid} external={project.external} can_sort={expanded} />
+                        <TaskView key={tid} tid={tid} external={project.external} can_sort={expanded && !project.external} />
                     ))}
                 </MainListSortable>
                 {tasks_to_display.length===0 &&
@@ -185,21 +215,23 @@ function ZoneView(props) {
     const zone=useSelector((state)=>state.zone[props.zid]);
 
     return (
-        <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
-            <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
-                {zone.project_order.map((pid)=>(
-                    <ProjectView key={pid} pid={pid} />
-                ))}
-            </MainListSortable>
-            {zone.project_order.length===0 &&
-                <div className="project-header-container">
-                    <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
-                        <Icon type="plus" /> 新建类别
-                    </ClickableText>
-                </div>
-            }
+        <div>
+            <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
+                <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
+                    {zone.project_order.map((pid)=>(
+                        <ProjectView key={pid} pid={pid} />
+                    ))}
+                </MainListSortable>
+                {zone.project_order.length===0 &&
+                    <div className="project-header-container">
+                        <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
+                            <Icon type="plus" /> 新建类别
+                        </ClickableText>
+                    </div>
+                }
+            </SideHeaderLayout>
             <div className="zone-margin" />
-        </SideHeaderLayout>
+        </div>
     )
 }
 

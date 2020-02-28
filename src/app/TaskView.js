@@ -49,7 +49,7 @@ function TaskViewDetails(props) {
     let compl_order=['todo','highlight','done','ignored'];
 
     function update_compl(compl) {
-        dispatch(do_update_completeness(props.tid,compl))
+        dispatch(do_update_completeness([props.tid],compl))
             .then((success)=>{
                 if(success)
                     props.hide();

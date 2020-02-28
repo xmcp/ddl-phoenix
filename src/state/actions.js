@@ -55,9 +55,9 @@ export function do_interact(type,scope,data) {
     });
 }
 
-export function do_update_completeness(tid,completeness) {
+export function do_update_completeness(tids,completeness) {
     return sister_call('/update/complete', {
-        id: tid,
+        ids: tids,
         completeness: completeness,
     });
 }

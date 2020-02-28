@@ -30,7 +30,7 @@ export function App(props) {
         return ()=>{
             window.removeEventListener('focus',on_focus);
         }
-    },[loading]);
+    },[loading,dispatch]);
 
     // update components every hour, so date handling will be correct
     let timetag=loading.last_update_time ? Math.floor(+loading.last_update_time/3600000) : 0;

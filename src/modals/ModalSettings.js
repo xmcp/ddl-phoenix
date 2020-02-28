@@ -16,7 +16,7 @@ export function ModalSettings(props) {
 
     useEffect(() => {
         set_collapse_all_past(dflt(settings.collapse_all_past, false));
-    }, [modal, settings.set_collapse_all_past]);
+    }, [modal, settings.collapse_all_past]);
 
     if(modal.type!=='settings') return (<Modal visible={false} />);
 
