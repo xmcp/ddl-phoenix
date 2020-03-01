@@ -21,15 +21,23 @@ export function ModalAdd(props) {
     const [task_due_first, set_task_due_first]=useState(null);
     const [task_due_delta, set_task_due_delta]=useState(7);
 
+    const disable_post_state=useRef(false);
+
     useEffect(() => {
         set_names('');
         set_task_due_first(null);
         set_task_due_delta(7);
+        if(modal.visible && modal.type==='add')
+            disable_post_state.current=false;
     }, [modal]);
 
     function do_post(ns) {
+        if(disable_post_state.current) return;
+
         let name_list=ns.split(/\n/).map((n) => n.trim()).filter((n) => n);
-        if(name_list.length)
+        if(name_list.length) {
+            disable_post_state.current=true;
+
             dispatch(do_interact('add', modal.scope, {
                 parent_id: modal.itemid,
                 names: name_list,
@@ -39,13 +47,18 @@ export function ModalAdd(props) {
                 } : {}),
             }))
                 .then((success)=>{
-                    if(!success) return;
+                    if(!success) {
+                        disable_post_state.current=false;
+                        return;
+                    }
 
+                    // disable_post_state is not recovered because this modal will be closed anyway
                     if(name_list.length===1)
                         dispatch(show_modal_for_last_task('update',modal.itemid,{from_modal_add: true}));
                     else
                         dispatch(close_modal());
                 });
+        }
     }
 
     const last_enter_ts=useRef(-DOUBLE_ENTER_THRESHOLD_MS);
