@@ -13,6 +13,10 @@
     }
 }
 
+.side-header-layout-header {
+    overflow-x: hidden;
+}
+
 @media screen and (min-width: @xl-breakpoint) {
     .xl-only {
         display: unset;
@@ -28,5 +32,21 @@
     }
     .side-header-layout-main {
         margin-left: @xl-side-width;
+    }
+}
+
+@media screen and (min-width: @max-content-width) {
+    .right-fader {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: calc((100% - @max-content-width) / 2);
+        height: 100%;
+        background: linear-gradient(to right,
+            fade(@body-background, 0) 0%,
+            fade(@body-background, 20%) 40%,
+            fade(@body-background, 60%) 100%
+        );
+        pointer-events: none;
     }
 }

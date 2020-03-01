@@ -16,3 +16,9 @@ SideHeaderLayout.propTypes={
     children: PropTypes.node,
     headerClassName: PropTypes.string,
 };
+
+export function RightFader(props) {
+    return (
+        <div className="right-fader" />
+    );
+}

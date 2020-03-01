@@ -1,13 +1,13 @@
 import React, {useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {Badge} from 'antd';
-import moment from 'moment';
 
 import {TaskView} from './TaskView';
 import {SideHeaderLayout} from '../widgets/Layout';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 import {ClickableText} from '../widgets/ClickableText';
 
+import moment from 'moment';
 import {moment_to_day, days_to, friendly_date} from '../functions';
 
 import './TodoView.less';

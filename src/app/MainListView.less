@@ -54,6 +54,11 @@
     margin-bottom: .5rem;
 }
 
+.section-header-zone, .section-header-project {
+    min-width: 120px;
+    white-space: nowrap;
+}
+
 .zone-header-container, .todo-header-container {
     background: #f1f1f1;
     font-size: 1.2em;
@@ -69,6 +74,10 @@
 }
 
 @media screen and (min-width: @xl-breakpoint) {
+    .section-header-zone, .section-header-project {
+        min-width: 80px;
+    }
+
     .zone-header-container, .todo-header-container {
         font-weight: normal;
         font-size: 1em;

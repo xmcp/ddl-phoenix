@@ -30,20 +30,10 @@ export function PoppableText(props) {
         </Menu>
     );
 
-    let last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
     function on_click(_) {
-        if((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS)
-            return;
-
-        // do real click
-        if(props.menu.length) {
+        if(props.menu.length && dropdown_visible) {
             props.menu[0].onClick();
             set_dropdown_visible(false);
-        }
-    }
-    function on_touch_end(e) {
-        if(!dropdown_visible) {
-            last_touch_end_ts.current=(+new Date());
         }
     }
 
@@ -58,9 +48,9 @@ export function PoppableText(props) {
     }
 
     return (
-        <Dropdown overlay={menu_elem} trigger={['hover','click']} mouseEnterDelay={0} mouseLeaveDelay={0.1}
+        <Dropdown overlay={menu_elem} trigger={['click']}
                   visible={dropdown_visible} onVisibleChange={on_vis_change}>
-            <span className={'clickable-text '+(props.className||'')} onTouchEnd={on_touch_end} onClick={on_click}>
+            <span className={'clickable-text '+(props.className||'')} onClick={on_click}>
                 {props.children}
             </span>
         </Dropdown>

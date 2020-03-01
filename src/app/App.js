@@ -9,9 +9,12 @@ import {Footer} from './Footer';
 import {StickyMsgsView} from './StickyMsgsView';
 
 import {do_refresh} from '../state/actions';
+import moment from 'moment';
 
 import './App.less';
 import './task_colors.less';
+import {moment_to_day} from '../functions';
+import {RightFader} from '../widgets/Layout';
 
 const AUTO_REFRESH_THRESHOLD_MS=300000;
 
@@ -32,8 +35,8 @@ export function App(props) {
         }
     },[loading,dispatch]);
 
-    // update components every hour, so date handling will be correct
-    let timetag=loading.last_update_time ? Math.floor(+loading.last_update_time/3600000) : 0;
+    // update components every day, so date handling will be correct
+    let timetag=loading.last_update_time ? moment_to_day(moment(loading.last_update_time)).unix() : 0;
 
     return (
         <div>
@@ -47,6 +50,7 @@ export function App(props) {
                 <MainListView key={'main-list-view-'+timetag} />
             </div>
             <Footer />
+            <RightFader />
         </div>
     );
 }
