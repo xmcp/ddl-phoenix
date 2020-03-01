@@ -26,7 +26,7 @@ export function Footer(props) {
 
 export function WithFooter(props) {
     return (
-        <div className="with-footer-container">
+        <div className={props.no_classname ? '' :'with-footer-container'}>
             {props.children}
             <Footer />
         </div>
