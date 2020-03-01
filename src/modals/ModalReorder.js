@@ -67,7 +67,7 @@ export function ModalReorder(props) {
     },[modal]);
 
     useEffect(() => {
-        set_mod_list(modal.args ? make_object(modal.args) : null);
+        set_mod_list((modal.type==='reorder' && modal.args) ? make_object(modal.args) : null);
         set_del_ids([]);
     }, [modal,tab]);
 

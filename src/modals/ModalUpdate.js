@@ -17,7 +17,8 @@ import {
     EditOutlined,
     DeleteOutlined,
     QuestionCircleOutlined,
-    CloseCircleOutlined
+    CloseCircleOutlined,
+    CheckSquareOutlined,
 } from '@ant-design/icons';
 
 export function ModalUpdate(props) {
@@ -139,7 +140,11 @@ export function ModalUpdate(props) {
     return (
         <Modal
             visible={modal.visible}
-            title={<span><EditOutlined /> 编辑{scope_name(modal.scope)}</span>}
+            title={
+                modal.args && modal.args.from_modal_add ?
+                    <span><CheckSquareOutlined /> 已创建{scope_name(modal.scope)}，请完善信息</span> :
+                    <span><EditOutlined /> 编辑{scope_name(modal.scope)}</span>
+            }
             width={modal.scope==='task' ? 700 : undefined}
             centered={modal.scope==='task' && window.innerHeight<=750}
             onCancel={() => dispatch(close_modal())}

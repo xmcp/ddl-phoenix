@@ -3,11 +3,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Modal, Input, DatePicker, Popover, Select} from 'antd';
 
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
-import {close_modal_if_success, SharingHelp} from './modal_common';
+import {SharingHelp} from './modal_common';
 
 import {magic_expand, MagicExpandHelp} from '../logic/magic_expand';
 import {scope_name, prev_scope, moment_to_day} from '../functions';
-import {do_interact, close_modal} from '../state/actions';
+import {do_interact, close_modal, show_modal_for_last_task} from '../state/actions';
 
 import {PlusSquareOutlined, EditOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 
@@ -38,7 +38,14 @@ export function ModalAdd(props) {
                     task_due_delta: task_due_delta,
                 } : {}),
             }))
-                .then(close_modal_if_success(dispatch));
+                .then((success)=>{
+                    if(!success) return;
+
+                    if(name_list.length===1)
+                        dispatch(show_modal_for_last_task('update',modal.itemid,{from_modal_add: true}));
+                    else
+                        dispatch(close_modal());
+                });
     }
 
     const last_enter_ts=useRef(-DOUBLE_ENTER_THRESHOLD_MS);

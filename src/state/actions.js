@@ -19,6 +19,15 @@ export function show_modal(type,scope,itemid,args) {
     };
 }
 
+export function show_modal_for_last_task(type,itemid,args) {
+    return {
+        type: 'show_modal_for_last_task',
+        modal_type: type,
+        parent_id: itemid,
+        modal_args: args||null,
+    };
+}
+
 export function close_modal() {
     return {
         type: 'close_modal',

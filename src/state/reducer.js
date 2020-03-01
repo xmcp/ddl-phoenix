@@ -131,6 +131,34 @@ export function reduce(state=INIT_STATE,action) {
                 },
             };
 
+        case 'show_modal_for_last_task':
+            let tasks=!state.project ? null : !state.project[action.parent_id] ? null : state.project[action.parent_id].task_order;
+            if(tasks && tasks.length)
+                return {
+                    ...state,
+                    local: {
+                        ...state.local,
+                        modal: {
+                            visible: true,
+                            type: action.modal_type,
+                            scope: 'task',
+                            itemid: tasks[tasks.length-1],
+                            args: action.modal_args,
+                        },
+                    },
+                };
+            else
+                return {
+                    ...state,
+                    local: {
+                        ...state.local,
+                        modal: {
+                            ...state.local.modal,
+                            visible: false,
+                        },
+                    },
+                };
+
         case 'close_modal':
             return {
                 ...state,
