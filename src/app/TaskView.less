@@ -27,12 +27,8 @@
     line-height: 1.5em;
 }
 
-.task-view-mode-2 {
-    cursor: unset;
-}
-
-.task-view-details {
-    width: 280px;
+.task-details {
+    width: 300px;
 }
 
 .task-details-custom-popover .ant-popover-title {
@@ -44,66 +40,84 @@
     margin: unset;
 }
 
-.task-view-details-statline {
+.task-details-statline {
     padding: .75em 1em .5em 1em;
 }
-.task-view-details-statline-link:hover {
+.task-details-statline-link:hover {
     background-color: #f3f3f3;
     cursor: pointer;
 }
 
-.task-view-details-desc {
-    max-height: 4em;
-    line-height: 1em;
-    padding-bottom: .5em;
-    margin-bottom: -.5em;
+.task-details-complgroup {
+    text-align: center;
+    padding: .25em 0 .5em 0;
+    user-select: none;
+}
+
+.task-complbtn {
+    padding-left: 11px;
+    padding-right: 11px;
+    border-color: hsl(0, 0%, 70%) !important;
+    box-shadow: unset !important;
+}
+.task-complbtn::before {
+    display: none !important; // reset .ant-radio-button-wrapper
+}
+.task-complbtn:hover {
+    filter: drop-shadow(0 0 1px rgba(0,0,0,.3)) saturate(200%) brightness(97%);
+}
+.taskcomplbtn-selected {
+    font-weight: bold;
+}
+
+.task-complbtn-todo {
+    color: hsl(210, 90%, 43%) !important;
+}
+.task-complbtn-todo.task-complbtn-selected {
+    background-color: hsl(210, 100%, 93%) !important;
+}
+.task-complbtn-highlight {
+    color: hsl(30, 100%, 44%) !important;
+}
+.task-complbtn-highlight.task-complbtn-selected {
+    background-color: hsl(30, 100%, 92%) !important;
+}
+.task-complbtn-done {
+    color: hsl(110, 30%, 44%) !important;
+}
+.task-complbtn-done.task-complbtn-selected {
+    background-color: hsl(110, 60%, 95%) !important;
+}
+.task-complbtn-ignored {
+    color: hsl(0, 0%, 50%) !important;
+}
+.task-complbtn-ignored.task-complbtn-selected {
+    background-color: hsl(0, 0%, 94%) !important;
+}
+
+.task-details-desc {
+    max-height: 5.75em;
+    line-height: 1.5em;
+    padding: .25em 1em .75em 2em;
+    margin-bottom: 1em;
     overflow: auto;
     white-space: pre-line;
 }
 
-.task-view-details-complgroup {
-    text-align: center;
-    padding: .5em 0;
-    user-select: none;
+.task-details-desc-prefix {
+    position: absolute;
+    left: .5em;
+    margin-top: -.05em;
+}
+.task-details-desc-prefix-clickable {
+    cursor: pointer;
 }
 
-.task-view-complbtn {
-    padding-left: 9px;
-    padding-right: 9px;
-    border-color: hsl(0, 0%, 70%) !important;
-    box-shadow: unset !important;
-}
-.task-view-complbtn::before {
-    display: none !important; // reset .ant-radio-button-wrapper
-}
-.task-view-complbtn:hover {
-    filter: drop-shadow(0 0 1px rgba(0,0,0,.3)) saturate(200%) brightness(97%);
-}
-.task-view-complbtn-selected {
-    font-weight: bold;
+.task-details-desc-marked {
+    background-color: hsl(110, 70%, 92%);
 }
 
-.task-view-complbtn-todo {
-    color: hsl(210, 90%, 43%) !important;
-}
-.task-view-complbtn-todo.task-view-complbtn-selected {
-    background-color: hsl(210, 100%, 93%) !important;
-}
-.task-view-complbtn-highlight {
-    color: hsl(30, 100%, 44%) !important;
-}
-.task-view-complbtn-highlight.task-view-complbtn-selected {
-    background-color: hsl(30, 100%, 92%) !important;
-}
-.task-view-complbtn-done {
-    color: hsl(110, 30%, 44%) !important;
-}
-.task-view-complbtn-done.task-view-complbtn-selected {
-    background-color: hsl(110, 60%, 95%) !important;
-}
-.task-view-complbtn-ignored {
-    color: hsl(0, 0%, 50%) !important;
-}
-.task-view-complbtn-ignored.task-view-complbtn-selected {
-    background-color: hsl(0, 0%, 94%) !important;
+.task-details-desc-marking {
+    text-decoration: underline;
+    text-shadow: 0 0 1px hsla(110,100%,30%,50%);
 }

@@ -1,14 +1,16 @@
-import React, {useMemo, useState, useRef} from 'react';
+import React, {useMemo, useState, useRef, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Tooltip, Popover, Radio} from 'antd';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 
 import {colortype, completeness_name, friendly_date} from '../functions';
-import {show_modal, do_update_completeness} from '../state/actions';
+import {show_modal, do_update_completeness, do_interact} from '../state/actions';
 
 import './TaskView.less';
 import {EditOutlined} from '@ant-design/icons';
+import BulbOutlined from '@ant-design/icons/lib/icons/BulbOutlined';
+import CloseCircleOutlined from '@ant-design/icons/lib/icons/CloseCircleOutlined';
 
 const STABLIZE_THRESHOLD_MS=100;
 
@@ -45,7 +47,7 @@ function WithDueTooltip(props) {
     );
 }
 
-function TaskViewDetails(props) {
+function TaskDetails(props) {
     const dispatch=useDispatch();
 
     let compl_order=['todo','highlight','done','ignored'];
@@ -63,10 +65,29 @@ function TaskViewDetails(props) {
     if(!props.external && props.task.status==='placeholder' && ui_compl_value==='todo')
         ui_compl_value='_placeholder';
 
+    let desc_chunks=useMemo(()=>{
+        let raw=(props.task.desc||'').split(/([^a-zA-Z0-9.@#$%^*_='"<>‘’“”《》])/g);
+        let res=[];
+        for(let idx=0,chars=0;idx<raw.length;idx+=2) {
+            let s=raw[idx]+(raw[idx+1]||'');
+            res.push([chars,s]);
+            chars+=s.length;
+        }
+        if(res.length===1 && res[0][1]==='')
+            res=[];
+        return res;
+    },[props.task.desc]);
+
+    let [marking_desc_idx,set_marking_desc_idx]=useState(0);
+
+    useEffect(()=>{
+        set_marking_desc_idx(0);
+    },[props.task.id]);
+
     return (
-        <div className="task-view-details">
+        <div className="task-details">
             <div
-                className={'task-view-details-statline '+(props.external ? '' : 'task-view-details-statline-link')}
+                className={'task-details-statline '+(props.external ? '' : 'task-details-statline-link')}
                 onClick={props.external ? null : ()=>{props.hide(); dispatch(show_modal('update','task',props.tid))}}
             >
                 <p>
@@ -81,60 +102,102 @@ function TaskViewDetails(props) {
                         '无截止日期'
                     }
                 </p>
-                {!!props.task.desc &&
-                    <p className="task-view-details-desc">{props.task.desc}</p>
-                }
             </div>
-            <div className="task-view-details-complgroup">
+            <div className="task-details-complgroup">
                 <Radio.Group value={ui_compl_value} onChange={(e)=>update_compl(e.target.value)}>
                     {compl_order.map((compl)=>(
-                        <Radio.Button key={compl} value={compl} className={'task-view-complbtn task-view-complbtn-'+compl+(compl===ui_compl_value ? ' task-view-complbtn-selected' : '')}>
+                        <Radio.Button key={compl} value={compl} className={'task-complbtn task-complbtn-'+compl+(compl===ui_compl_value ? ' task-complbtn-selected' : '')}>
                             <IconForColorType type={compl} /> {completeness_name(compl)}
                         </Radio.Button>
                     ))}
                 </Radio.Group>
             </div>
+            {!!desc_chunks.length &&
+                <p className="task-details-desc" onMouseOut={()=>set_marking_desc_idx(0)}>
+                    <div
+                        className={'task-details-desc-prefix'+(props.task.desc_idx ? ' task-details-desc-prefix-clickable' : '')}
+                        onClick={()=>dispatch(do_interact('update','desc_idx',{
+                            id: props.task.id,
+                            desc_idx: null,
+                        }))}
+                        onMouseOver={()=>set_marking_desc_idx(0)}
+                    >
+                        &nbsp;{props.task.desc_idx ? <CloseCircleOutlined /> : <BulbOutlined />}&nbsp;
+                    </div>
+                    {desc_chunks.map(([idx,s])=>(
+                        <span
+                            key={idx}
+                            className={
+                                ((props.task.desc_idx && props.task.desc_idx>idx) ? ' task-details-desc-marked' : '')+
+                                (marking_desc_idx>idx ? ' task-details-desc-marking' : '')
+                            }
+                            onClick={()=>dispatch(do_interact('update','desc_idx',{
+                                id: props.task.id,
+                                desc_idx: idx+s.length,
+                            }))}
+                            onMouseOver={()=>set_marking_desc_idx(idx+s.length)}
+                        >
+                            {s}
+                        </span>
+                    ))}
+                </p>
+            }
         </div>
     );
 }
 
 export function TaskView(props) {
+    const dispatch=useDispatch();
     const task=useSelector((state)=>state.task[props.tid]);
     const [card_mode,set_card_mode]=useState(0); // 0: hidden, 1: tooltip, 2: tooltip+popover
 
     let last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    let last_click_ts=useRef(-STABLIZE_THRESHOLD_MS);
     let last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
 
     function on_touch_end() {
         last_touch_end_ts.current=(+new Date());
+    }
+    function on_click() {
+        last_click_ts.current=(+new Date());
     }
 
     function may_set_card_mode(m) {
         if((+new Date())-last_vis_change_ts.current>STABLIZE_THRESHOLD_MS) {
             last_vis_change_ts.current=(+new Date());
             set_card_mode(m);
-        }
+            return true;
+        } else
+            return false;
     }
 
     function on_tooltip_visible_change(v) {
-        if(card_mode>1) return;
-        if(v) {
-            // simulate click if is touched
+        if(card_mode>1) // 2 -> * is handled by popover
+            return;
+
+        if(v) { // touch should make 0 -> 2 instead of 0 -> 1
             may_set_card_mode((+new Date())-last_touch_end_ts.current<STABLIZE_THRESHOLD_MS ? 2 : 1);
-        } else {
+        } else { // 1 -> 0
             // no `may` here because we want to skip threshold test
             set_card_mode(0);
         }
     }
     function on_popover_visible_change(v) {
-        may_set_card_mode(v ? 2 : 0);
+        if(v) { // (0 or 1) -> 2
+            may_set_card_mode(2);
+        } else { // 2 -> 0
+            if(may_set_card_mode(0)) // is not debounced
+                if((+new Date())-last_click_ts.current<=STABLIZE_THRESHOLD_MS) // double click
+                    if(!props.external) // has permission
+                        dispatch(show_modal('update','task',props.tid));
+        }
     }
 
     let ctype=colortype(task);
     return useMemo(()=>(
         <span
             key={ctype} onTouchEndCapture={on_touch_end}
-            className={'task-view task-view-mode-'+card_mode+(props.can_sort?' reorder-handle reorder-handle-task':'')}
+            className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
         >
             <WithDueTooltip
                 task={task}
@@ -142,11 +205,11 @@ export function TaskView(props) {
             >
                 <Popover
                     title="任务属性" trigger="click" placement="bottom"
-                    content={<TaskViewDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
+                    content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
                     visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
                     overlayClassName="task-details-custom-popover"
                 >
-                    <span className={'task-badge task-color-'+ctype}>
+                    <span className={'task-badge task-color-'+ctype} onClick={on_click}>
                         <IconForColorType type={ctype} className="task-badge-icon" />
                         <span className="task-badge-label">{task.name}</span>
                     </span>

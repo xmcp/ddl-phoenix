@@ -16,7 +16,7 @@ import './task_colors.less';
 import {moment_to_day} from '../functions';
 import {RightFader} from '../widgets/Layout';
 
-const AUTO_REFRESH_THRESHOLD_MS=300000;
+const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
 export function App(props) {
     const dispatch=useDispatch();
