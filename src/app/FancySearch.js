@@ -35,13 +35,13 @@ export function FancySearchCtrl(props) {
 
             if(k==='backspace' && term) {
                 e.preventDefault();
-                dispatch(set_fancy_search(term.substr(0,term.length-1)));
+                dispatch(set_fancy_search('backspace'));
             } else if(k==='escape' && term) {
                 e.preventDefault();
-                dispatch(set_fancy_search(''));
+                dispatch(set_fancy_search('set',''));
             } else if(/^[a-z0-9]$/.test(k)) {
                 e.preventDefault();
-                dispatch(set_fancy_search(term+k));
+                dispatch(set_fancy_search('append',k));
             }
         }
 
@@ -58,7 +58,7 @@ export function FancySearchCtrl(props) {
         <div className="fancy-search-ctrl">
             <div className="width-container" ref={elem}>
                 <span style={{float: 'right'}}>
-                    <span style={{cursor: 'pointer'}} onClick={()=>dispatch(set_fancy_search(''))}>
+                    <span style={{cursor: 'pointer'}} onClick={()=>dispatch(set_fancy_search('set',''))}>
                         &nbsp;<CloseCircleOutlined />&nbsp;
                     </span>
                     <Popover

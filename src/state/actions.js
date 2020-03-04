@@ -90,9 +90,10 @@ export function main_list_sorting(sorting) {
     };
 }
 
-export function set_fancy_search(term) {
+export function set_fancy_search(mod_type,arg) {
     return {
         type: 'set_fancy_search',
-        term: term||'',
+        mod_type: mod_type,
+        arg: arg,
     };
 }

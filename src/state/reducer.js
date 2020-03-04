@@ -74,6 +74,13 @@ function shallow_merge(obj_in,baseline,merge_keys,merge_id) {
     return obj;
 }
 
+function reduce_fancy_search(oldt,typ,arg) {
+    if(typ==='set') return arg;
+    else if(typ==='backspace') return oldt.substr(0,oldt.length-1);
+    else if(typ==='append') return oldt+arg;
+    else return oldt;
+}
+
 export function reduce(state=INIT_STATE,action) {
     process_flash_msg(action);
 
@@ -187,7 +194,7 @@ export function reduce(state=INIT_STATE,action) {
                 ...state,
                 local: {
                     ...state.local,
-                    fancy_search_term: action.term,
+                    fancy_search_term: reduce_fancy_search(state.local.fancy_search_term,action.mod_type,action.arg),
                 },
             };
 
