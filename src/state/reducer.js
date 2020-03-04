@@ -95,7 +95,7 @@ export function reduce(state=INIT_STATE,action) {
                     loading: process_bee_loading_status(state,action),
                     modal: action.hide_modal ? EMPTY_MODAL : state.local.modal,
                     refresh_key: action.manual_refresh ? (+new Date()) : state.local.refresh_key,
-                    fancy_search_term: '',
+                    fancy_search_term: action.keep_search_term ? state.local.fancy_search_term : '',
                 },
             };
 

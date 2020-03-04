@@ -61,6 +61,8 @@ export function do_interact(type,scope,data) {
         hide();
         if(type==='delete')
             return {hide_modal: true};
+        if(type==='update' && scope==='desc_idx')
+            return {keep_search_term: true};
     });
 }
 
