@@ -7,14 +7,15 @@ import {TodoView} from './TodoView';
 import {MainListView} from './MainListView';
 import {Footer} from './Footer';
 import {StickyMsgsView} from './StickyMsgsView';
+import {RightFader} from '../widgets/Layout';
+import {PosFixer} from '../widgets/PosFixer';
 
-import {do_refresh} from '../state/actions';
 import moment from 'moment';
+import {do_refresh} from '../state/actions';
+import {moment_to_day} from '../functions';
 
 import './App.less';
 import './task_colors.less';
-import {moment_to_day} from '../functions';
-import {RightFader} from '../widgets/Layout';
 
 const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
@@ -47,7 +48,9 @@ export function App(props) {
                 <StickyMsgsView />
             </div>
             <div className="width-container-leftonly app-main">
-                <TodoView key={'todo-view-'+timetag} />
+                <PosFixer>
+                    <TodoView key={'todo-view-'+timetag} />
+                </PosFixer>
                 <MainListView key={'main-list-view-'+timetag} />
             </div>
             <Footer />

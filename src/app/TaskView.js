@@ -113,7 +113,7 @@ function TaskDetails(props) {
                 </Radio.Group>
             </div>
             {!!desc_chunks.length &&
-                <p className="task-details-desc" onMouseOut={()=>set_marking_desc_idx(0)}>
+                <div className="task-details-desc" onMouseOut={()=>set_marking_desc_idx(0)}>
                     <div
                         className={'task-details-desc-prefix'+(props.task.desc_idx ? ' task-details-desc-prefix-clickable' : '')}
                         onClick={()=>dispatch(do_interact('update','desc_idx',{
@@ -140,7 +140,7 @@ function TaskDetails(props) {
                             {s}
                         </span>
                     ))}
-                </p>
+                </div>
             }
         </div>
     );
