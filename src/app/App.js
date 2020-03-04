@@ -20,6 +20,7 @@ const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
 export function App(props) {
     const dispatch=useDispatch();
+    const is_sorting=useSelector((state)=>state.local.main_list_sorting);
 
     let loading=useSelector((state)=>state.local.loading);
 
@@ -39,7 +40,7 @@ export function App(props) {
     let timetag=loading.last_update_time ? moment_to_day(moment(loading.last_update_time)).unix() : 0;
 
     return (
-        <div>
+        <div className={is_sorting ? 'main-list-sorting' : 'not-main-list-sorting'}>
             <Modals />
             <AppHeader />
             <div className="skip-header width-container">

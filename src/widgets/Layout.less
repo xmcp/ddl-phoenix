@@ -21,17 +21,23 @@
     .xl-only {
         display: unset;
     }
+
     .side-header-layout::after {
         clear: both;
         content: "";
         display: block;
     }
+
     .side-header-layout-header {
         float: left;
         width: @xl-side-width;
     }
     .side-header-layout-main {
         margin-left: @xl-side-width;
+    }
+
+    .not-main-list-sorting .side-header-layout:hover>.side-header-layout-header .should-highlight {
+        font-weight: bold;
     }
 }
 
@@ -44,8 +50,8 @@
         height: 100%;
         background: linear-gradient(to right,
             fade(@body-background, 0) 0%,
-            fade(@body-background, 20%) 40%,
-            fade(@body-background, 60%) 100%
+            fade(@body-background, 25%) 40%,
+            fade(@body-background, 75%) 100%
         );
         pointer-events: none;
     }

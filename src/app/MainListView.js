@@ -98,7 +98,7 @@ function SectionHeader(props) {
         menu=menu.filter((menuitem)=>menuitem._key!=='reorder'); // remove reorder
 
     return (
-        <PoppableText menu={menu} className={'section-header-'+props.scope}>
+        <PoppableText menu={menu} className={'should-highlight section-header-'+props.scope}>
             <span className={'reorder-handle reorder-handle-'+props.scope}><MoreOutlined /> </span>{props.item.name}
             {props.item.external &&
                 <Tooltip title="来自其他用户的分享" className="project-icon-shared">

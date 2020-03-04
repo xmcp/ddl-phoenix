@@ -30,7 +30,7 @@ function TodoTaskView(props) {
 
 function TodoCatView(props) {
     return (
-        <SideHeaderLayout headerClassName="todo-cat-container" header={props.name}>
+        <SideHeaderLayout headerClassName="todo-cat-container" header={<span className="should-highlight">{props.name}</span>}>
             {props.tasks.map((t)=>(
                 <TodoTaskView key={t.id} task={t} />
             ))}
@@ -108,7 +108,7 @@ export function TodoView(props) {
     return (
         <div>
             <SideHeaderLayout headerClassName="todo-header-container" header={
-                <div>
+                <div className="should-highlight">
                     待办任务
                     <Badge count={todo_tasks.length} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
                 </div>}
