@@ -9,6 +9,7 @@ import {Footer} from './Footer';
 import {StickyMsgsView} from './StickyMsgsView';
 import {RightFader} from '../widgets/Layout';
 import {PosFixer} from '../widgets/PosFixer';
+import {FancySearchCtrl} from './FancySearch';
 
 import moment from 'moment';
 import {do_refresh} from '../state/actions';
@@ -42,7 +43,6 @@ export function App(props) {
 
     return (
         <div className={is_sorting ? 'main-list-sorting' : 'not-main-list-sorting'}>
-            <Modals />
             <AppHeader />
             <div className="skip-header width-container">
                 <StickyMsgsView />
@@ -54,7 +54,10 @@ export function App(props) {
                 <MainListView key={'main-list-view-'+timetag} />
             </div>
             <Footer />
+
             <RightFader />
+            <Modals />
+            <FancySearchCtrl />
         </div>
     );
 }

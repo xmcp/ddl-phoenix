@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Badge, Tooltip, message, Modal} from 'antd';
 import copy from 'copy-to-clipboard';
+import LazyLoad from 'react-lazyload';
 
 import {TaskView} from './TaskView';
 import {SideHeaderLayout} from '../widgets/Layout';
@@ -27,6 +28,7 @@ import {
     StopOutlined,
     MoreOutlined
 } from '@ant-design/icons';
+import {test_term} from '../logic/fancy_search_core';
 
 function SectionHeader(props) {
     const dispatch=useDispatch();
@@ -229,25 +231,36 @@ function ProjectView(props) {
 function ZoneView(props) {
     const dispatch=useDispatch();
     const zone=useSelector((state)=>state.zone[props.zid]);
+    const term=useSelector((state)=>state.local.fancy_search_term);
+    const projects=useSelector((state)=>state.project);
+
+    let project_order_disp=zone.project_order;
+    if(term) {
+        project_order_disp=project_order_disp.filter((pid)=>test_term(zone.name+projects[pid].name,term));
+        if(project_order_disp.length===0)
+            return null;
+    }
 
     return (
-        <div>
-            <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
-                <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
-                    {zone.project_order.map((pid)=>(
-                        <ProjectView key={pid} pid={pid} />
-                    ))}
-                </MainListSortable>
-                {zone.project_order.length===0 &&
-                    <div className="project-header-container">
-                        <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
-                            <PlusOutlined /> 新建类别
-                        </ClickableText>
-                    </div>
-                }
-            </SideHeaderLayout>
-            <div className="zone-margin" />
-        </div>
+        <LazyLoad offset={0} height="7rem" once={true} resize={true}>
+            <div>
+                <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
+                    <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
+                        {project_order_disp.map((pid)=>(
+                            <ProjectView key={pid} pid={pid} />
+                        ))}
+                    </MainListSortable>
+                    {project_order_disp.length===0 &&
+                        <div className="project-header-container">
+                            <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
+                                <PlusOutlined /> 新建类别
+                            </ClickableText>
+                        </div>
+                    }
+                </SideHeaderLayout>
+                <div className="zone-margin" />
+            </div>
+        </LazyLoad>
     );
 }
 

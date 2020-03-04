@@ -20,6 +20,7 @@ const INIT_STATE={
         },
         main_list_sorting: false,
         refresh_key: (+new Date()),
+        fancy_search_term: '',
     },
     error: 'PHOENIX_NO_DATA',
 };
@@ -94,6 +95,7 @@ export function reduce(state=INIT_STATE,action) {
                     loading: process_bee_loading_status(state,action),
                     modal: action.hide_modal ? EMPTY_MODAL : state.local.modal,
                     refresh_key: action.manual_refresh ? (+new Date()) : state.local.refresh_key,
+                    fancy_search_term: '',
                 },
             };
 
@@ -178,6 +180,15 @@ export function reduce(state=INIT_STATE,action) {
                     ...state.local,
                     main_list_sorting: action.sorting,
                 }
+            };
+
+        case 'set_fancy_search':
+            return {
+                ...state,
+                local: {
+                    ...state.local,
+                    fancy_search_term: action.term,
+                },
             };
 
         default:

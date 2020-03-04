@@ -109,7 +109,8 @@ export function ModalUpdate(props) {
         if(modal.type!=='update' || !modal.visible) return;
 
         function handler(e) {
-            console.log(e.key);
+            //console.log(e.key);
+
             // skip if we are in other inputs
             if(['input', 'textarea'].indexOf(e.target.tagName.toLowerCase())!==-1)
                 return;

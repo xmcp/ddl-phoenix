@@ -149,11 +149,14 @@ function TaskDetails(props) {
 export function TaskView(props) {
     const dispatch=useDispatch();
     const task=useSelector((state)=>state.task[props.tid]);
+    const term=useSelector((state)=>state.local.fancy_search_term);
     const [card_mode,set_card_mode]=useState(0); // 0: hidden, 1: tooltip, 2: tooltip+popover
 
-    let last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
-    let last_click_ts=useRef(-STABLIZE_THRESHOLD_MS);
-    let last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    const last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    const last_click_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    const last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
+
+    const task_elem=useRef(null);
 
     function on_touch_end() {
         last_touch_end_ts.current=(+new Date());
@@ -161,6 +164,10 @@ export function TaskView(props) {
     function on_click() {
         last_click_ts.current=(+new Date());
     }
+
+    useEffect(()=>{
+        set_card_mode(0);
+    },[term]);
 
     function may_set_card_mode(m) {
         if((+new Date())-last_vis_change_ts.current>STABLIZE_THRESHOLD_MS) {
@@ -196,7 +203,7 @@ export function TaskView(props) {
     let ctype=colortype(task);
     return useMemo(()=>(
         <span
-            key={ctype} onTouchEndCapture={on_touch_end}
+            key={ctype} ref={task_elem} onTouchEndCapture={on_touch_end}
             className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
         >
             <WithDueTooltip
@@ -208,6 +215,7 @@ export function TaskView(props) {
                     content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
                     visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
                     overlayClassName="task-details-custom-popover"
+                    getPopupContainer={()=>task_elem.current||document.body}
                 >
                     <span className={'task-badge task-color-'+ctype} onClick={on_click}>
                         <IconForColorType type={ctype} className="task-badge-icon" />

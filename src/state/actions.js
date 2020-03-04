@@ -78,12 +78,19 @@ export function do_reset_splash_index() {
 export function do_update_settings(settings) {
     return sister_call('/profile/update_settings', {
         settings: settings
-    })
+    });
 }
 
 export function main_list_sorting(sorting) {
     return {
         type: 'set_main_list_sorting',
         sorting: sorting,
-    }
+    };
+}
+
+export function set_fancy_search(term) {
+    return {
+        type: 'set_fancy_search',
+        term: term||'',
+    };
 }
