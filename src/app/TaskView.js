@@ -36,7 +36,7 @@ function WithDueTooltip(props) {
 
     return (
         <Tooltip
-            title={tooltip_text} trigger="hover"
+            title={tooltip_text} trigger="hover" className={props.className||null}
             visible={props.visible} onVisibleChange={props.onVisibleChange}
             overlayClassName="pointer-event-none" autoAdjustOverflow={false}
             mouseEnterDelay={0} mouseLeaveDelay={0}
@@ -150,6 +150,7 @@ export function TaskView(props) {
     const dispatch=useDispatch();
     const task=useSelector((state)=>state.task[props.tid]);
     const term=useSelector((state)=>state.local.fancy_search_term);
+    const is_sorting=useSelector((state)=>state.local.main_list_sorting);
     const [card_mode,set_card_mode]=useState(0); // 0: hidden, 1: tooltip, 2: tooltip+popover
 
     const last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
@@ -168,6 +169,10 @@ export function TaskView(props) {
     useEffect(()=>{
         set_card_mode(0);
     },[term]);
+    useEffect(()=>{
+       if(is_sorting)
+           set_card_mode(0);
+    },[is_sorting]);
 
     function may_set_card_mode(m) {
         if((+new Date())-last_vis_change_ts.current>STABLIZE_THRESHOLD_MS) {
@@ -204,10 +209,9 @@ export function TaskView(props) {
     return useMemo(()=>(
         <span
             key={ctype} ref={task_elem} onTouchEndCapture={on_touch_end}
-            className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
         >
             <WithDueTooltip
-                task={task}
+                task={task} className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
                 visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
             >
                 <Popover
