@@ -36,8 +36,13 @@
         margin-left: @xl-side-width;
     }
 
+    .should-highlight {
+        transition: color .07s ease-out, text-shadow .07s ease-out;
+    }
+
     .not-main-list-sorting .side-header-layout:hover>.side-header-layout-header .should-highlight {
-        font-weight: bold;
+        color: black;
+        text-shadow: 0 0 1px rgba(0,0,0,.6);
     }
 }
 
