@@ -248,7 +248,7 @@ function ZoneView(props) {
     }
 
     return (
-        <LazyLoad offset={0} height="7rem" once={true} resize={true}>
+        <LazyLoad offset={0} height="4rem" once={true} resize={true}>
             <div>
                 <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
                     <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
