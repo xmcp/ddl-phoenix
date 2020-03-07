@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useRef} from 'react';
 import {useSelector} from 'react-redux';
 import {Badge} from 'antd';
 
@@ -18,11 +18,16 @@ const TODO_COLLAPSED_LINES=3;
 function TodoTaskView(props) {
     const project_external=useSelector((state)=>state.project[props.task.parent_id].external);
 
+    const todo_task_container_ref=useRef(null);
+
     return (
-        <p className="todo-task">
+        <p className="todo-task" ref={todo_task_container_ref}>
             <ItemBreadcrumb scope="project" id={props.task.parent_id} suffix="" />
             <span className="todo-task-tag">
-                <TaskView tid={props.task.id} external={project_external} can_sort={false} />
+                <TaskView
+                    tid={props.task.id} external={project_external}
+                    can_sort={false} popup_container_ref={todo_task_container_ref}
+                />
             </span>
         </p>
     )

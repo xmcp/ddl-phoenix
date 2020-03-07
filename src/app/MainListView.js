@@ -180,8 +180,11 @@ function ProjectView(props) {
         }
     }
 
+    const popup_container_ref=useRef(null);
+
     return (
         <SideHeaderLayout header={<SectionHeader scope="project" id={props.pid} item={project} />} headerClassName="project-header-container">
+            <div ref={popup_container_ref} />
             <div className={expanded ? 'task-list-expanded width-container-rightonly' : 'task-list-collapsed width-container-rightonly-padded'}>
                 {expanded ?
                     <ClickableText onClick={()=>set_expanded(false)} className="have-hover-bg task-collapse-widget">
@@ -211,7 +214,10 @@ function ProjectView(props) {
                     }}
                 >
                     {tasks_to_display.map((tid)=>(
-                        <TaskView key={tid} tid={tid} external={project.external} can_sort={expanded && !project.external} />
+                        <TaskView
+                            key={tid} tid={tid} external={project.external}
+                            can_sort={expanded && !project.external} popup_container_ref={popup_container_ref}
+                        />
                     ))}
                 </MainListSortable>
                 {tasks_to_display.length===0 &&

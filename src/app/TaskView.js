@@ -157,8 +157,6 @@ export function TaskView(props) {
     const last_click_ts=useRef(-STABLIZE_THRESHOLD_MS);
     const last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
 
-    const task_elem=useRef(null);
-
     function on_touch_end() {
         last_touch_end_ts.current=(+new Date());
     }
@@ -207,9 +205,7 @@ export function TaskView(props) {
 
     let ctype=colortype(task);
     return useMemo(()=>(
-        <span
-            key={ctype} ref={task_elem} onTouchEndCapture={on_touch_end}
-        >
+        <span key={ctype} onTouchEndCapture={on_touch_end}>
             <WithDueTooltip
                 task={task} className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
                 visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
@@ -219,7 +215,7 @@ export function TaskView(props) {
                     content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
                     visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
                     overlayClassName="task-details-custom-popover"
-                    getPopupContainer={()=>task_elem.current||document.body}
+                    getPopupContainer={()=>props.popup_container_ref.current||document.body}
                 >
                     <span className={'task-badge task-color-'+ctype} onClick={on_click}>
                         <IconForColorType type={ctype} className="task-badge-icon" />
