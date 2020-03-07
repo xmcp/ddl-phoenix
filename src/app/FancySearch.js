@@ -40,6 +40,9 @@ export function FancySearchCtrl(props) {
             } else if(k==='escape' && term!==null) {
                 e.preventDefault();
                 dispatch(set_fancy_search('set',null));
+            } else if(k==='enter' && term!==null) {
+                if(input_elem.current)
+                    input_elem.current.blur();
             } else if(/^[a-z0-9]$/.test(k)) {
                 e.preventDefault();
                 dispatch(set_fancy_search('append',k));
