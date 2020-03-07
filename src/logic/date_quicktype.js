@@ -183,7 +183,7 @@ export function proc_input(prev_state,ch) {
 export function set_numeric_buffer(buf) {
     console.log('quicktype set numeric buffer',buf);
 
-    let m=parse_numeric_date(buf);
+    let m=moment_to_day(parse_numeric_date(buf));
 
     return {
         buffer: buf,

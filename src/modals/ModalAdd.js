@@ -1,20 +1,28 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector, useStore} from 'react-redux';
 import {Modal, Input, DatePicker, Popover, Select} from 'antd';
 
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 import {SharingHelp} from './modal_common';
 
-import {magic_expand, MagicExpandHelp} from '../logic/magic_expand';
+import {magic_expand, MagicExpandHelp, magic_extend} from '../logic/magic_expand';
 import {scope_name, prev_scope, moment_to_day} from '../functions';
 import {do_interact, close_modal, show_modal_for_last_task} from '../state/actions';
 
 import {PlusSquareOutlined, EditOutlined, QuestionCircleOutlined} from '@ant-design/icons';
+import moment from 'moment';
 
 const DOUBLE_ENTER_THRESHOLD_MS=250;
+const DUE_DELTA_DAYS=[0,1,7,14];
+
+function get_delta_days(ts_a,ts_b) {
+    let t_a=moment_to_day(moment.unix(ts_a)), t_b=moment_to_day(moment.unix(ts_b));
+    return t_b.diff(t_a,'days');
+}
 
 export function ModalAdd(props) {
     const dispatch=useDispatch();
+    const store_getter=useStore();
     const modal=useSelector((state) => state.local.modal);
 
     const [names, set_names]=useState('');
@@ -27,8 +35,32 @@ export function ModalAdd(props) {
         set_names('');
         set_task_due_first(null);
         set_task_due_delta(7);
-        if(modal.visible && modal.type==='add')
+        if(modal.visible && modal.type==='add') {
             disable_post_state.current=false;
+
+            // magic extend
+            if(modal.scope==='task') {
+                let store=store_getter.getState();
+                let subtasks_order=store.project[modal.itemid].task_order;
+                if(subtasks_order.length===1) {
+                    let res=magic_extend(store.task[subtasks_order[0]].name);
+                    if(res)
+                        set_names(res[1]);
+                } else if(subtasks_order.length>=2) {
+                    let last_task=store.task[subtasks_order[subtasks_order.length-1]];
+                    let prelast_task=store.task[subtasks_order[subtasks_order.length-2]];
+                    let res=magic_extend(last_task.name);
+                    if(res && res[0]===prelast_task.name) {
+                        set_names(res[1]);
+                        if(prelast_task.due && last_task.due) {
+                            let delta_due_days=get_delta_days(prelast_task.due,last_task.due);
+                            if(DUE_DELTA_DAYS.indexOf(delta_due_days)!==-1)
+                                set_task_due_first(moment.unix(last_task.due+delta_due_days*86400));
+                        }
+                    }
+                }
+            }
+        }
     }, [modal]);
 
     function do_post(ns) {
@@ -90,6 +122,8 @@ export function ModalAdd(props) {
 
     if(modal.type!=='add') return (<Modal visible={false} />);
 
+    let is_multiple_names=(names.trim().indexOf('\n')!==-1);
+
     return (
         <Modal
             visible={modal.visible}
@@ -112,15 +146,15 @@ export function ModalAdd(props) {
                 placeholder={scope_name(modal.scope)+'名称（每行一个）'}
             />
             <br />
-            {modal.scope==='task' && names.trim().indexOf('\n')!== -1 &&
+            {modal.scope==='task' && (task_due_first || is_multiple_names) &&
                 <div>
                     <br />
                     <DatePicker
                         onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
-                        allowClear={true} placeholder="批量设置截止日期"
+                        allowClear={true} placeholder="设置截止日期"
                         format="YYYY-MM-DD (ddd)"
                     />
-                    {!!task_due_first &&
+                    {!!task_due_first && is_multiple_names &&
                         <span>
                             &nbsp;起每隔&nbsp;
                             <Select
@@ -128,10 +162,9 @@ export function ModalAdd(props) {
                                 onChange={(v) => set_task_due_delta(v)} min={0} max={999}
                                 className="modal-add-delta-number-input"
                             >
-                                <Select.Option value={0}>0天</Select.Option>
-                                <Select.Option value={1}>1天</Select.Option>
-                                <Select.Option value={7}>7天</Select.Option>
-                                <Select.Option value={14}>14天</Select.Option>
+                                {DUE_DELTA_DAYS.map((d)=>(
+                                    <Select.Option key={d} value={d}>{d}天</Select.Option>
+                                ))}
                             </Select>
                         </span>
                     }

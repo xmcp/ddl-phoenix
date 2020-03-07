@@ -19,6 +19,8 @@ const MAX_EXPANSION_COUNT=50;
 const BRACKET_PATTERN=/([\[【][^\]]+[\]】])/;
 const CHI_PATTERN=/^(?:([一二三四五六七八九])?十([一二三四五六七八九])?|([一二三四五六七八九零]))$/;
 const NUM_PATTERN=/^\d{1,2}$/;
+const DETECT_CHI_PATTERN=/^(.*)([一二三四五六七八]?十[一二三四五六七八九]?|[一二三四五六七八九])(.*?)$/;
+const DETECT_NUM_PATTERN=/(^|^.*\D)(\d{1,2})(\D.*?$|$)/;
 const CHINUM={'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'零':0};
 const NUMCHI=['零','一','二','三','四','五','六','七','八','九'];
 
@@ -111,4 +113,32 @@ export function magic_expand(pattern) {
         else
             throw e;
     }
+}
+
+export function magic_extend(pattern) {
+    let res;
+
+    res=DETECT_NUM_PATTERN.exec(pattern);
+    if(res) {
+        let [_,bef,n,aft]=res;
+        n=parseInt(n);
+        //console.log('num',res,n);
+        return [
+            bef+(n-1)+aft,
+            bef+(n+1)+aft,
+        ];
+    }
+
+    res=DETECT_CHI_PATTERN.exec(pattern);
+    if(res) {
+        let [_,bef,c,aft]=res;
+        let n=chi2num(c);
+        //console.log('chi',res,n);
+        return [
+            bef+num2chi(n-1)+aft,
+            bef+num2chi(n+1)+aft,
+        ];
+    }
+
+    return null;
 }
