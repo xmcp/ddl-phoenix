@@ -242,7 +242,7 @@ function ZoneView(props) {
 
     let project_order_disp=zone.project_order;
     if(term) {
-        project_order_disp=project_order_disp.filter((pid)=>test_term(zone.name+projects[pid].name,term));
+        project_order_disp=project_order_disp.filter((pid)=>test_term(zone.name+' '+projects[pid].name,term));
         if(project_order_disp.length===0)
             return null;
     }

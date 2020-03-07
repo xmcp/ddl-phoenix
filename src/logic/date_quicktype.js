@@ -19,8 +19,8 @@ numeric input:
 - yymmdd
 
 relative nav:
-- `j`, `k` to navigate by week
-- `h`, `l` to navigate by day
+- `j`, `k` or up/down to navigate by week
+- `h`, `l` or left/right to navigate by day
 
 */
 
@@ -39,18 +39,19 @@ export function QuicktypeHelp(props) {
                 <li><kbd>N</kbd> 表示今日</li>
                 <li><kbd>Space</kbd> 表示下周的今日</li>
                 <li><kbd>BackSpace</kbd> 清除</li>
-                <li><kbd>J</kbd>, <kbd>K</kbd> 向下、向上移动一周</li>
-                <li><kbd>H</kbd>, <kbd>L</kbd> 向前、向后移动一天</li>
+                <li><kbd>J</kbd>, <kbd>K</kbd> 或 <kbd>↓</kbd>, <kbd>↑</kbd> 向下、向上移动一周</li>
+                <li><kbd>H</kbd>, <kbd>L</kbd> 或 <kbd>←</kbd>, <kbd>→</kbd> 向前、向后移动一天</li>
             </ul>
         </div>
     )
 }
 
 export function is_quicktype_char(c) {
+    console.log(c);
     return [
         'q','w','e','r','t','y','u',
-        'n',' ','backspace','h','j','k',
-        'l','1','2','3','4','5','6','7','8','9','0'
+        'n',' ','backspace','h','j','k','l','arrowleft','arrowright','arrowup','arrowdown',
+        '1','2','3','4','5','6','7','8','9','0',
     ].indexOf(c.toLowerCase())!==-1;
 }
 
@@ -103,12 +104,14 @@ function proc_key_shortcut(prev_state,ch) {
             return done_quicktype('清除日期');
         } else
             return null;
-    } else if(ch==='j' || ch==='k') {
-        nxt_moment=(prev_state.moment||nxt_moment).clone().add(ch==='j'?1:-1,'week');
-        return done_quicktype(ch==='j'?'↓ 下一周':'↑ 上一周');
-    } else if(ch==='h' || ch==='l') {
-        nxt_moment=(prev_state.moment||nxt_moment).clone().add(ch==='l'?1:-1,'day');
-        return done_quicktype(ch==='l'?'→ 后一天':'← 前一天');
+    } else if(['j','k','arrowup','arrowdown'].indexOf(ch)!==-1) {
+        let isdown=(ch==='j'||ch==='arrowdown');
+        nxt_moment=(prev_state.moment||nxt_moment).clone().add(isdown?1:-1,'week');
+        return done_quicktype(isdown?'↓ 下一周':'↑ 上一周');
+    } else if(['h','l','arrowleft','arrowright'].indexOf(ch)!==-1) {
+        let isright=(ch==='l'||ch==='arrowright');
+        nxt_moment=(prev_state.moment||nxt_moment).clone().add(isright?1:-1,'day');
+        return done_quicktype(isright?'→ 后一天':'← 前一天');
     } else if(ch==='n') {
         if(prev_state.prev_shortcut==='n') {
             nxt_moment.add(1,'day');
