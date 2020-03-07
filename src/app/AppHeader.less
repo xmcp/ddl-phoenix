@@ -25,6 +25,13 @@
     animation: 200ms did-refresh;
 }
 
+.header-highlight {
+    .highlight-transition-mixin();
+}
+.header-highlight:hover {
+    .highlight-mixin();
+}
+
 @keyframes did-refresh {
     from {
         transform: translateY(0);

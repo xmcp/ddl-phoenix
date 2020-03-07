@@ -20,7 +20,7 @@ const INIT_STATE={
         },
         main_list_sorting: false,
         refresh_key: (+new Date()),
-        fancy_search_term: '',
+        fancy_search_term: null,
     },
     error: 'PHOENIX_NO_DATA',
 };
@@ -75,6 +75,7 @@ function shallow_merge(obj_in,baseline,merge_keys,merge_id) {
 }
 
 function reduce_fancy_search(oldt,typ,arg) {
+    oldt=oldt||'';
     if(typ==='set') return arg;
     else if(typ==='backspace') return oldt.substr(0,oldt.length-1);
     else if(typ==='append') return oldt+arg;
@@ -102,7 +103,7 @@ export function reduce(state=INIT_STATE,action) {
                     loading: process_bee_loading_status(state,action),
                     modal: action.hide_modal ? EMPTY_MODAL : state.local.modal,
                     refresh_key: action.manual_refresh ? (+new Date()) : state.local.refresh_key,
-                    fancy_search_term: action.keep_search_term ? state.local.fancy_search_term : '',
+                    fancy_search_term: action.keep_search_term ? state.local.fancy_search_term : null,
                 },
             };
 

@@ -37,12 +37,11 @@
     }
 
     .should-highlight {
-        transition: color .08s ease-out, text-shadow .08s ease-out;
+        .highlight-transition-mixin();
     }
 
     .not-main-list-sorting .side-header-layout:hover>.side-header-layout-header .should-highlight {
-        color: black;
-        text-shadow: 0 0 1px rgba(0,0,0,.6);
+        .highlight-mixin();
     }
 }
 

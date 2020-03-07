@@ -6,11 +6,23 @@ import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
 import {TimeStr} from '../widgets/TimeStr';
 
-import {show_modal, do_refresh, get_token, do_reset_splash_index} from '../state/actions';
+import {show_modal, do_refresh, get_token, do_reset_splash_index, set_fancy_search} from '../state/actions';
 
 import './AppHeader.less';
 import fire_bird_logo from '../fire_bird_bw.png';
-import {SettingOutlined, UserOutlined, PlusOutlined, AppstoreOutlined, MoreOutlined, LoadingOutlined, SyncOutlined, ExclamationCircleOutlined, LogoutOutlined, UndoOutlined} from '@ant-design/icons';
+import {
+    SettingOutlined,
+    UserOutlined,
+    PlusOutlined,
+    AppstoreOutlined,
+    MoreOutlined,
+    LoadingOutlined,
+    SyncOutlined,
+    ExclamationCircleOutlined,
+    LogoutOutlined,
+    UndoOutlined,
+    SearchOutlined
+} from '@ant-design/icons';
 
 export function AppHeader(props) {
     const dispatch=useDispatch();
@@ -23,7 +35,7 @@ export function AppHeader(props) {
             <div className="width-container">
                 {!!user &&
                     <div className="pull-right">
-                        <Dropdown trigger={['click']} overlay={<Menu>
+                        <Dropdown trigger={['click']} className="header-highlight" overlay={<Menu>
                             <Menu.Item disabled={true}>
                                 当前用户：{user.name}
                             </Menu.Item>
@@ -59,7 +71,7 @@ export function AppHeader(props) {
                         </Dropdown>
                     </div>
                 }
-                <PoppableText menu={[
+                <PoppableText className="header-highlight" menu={[
                     {
                         children: (<span><PlusOutlined /> 新建课程</span>),
                         onClick: ()=>dispatch(show_modal('add','zone',null)),
@@ -73,8 +85,13 @@ export function AppHeader(props) {
                     <MoreOutlined />
                     <span className="l-only"> 不咕计划</span>
                 </PoppableText>
-                &nbsp;&nbsp;
-                <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())}>
+                &nbsp;
+                <ClickableText onClick={()=>dispatch(set_fancy_search('set',''))} className="header-highlight">
+                    <SearchOutlined />
+                    &nbsp;筛选
+                </ClickableText>
+                &nbsp;
+                <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())} className="header-highlight">
                     {{
                         loading: <LoadingOutlined />,
                         done: <SyncOutlined className="header-refresh-icon" />,
@@ -84,7 +101,7 @@ export function AppHeader(props) {
                     {loading.status==='loading' ? '正在更新' :
                         <span>
                             <TimeStr time={loading.last_update_time} />
-                            &nbsp;更新
+                            <span className="l-only">&nbsp;更新</span>
                         </span>
                     }
                 </ClickableText>

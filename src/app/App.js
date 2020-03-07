@@ -23,6 +23,7 @@ const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 export function App(props) {
     const dispatch=useDispatch();
     const is_sorting=useSelector((state)=>state.local.main_list_sorting);
+    let term=useSelector((state)=>state.local.fancy_search_term);
 
     let loading=useSelector((state)=>state.local.loading);
 
@@ -49,7 +50,9 @@ export function App(props) {
             </div>
             <div className="width-container-leftonly app-main">
                 <PosFixer>
-                    <TodoView key={'todo-view-'+timetag} />
+                    {!term &&
+                        <TodoView key={'todo-view-'+timetag} />
+                    }
                 </PosFixer>
                 <MainListView key={'main-list-view-'+timetag} />
             </div>
