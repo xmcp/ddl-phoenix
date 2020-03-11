@@ -11,7 +11,7 @@ import moment from 'moment';
 import {moment_to_day, days_to, friendly_date, dflt} from '../functions';
 
 import './TodoView.less';
-import {SmileOutlined, CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
+import {InboxOutlined, CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
 
 const INF=1e50; // as sort key
 
@@ -58,9 +58,10 @@ export function TodoView(props) {
     if(todo_tasks.length===0) {
         return (
             <div className="width-container-rightonly">
-                <p>
-                    &nbsp;无待办任务 <SmileOutlined />
+                <p style={{textAlign: 'center', opacity: .8}}>
+                    &nbsp;无待办任务 <InboxOutlined />
                 </p>
+                <div className="todo-task-bottom-margin" />
                 <div className="todo-task-bottom-line" />
             </div>
         );
