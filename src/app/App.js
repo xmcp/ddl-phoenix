@@ -45,6 +45,9 @@ export function App(props) {
     return (
         <div className={is_sorting ? 'main-list-sorting' : 'not-main-list-sorting'}>
             <AppHeader />
+            {term!==null &&
+                <div className="fancy-search-height-placeholder" />
+            }
             <div className="skip-header width-container">
                 <StickyMsgsView />
             </div>

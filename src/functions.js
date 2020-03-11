@@ -27,7 +27,7 @@ export function prev_scope(scope) {
 export function completeness_name(ctype) {
     return {
         done: '完成',
-        ignored: '忽略',
+        ignored: '搁置',
         highlight: '旗标',
         todo: '待办',
         placeholder: '占位'

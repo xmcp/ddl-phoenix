@@ -101,7 +101,7 @@ export function FancySearchCtrl(props) {
                     {!!term &&
                         <Popover
                             title="快速筛选" content={<FancySearchHelp />} trigger="click"
-                            placement="bottomRight" getPopupContainer={()=>container_elem.current}
+                            placement="topRight" getPopupContainer={()=>container_elem.current}
                         >
                             <span style={{cursor: 'pointer'}}>
                                 &nbsp;<QuestionCircleOutlined />&nbsp;

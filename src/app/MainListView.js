@@ -25,7 +25,7 @@ import {
     WifiOutlined,
     VerticalAlignMiddleOutlined,
     DragOutlined,
-    StopOutlined,
+    HourglassOutlined,
     MoreOutlined
 } from '@ant-design/icons';
 import {test_term} from '../logic/fancy_search_core';
@@ -198,8 +198,8 @@ function ProjectView(props) {
                             </Badge>
                         }
                         {cnt.ignored>0 &&
-                            <Badge count={cnt.ignored} {...task_collapse_badge_style}  title={'忽略'+cnt.done+'项'}>
-                                <StopOutlined />
+                            <Badge count={cnt.ignored} {...task_collapse_badge_style}  title={'搁置'+cnt.done+'项'}>
+                                <HourglassOutlined />
                             </Badge>
                         }
                     </ClickableText>

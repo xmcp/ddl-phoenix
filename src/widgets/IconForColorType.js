@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
     SmallDashOutlined,
     CheckSquareOutlined,
-    StopOutlined,
+    HourglassOutlined,
     FlagOutlined,
     ClockCircleOutlined
 } from '@ant-design/icons';
@@ -13,7 +13,7 @@ export function IconForColorType(props) {
     let Widget={
         placeholder: SmallDashOutlined,
         done: CheckSquareOutlined,
-        ignored: StopOutlined,
+        ignored: HourglassOutlined,
         highlight: FlagOutlined,
         todo: ClockCircleOutlined,
     }[props.type];

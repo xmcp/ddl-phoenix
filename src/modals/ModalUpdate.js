@@ -218,7 +218,7 @@ export function ModalUpdate(props) {
                     <Col xs={24} md={12}>
                         <Calendar
                             value={due_quicktype.moment===null ? moment_to_day(moment()) : due_quicktype.moment}
-                            onChange={on_select_date}
+                            onSelect={on_select_date}
                             fullscreen={false} headerRender={calendar_header_render} className="custom-ant-calender"
                         />
                     </Col>
