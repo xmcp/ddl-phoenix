@@ -34,19 +34,15 @@ function Root(props) {
         }
     },[dispatch,error]);
 
-    if(error===null)
-        return (<App />);
-
-    if(loading_status==='loading')
-        return (
-            <WithFooter>
-                <Result
-                    icon={<LoadingOutlined />}
-                    title="不咕计划"
-                    subTitle="少女刷夜中"
-                />
-            </WithFooter>
-        );
+    const LOADING_UI=(
+        <WithFooter>
+            <Result
+                icon={<LoadingOutlined />}
+                title="不咕计划"
+                subTitle="少女刷夜中"
+            />
+        </WithFooter>
+    );
 
     let refresh_btn=(
         <Button key="refresh" type="primary" onClick={()=>dispatch(do_refresh())}>重试</Button>
@@ -72,19 +68,16 @@ function Root(props) {
         },200);
     }
 
+    if(error===null)
+        return (<App />);
+
+    if(loading_status==='loading')
+        return LOADING_UI;
+
     // below: deal with errors
 
-    if(error==='PHOENIX_NO_DATA')
-        return (
-            <WithFooter>
-                <Result
-                    icon={<WifiOutlined />}
-                    status="error"
-                    title={"加载失败"}
-                    extra={[refresh_btn]}
-                />
-            </WithFooter>
-        );
+    if(error==='PHOENIX_NO_DATA') // upon initialization
+        return LOADING_UI;
     else if(error==='PHOENIX_NO_TOKEN')
         return (<AskTokenPage on_got_token={on_got_token} />);
     else if(error==='SISTER_VER_MISMATCH')

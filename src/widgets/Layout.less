@@ -1,10 +1,19 @@
 @import '../vars';
 
+.no-xs {
+    display: none;
+}
 .l-only {
     display: none;
 }
 .xl-only {
     display: none;
+}
+
+@media screen and (min-width: @xs-breakpoint) {
+    .no-xs {
+        display: unset;
+    }
 }
 
 @media screen and (min-width: @l-breakpoint) {

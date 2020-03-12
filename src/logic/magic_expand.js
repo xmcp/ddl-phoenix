@@ -6,11 +6,17 @@ export function MagicExpandHelp(props) {
             <p>可以输入这样的内容：</p>
             <ul>
                 <li><code>Week [1-16]</code></li>
-                <li><code>第【八-十五】章习题</code></li>
-                <li><code>练习[3 5 10 14]</code></li>
+                <li><code>第【八-十二】章习题</code></li>
                 <li><code>[Data Bomb Proxy] Lab</code></li>
+                <li><del style={{opacity: .6}}><code>练习[3.3 3.5 3.9 4.1]</code></del> *</li>
             </ul>
             <p>按回车后将会自动展开为多行（最多{MAX_EXPANSION_COUNT}行）</p>
+            <br />
+            <p>
+                (*) 对这种情况，建议为一次作业只建立一个任务，
+                <br />
+                再将题目列表写在备注里，而不是每道题一个任务。
+            </p>
         </div>
     )
 }

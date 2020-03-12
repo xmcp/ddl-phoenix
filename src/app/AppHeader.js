@@ -82,8 +82,10 @@ export function AppHeader(props) {
                     },
                 ]}>
                     <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" title="美术协力 @Meguchi" />
-                    <MoreOutlined />
-                    <span className="l-only"> 不咕计划</span>
+                    <span className="no-xs">
+                        <MoreOutlined />
+                        <span className="l-only"> 不咕计划</span>
+                    </span>
                 </PoppableText>
                 &nbsp;
                 <ClickableText onClick={()=>dispatch(set_fancy_search('set',''))} className="header-highlight">

@@ -28,7 +28,7 @@ export function PosFixer(props) {
             let delta=cur_rect.height-state.current.elem_height;
             state.current.elem_height=cur_rect.height;
 
-            console.log('posfixer on resize',state.current.elem_height);
+            //console.log('posfixer on resize',state.current.elem_height);
 
             if(Math.abs(delta)>=1 && state.current.scroll_pos>=1) {
                 window.scrollTo(0,state.current.scroll_pos+delta);
