@@ -42,6 +42,7 @@ export function colortype(task) {
 }
 
 export function moment_to_day(m) {
+    if(m===null) return null;
     return m.utcOffset(TIMEZONE).hour(0).minute(0).second(0).millisecond(0);
 }
 

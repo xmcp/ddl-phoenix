@@ -27,11 +27,11 @@ export function FancySearchHelp(props) {
     );
 }
 
-function pinyinify(s) {
+export function pinyinify(s,sep) {
     let ret=[];
     for(let i=0;i<s.length;i++)
         if(dictNotone[s[i]]!==undefined)
-            ret.push(' '+dictNotone[s[i]]+' ');
+            ret.push(sep+dictNotone[s[i]]+sep);
         else
             ret.push(s[i]);
     return ret.join('');
@@ -68,6 +68,8 @@ function get_segment(ss) {
 
 window._search_store={};
 export function test_term(s,term) {
+    term=pinyinify(term,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+
     if(window._search_store[s.length+'-'+s+term]!==undefined)
         return window._search_store[s.length+'-'+s+term];
 
