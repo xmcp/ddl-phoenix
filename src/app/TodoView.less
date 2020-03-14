@@ -1,18 +1,13 @@
 @import '../vars';
 
 .todo-task-badge {
-    vertical-align: -.25em !important;
-    margin-left: .5em;
+    vertical-align: text-top !important;
 }
 
 .todo-collapse-switch {
     display: block;
     padding: .25em;
     margin: 0 .5em;
-}
-
-.todo-task-bottom-margin {
-    height: 1rem;
 }
 
 .todo-header-container, .todo-cat-container, .todo-task {
@@ -23,21 +18,26 @@
     margin-bottom: .5rem;
 }
 
+.todo-task-bottom-line {
+    border-bottom: 1px dashed rgba(0,0,0,.25);
+    margin: 1rem 0;
+}
+
+.todo-lazyload-placeholder {
+    height: 4em;
+}
+
 @media screen and (min-width: @xl-breakpoint) {
-    .todo-task-badge {
-        vertical-align: -.35em !important;
-    }
-    .todo-collapse-switch {
-        margin: 0;
-    }
-    .todo-task-bottom-margin {
-        height: 0;
-    }
-    .todo-task-bottom-line {
-        border-bottom: 1px dashed rgba(0,0,0,.25);
-        margin: 1rem 0;
-    }
     .todo-header-container, .todo-cat-container, .todo-task {
         padding-left: .25em;
     }
+    .todo-lazyload-placeholder {
+        height: 2.5em;
+    }
+}
+
+.todo-empty-hint {
+    text-align: center;
+    opacity: .8;
+    margin-top: 1em;
 }

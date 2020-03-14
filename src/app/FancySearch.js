@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector, useDispatch, useStore} from 'react-redux';
 import {Popover} from 'antd';
 
-import {set_fancy_search} from '../state/actions';
+import {set_fancy_search, set_slim_main_toggle} from '../state/actions';
 import {forceCheck} from 'react-lazyload';
 
 import './FancySearch.less';
@@ -13,6 +13,7 @@ export function FancySearchCtrl(props) {
     const term=useSelector((state)=>state.local.fancy_search_term);
     const modal_visible=useSelector((state)=>state.local.modal.visible);
     const dispatch=useDispatch();
+    const store_getter=useStore();
 
     const container_elem=useRef(null);
     const input_elem=useRef(null);
@@ -24,8 +25,11 @@ export function FancySearchCtrl(props) {
             return;
 
         function on_keypress(e) {
+            let store=store_getter.getState();
             let k=e.key.toLowerCase();
             //console.log(k);
+
+            let term=store.local.fancy_search_term;
 
             // if we are in ctrl-input itself
             if(e.target===input_elem.current) {
@@ -33,6 +37,11 @@ export function FancySearchCtrl(props) {
                     e.preventDefault();
                     input_elem.current.blur();
                 }
+                if(k==='escape' && term!==null) {
+                    e.preventDefault();
+                    dispatch(set_fancy_search('set',null));
+                }
+                return;
             }
 
             // skip if we are in other inputs
@@ -45,9 +54,14 @@ export function FancySearchCtrl(props) {
             if(k==='backspace' && term) {
                 e.preventDefault();
                 dispatch(set_fancy_search('backspace'));
-            } else if(k==='escape' && term!==null) {
-                e.preventDefault();
-                dispatch(set_fancy_search('set',null));
+            } else if(k==='escape') {
+                if(term!==null) { // close fancy search bar
+                    e.preventDefault();
+                    dispatch(set_fancy_search('set',null));
+                } else if(store.local.is_slim && store.local.slim_main_toggle) { // close slim mgmt
+                    e.preventDefault();
+                    dispatch(set_slim_main_toggle(false));
+                }
             } else if(/^[a-z0-9]$/.test(k)) {
                 e.preventDefault();
                 dispatch(set_fancy_search('append',k));
@@ -58,7 +72,7 @@ export function FancySearchCtrl(props) {
         return ()=>{
             document.removeEventListener('keydown',on_keypress,{passive: false, capture: true});
         }
-    },[term,modal_visible]);
+    },[modal_visible]);
 
     useEffect(()=>{
         if(input_elem.current) {

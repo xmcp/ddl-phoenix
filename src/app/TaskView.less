@@ -1,3 +1,5 @@
+@import "../vars";
+
 .task-view {
     display: inline-block;
     cursor: pointer;
@@ -120,4 +122,59 @@
 .task-details-desc-marking {
     text-decoration: underline;
     text-shadow: 0 0 1px hsla(110,100%,30%,50%);
+}
+
+.todo-task-view {
+    display: block !important; // override .task-badge
+    cursor: pointer;
+    margin-bottom: .5em;
+}
+
+.app-slim .todo-task-view {
+    line-height: 1.2em;
+}
+
+.todo-task-ddl-part {
+    font-size: .75em;
+}
+.todo-task-name-part {
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-slim .todo-task-ddl-part {
+    margin-top: .1rem;
+}
+.app-slim .todo-task-name-part {
+    white-space: normal;
+    margin-top: -.1rem;
+    padding-bottom: .2rem;
+}
+
+.task-ddl-already-dued {
+    font-weight: bold;
+    color: white;
+    text-shadow:
+        -1px -1px 1px red, -1px 0 1px red, -1px 1px 1px red,
+        0 -1px 1px red, 0 0 1px red, 0 1px 1px red,
+        1px -1px 1px red, 1px 0 1px red, 1px 1px 1px red;
+}
+
+@media screen and (min-width: @xl-breakpoint) {
+    .todo-task-view {
+        display: flex !important;
+    }
+
+    .todo-task-ddl-part {
+        flex: 0 0 165px;
+        text-align: right;
+    }
+    .todo-task-ddl-part>span {
+        padding: 0 .25em;
+    }
+    .todo-task-name-part {
+        padding-left: .5em;
+        flex: 1 1 0;
+    }
 }

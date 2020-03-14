@@ -14,6 +14,8 @@ const INIT_STATE={
     local: {
         token: null,
         modal: EMPTY_MODAL,
+        is_slim: true,
+        slim_main_toggle: false,
         loading: {
             status: 'done',
             last_update_time: null, // as Date type
@@ -197,6 +199,29 @@ export function reduce(state=INIT_STATE,action) {
                     ...state.local,
                     fancy_search_term: reduce_fancy_search(state.local.fancy_search_term,action.mod_type,action.arg),
                 },
+            };
+
+        case 'set_is_slim':
+            if(action.is_slim===state.local.is_slim)
+                return state;
+            return {
+                ...state,
+                local: {
+                    ...state.local,
+                    is_slim: action.is_slim,
+                    slim_main_toggle: false,
+                }
+            };
+
+        case 'set_slim_main_toggle':
+            if(action.toggle===state.local.slim_main_toggle)
+                return state;
+            return {
+                ...state,
+                local: {
+                    ...state.local,
+                    slim_main_toggle: action.toggle,
+                }
             };
 
         default:

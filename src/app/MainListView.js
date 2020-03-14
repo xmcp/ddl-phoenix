@@ -215,7 +215,7 @@ function ProjectView(props) {
                 >
                     {tasks_to_display.map((tid)=>(
                         <TaskView
-                            key={tid} tid={tid} external={project.external}
+                            key={tid} tid={tid} external={project.external} todo_style={false}
                             can_sort={expanded && !project.external} popup_container_ref={popup_container_ref}
                         />
                     ))}
@@ -248,7 +248,7 @@ function ZoneView(props) {
     }
 
     return (
-        <LazyLoad offset={0} height="4rem" once={true} resize={true}>
+        <LazyLoad offset={0} height="4rem" resize={true} once={true} overflow={true}>
             <div>
                 <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
                     <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>

@@ -4,13 +4,15 @@ import {Tooltip, Popover, Radio} from 'antd';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 
-import {colortype, completeness_name, friendly_date} from '../functions';
+import {colortype, completeness_name, friendly_date, moment_to_day} from '../functions';
 import {show_modal, do_update_completeness, do_interact} from '../state/actions';
+import moment from 'moment';
 
 import './TaskView.less';
 import {EditOutlined} from '@ant-design/icons';
 import BulbOutlined from '@ant-design/icons/lib/icons/BulbOutlined';
 import CloseCircleOutlined from '@ant-design/icons/lib/icons/CloseCircleOutlined';
+import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
 const STABLIZE_THRESHOLD_MS=100;
 
@@ -203,26 +205,56 @@ export function TaskView(props) {
         }
     }
 
+    let today_ts=moment_to_day(moment()).unix();
+
     let ctype=colortype(task);
     return useMemo(()=>(
-        <span key={ctype} onTouchEndCapture={on_touch_end}>
-            <WithDueTooltip
-                task={task} className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
-                visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
-            >
+        props.todo_style ?
+            <div key={ctype} onTouchEndCapture={on_touch_end}>
                 <Popover
                     title="任务属性" trigger="click" placement="bottom"
                     content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
                     visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
                     overlayClassName="task-details-custom-popover"
-                    getPopupContainer={()=>props.popup_container_ref.current||document.body}
+                    getPopupContainer={()=>props.popup_container_ref ? (props.popup_container_ref.current||document.body) : document.body}
                 >
-                    <span className={'task-badge task-color-'+ctype} onClick={on_click}>
-                        <IconForColorType type={ctype} className="task-badge-icon" />
-                        <span className="task-badge-label">{task.name}</span>
-                    </span>
+                    <div className={'task-badge todo-task-view task-color-'+ctype} onClick={on_click}>
+                        <div className="todo-task-ddl-part">
+                            <IconForColorType type={ctype} className="task-badge-icon" />
+                            <span className={(task.completeness!=='done' && task.due && task.due<=today_ts) ? 'task-ddl-already-dued' : ''}>
+                                {
+                                    task.completeness==='done' ?
+                                        (friendly_date(task.complete_timestamp,true)+' 完成') :
+                                        task.due ?
+                                            (friendly_date(task.due,true)+' 截止') :
+                                            '无截止日期'
+                                }
+                            </span>
+                        </div>
+                        <div className="todo-task-name-part">
+                            <ItemBreadcrumb scope="task" id={props.tid} />
+                        </div>
+                    </div>
                 </Popover>
-            </WithDueTooltip>
-        </span>
-    ),[task,card_mode,ctype,props.tid,props.can_sort,props.external]);
+            </div> :
+            <span key={ctype} onTouchEndCapture={on_touch_end}>
+                <WithDueTooltip
+                    task={task} className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
+                    visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}
+                >
+                    <Popover
+                        title="任务属性" trigger="click" placement="bottom"
+                        content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
+                        visible={card_mode>=2} onVisibleChange={on_popover_visible_change}
+                        overlayClassName="task-details-custom-popover"
+                        getPopupContainer={()=>props.popup_container_ref.current||document.body}
+                    >
+                        <span className={'task-badge task-color-'+ctype} onClick={on_click}>
+                            <IconForColorType type={ctype} className="task-badge-icon" />
+                            <span className="task-badge-label">{task.name}</span>
+                        </span>
+                    </Popover>
+                </WithDueTooltip>
+            </span>
+    ),[props.todo_style,task,card_mode,ctype,props.tid,props.can_sort,props.external]);
 }

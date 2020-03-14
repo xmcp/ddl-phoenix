@@ -1,5 +1,9 @@
 @import '../vars';
 
+:root {
+    --viewport-height: 100vh; // inaccurate, so updated in js
+}
+
 .pull-right {
     float: right;
 }
@@ -51,10 +55,64 @@
     }
 }
 
+.todo-view-large-container {
+    max-width: 650px;
+    margin: auto;
+}
+
+.custom-ant-tabs {
+    font-size: unset;
+}
+
 .app-main {
     line-height: 2em;
     font-size: 1.1em;
     user-select: none;
+}
+
+@slim-mgmt-handle-height: 3rem;
+
+.slim-carousel-overflower {
+    height: calc(var(--viewport-height) - @header-height - @slim-mgmt-handle-height - 3.5rem);
+    overflow: auto;
+    padding: 0 1em;
+}
+
+.slim-todo-tab-container {
+    text-align: center;
+    margin-bottom: .5em;
+}
+
+.slim-mgmt-panel {
+    position: fixed;
+    z-index: @header-z-index - 1;
+    height: calc(var(--viewport-height) - @header-height);
+    width: 100vw;
+    top: calc(var(--viewport-height) - @slim-mgmt-handle-height);
+    left: 0;
+    transition: top .1s ease-out;
+    background-color: @body-background;
+}
+.slim-mgmt-panel-on {
+    top: @header-height;
+}
+
+.slim-mgmt-panel-handle {
+    height: @slim-mgmt-handle-height;
+    line-height: @slim-mgmt-handle-height;
+    background-color: white;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    cursor: pointer;
+}
+
+.slim-mgmt-panel-body {
+    height: calc(var(--viewport-height) - @header-height - @slim-mgmt-handle-height);
+    overflow-y: auto;
+    .no-scrollbar-mixin();
+}
+.slim-mgmt-top-padding {
+    height: 1em;
 }
 
 @media screen and (min-width: @max-content-width) {

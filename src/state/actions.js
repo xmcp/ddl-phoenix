@@ -97,3 +97,17 @@ export function set_fancy_search(mod_type,arg) {
         arg: arg,
     };
 }
+
+export function set_is_slim(s) {
+    return {
+        type: 'set_is_slim',
+        is_slim: s,
+    };
+}
+
+export function set_slim_main_toggle(t) {
+    return {
+        type: 'set_slim_main_toggle',
+        toggle: t,
+    };
+}

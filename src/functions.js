@@ -52,6 +52,9 @@ export function days_to(m,ref) {
 
 export function friendly_date(ts,use_rel=true) {
     let date=moment_to_day(moment.unix(ts));
+    if(!date)
+        return '???';
+
     let today=moment_to_day(moment());
     let days_to_due=days_to(date,today);
 
