@@ -23,9 +23,6 @@ import './task_colors.less';
 import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
 import {SwipeHandler} from '../widgets/SwipeHandler';
 
-const LG_BREAKPOINT=800; // px
-const SLIM_MGMT_TRAINSITION_MS=150;
-
 const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
 const TODO_TASK_BADGE_STYLE={backgroundColor: '#fff', color: '#777', boxShadow: '0 0 0 1px #777 inset'};
@@ -155,23 +152,6 @@ export function App(props) {
     const is_sorting=useSelector((state)=>state.local.main_list_sorting);
     const slim=useSelector((state)=>state.local.is_slim);
     const loading=useSelector((state)=>state.local.loading);
-
-    // update slim and viewport_height upon resize
-    useEffect(()=>{
-        function on_resize() {
-            if(window.innerWidth>=LG_BREAKPOINT)
-                dispatch(set_is_slim(false));
-            else
-                dispatch(set_is_slim(true));
-
-            document.body.style.setProperty('--viewport-height',window.innerHeight+'px');
-        }
-        on_resize();
-        window.addEventListener('resize',on_resize,{passive: true});
-        return ()=>{
-            window.removeEventListener('resize',on_resize,{passive: true});
-        };
-    },[]);
 
     // auto refresh
     useEffect(()=>{

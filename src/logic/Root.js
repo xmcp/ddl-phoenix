@@ -7,14 +7,17 @@ import {WelcomePage, AskTokenPage} from '../welcome/WelcomePage';
 import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
 
-import {do_refresh, get_token, close_modal} from '../state/actions';
+import {do_refresh, get_token, close_modal, set_is_slim} from '../state/actions';
 
-import {LoadingOutlined, WifiOutlined, RobotOutlined, BugOutlined, GithubOutlined} from '@ant-design/icons';
+import {LoadingOutlined, RobotOutlined, BugOutlined, GithubOutlined} from '@ant-design/icons';
+
+const LG_BREAKPOINT_PX=800;
 
 function Root(props) {
     const dispatch=useDispatch();
     const token=useSelector((state)=>state.local.token);
 
+    // init process
     useEffect(()=>{
         dispatch(get_token());
     },[dispatch]);
@@ -23,10 +26,28 @@ function Root(props) {
             dispatch(do_refresh());
     },[dispatch,token]);
 
+    // update slim and viewport_height upon resize
+    useEffect(()=>{
+        function on_resize() {
+            if(window.innerWidth>=LG_BREAKPOINT_PX)
+                dispatch(set_is_slim(false));
+            else
+                dispatch(set_is_slim(true));
+
+            document.body.style.setProperty('--viewport-height',window.innerHeight+'px');
+        }
+        on_resize();
+        window.addEventListener('resize',on_resize,{passive: true});
+        return ()=>{
+            window.removeEventListener('resize',on_resize,{passive: true});
+        };
+    },[]);
+
     const error=useSelector((state)=>state.error);
     const error_msg=useSelector((state)=>state.error_msg);
     const loading_status=useSelector((state)=>state.local.loading.status);
 
+    // handle PROCEDD error
     useEffect(()=>{
         if(error==='PROCEED') {
             dispatch(close_modal());
