@@ -59,10 +59,13 @@
     padding-right: .5em;
     white-space: nowrap;
 }
+.section-header-zone.no-min-width, .section-header-project.no-min-width {
+    min-width: unset !important;
+}
 
 .zone-header-container, .todo-header-container {
     background: #f1f1f1;
-    font-size: 1.2em;
+    font-size: 1.1em;
     position: sticky;
     top: @header-height;
     z-index: @header-z-index - 2;
@@ -73,31 +76,31 @@
     top: 0;
 }
 
+.zone-header-container-clickable {
+    cursor: pointer;
+}
+
 .project-header-container, .todo-cat-container {
     padding-top: .5em;
 }
 
-@media screen and (min-width: @xl-breakpoint) {
-    .section-header-zone, .section-header-project {
+.app-large {
+    & .section-header-zone, .section-header-project {
         min-width: 80px;
     }
 
-    .zone-header-container, .todo-header-container {
+    & .zone-header-container {
         font-weight: normal;
         font-size: 1em;
         background: unset;
         padding-top: 0;
         padding-bottom: 0;
-        margin-bottom: 0;
+        margin-bottom: 1rem;
     }
 
-    .project-header-container, .todo-cat-container {
+    & .project-header-container {
         padding-top: 0;
         padding-bottom: 0;
-    }
-
-    .zone-header-container, .todo-header-container {
-        margin-bottom: 1rem;
     }
 }
 
@@ -111,4 +114,35 @@
 
 .project-icon-shared, .project-icon-sharing {
     color: hsl(120, 100%, 30%);
+}
+
+.zone-collapse-anim-enter {
+    opacity: 0;
+    max-height: 0;
+    transition: opacity .1s ease-out, max-height .6s linear;
+}
+.zone-collapse-anim-enter-active {
+    opacity: 1;
+    max-height: 2000px;
+}
+.zone-collapse-anim-enter-done {
+    max-height: unset;
+}
+.zone-collapse-anim-exit {
+    opacity: 1;
+    transition: opacity .1s ease-out;
+}
+.zone-collapse-anim-exit-active {
+    opacity: 0;
+}
+
+.section-header-right-status {
+    font-size: .6em;
+    float: right;
+    margin-right: 1rem;
+    opacity: .8;
+}
+
+.task-collapse-badge .ant-scroll-number-only-unit:not(.current) {
+    visibility: hidden; // fix ios safari bug
 }

@@ -1,8 +1,7 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Badge, Tooltip, message, Modal} from 'antd';
-import copy from 'copy-to-clipboard';
-import LazyLoad from 'react-lazyload';
+import {CSSTransition} from 'react-transition-group';
 
 import {TaskView} from './TaskView';
 import {HEADER_MENU} from './AppHeader';
@@ -12,6 +11,7 @@ import {ClickableText} from '../widgets/ClickableText';
 import {MainListSortable} from '../widgets/MainListSortable';
 import {IconForColorType} from '../widgets/IconForColorType';
 
+import copy from 'copy-to-clipboard';
 import {scope_name, next_scope, colortype, dflt} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
 import {test_term} from '../logic/fancy_search_core';
@@ -28,7 +28,9 @@ import {
     VerticalAlignMiddleOutlined,
     DragOutlined,
     HourglassOutlined,
-    MoreOutlined
+    MoreOutlined,
+    UpOutlined,
+    DownOutlined
 } from '@ant-design/icons';
 
 function SectionHeader(props) {
@@ -100,9 +102,9 @@ function SectionHeader(props) {
     if(props.item[ns+'_order'].length===0) // empty
         menu=menu.filter((menuitem)=>menuitem._key!=='reorder'); // remove reorder
 
-    return (
-        <PoppableText menu={menu} className={'should-highlight section-header-'+props.scope}>
-            <span className={'reorder-handle reorder-handle-'+props.scope}><MoreOutlined /> </span>{props.item.name}
+    let name_ui=(
+        <>
+            {props.item.name}
             {props.item.external &&
                 <Tooltip title="来自其他用户的分享" className="project-icon-shared">
                     &nbsp;<GiftOutlined />
@@ -113,7 +115,29 @@ function SectionHeader(props) {
                     &nbsp;<WifiOutlined />
                 </Tooltip>
             }
-        </PoppableText>
+        </>
+    );
+
+    return (
+        <span>
+            {!!props.set_expanded &&
+                <span className="section-header-right-status">
+                    {props.expanded ? <UpOutlined /> : <DownOutlined />}
+                </span>
+            }
+            {props.set_expanded ?
+                <>
+                    <PoppableText menu={menu} className={'should-highlight no-min-width section-header-'+props.scope}>
+                        <span className={'reorder-handle reorder-handle-'+props.scope}><MoreOutlined /> </span>
+                    </PoppableText>
+                    {name_ui}
+                </> :
+                <PoppableText menu={menu} className={'should-highlight section-header-'+props.scope}>
+                    <span className={'reorder-handle reorder-handle-'+props.scope}><MoreOutlined /> </span>
+                    {name_ui}
+                </PoppableText>
+            }
+        </span>
     );
 }
 
@@ -242,32 +266,60 @@ function ZoneView(props) {
     const projects=useSelector((state)=>state.project);
 
     let project_order_disp=zone.project_order;
-    if(term) {
+
+    const [expanded,set_expanded]=useState(false);
+
+    // auto change collapse state
+    useEffect(()=>{
+        if(!props.collapsible)
+            set_expanded(false);
+    },[props.collapsible]);
+    useEffect(()=>{
+        set_expanded(!!term);
+    },[term]);
+
+    if(term)
         project_order_disp=project_order_disp.filter((pid)=>test_term(zone.name+' '+projects[pid].name,term));
-        if(project_order_disp.length===0)
-            return null;
-    }
+
+    if(term && project_order_disp.length===0)
+        return null;
+
+    let projects_ui=(
+        <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
+            {project_order_disp.map((pid)=>(
+                <ProjectView key={pid} pid={pid} />
+            ))}
+        </MainListSortable>
+    );
 
     return (
-        <LazyLoad offset={0} height="4rem" resize={true} once={true} overflow={true}>
-            <div>
-                <SideHeaderLayout headerClassName="zone-header-container" header={<SectionHeader scope="zone" id={props.zid} item={zone} />}>
-                    <MainListSortable scope="project" id={props.zid} subs={zone.project_order}>
-                        {project_order_disp.map((pid)=>(
-                            <ProjectView key={pid} pid={pid} />
-                        ))}
-                    </MainListSortable>
-                    {project_order_disp.length===0 &&
-                        <div className="project-header-container">
-                            <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
-                                <PlusOutlined /> 新建类别
-                            </ClickableText>
-                        </div>
-                    }
-                </SideHeaderLayout>
-                <div className="zone-margin" />
-            </div>
-        </LazyLoad>
+        <div>
+            <SideHeaderLayout
+                headerClassName={'zone-header-container'+(props.collapsible ? ' zone-header-container-clickable' : '')}
+                headerOnClick={set_expanded ? (e)=>{
+                    if(!e.target.closest('.section-header-zone'))
+                        set_expanded(!expanded);
+                } : null}
+                header={
+                    <SectionHeader scope="zone" id={props.zid} item={zone} expanded={expanded} set_expanded={props.collapsible ? set_expanded : null} />
+                }
+            >
+                {props.collapsible ?
+                    <CSSTransition in={expanded} timeout={600} classNames="zone-collapse-anim">
+                        {expanded ? projects_ui : <div />}
+                    </CSSTransition> :
+                    projects_ui
+                }
+                {project_order_disp.length===0 &&
+                    <div className="project-header-container">
+                        <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
+                            <PlusOutlined /> 新建类别
+                        </ClickableText>
+                    </div>
+                }
+            </SideHeaderLayout>
+            <div className="zone-margin" />
+        </div>
     );
 }
 
@@ -275,6 +327,7 @@ export function MainListView(props) {
     const dispatch=useDispatch();
     const zone_order=useSelector((state)=>state.zone_order);
     const slim=useSelector((state)=>state.local.is_slim);
+    const term=useSelector((state)=>state.local.fancy_search_term);
 
     return (
         <div>
@@ -288,14 +341,16 @@ export function MainListView(props) {
             </div>
             <MainListSortable scope="zone" id={null} subs={zone_order}>
                 {zone_order.map((zid)=>(
-                    <ZoneView key={zid} zid={zid} />
+                    <ZoneView key={zid} zid={zid} collapsible={slim} />
                 ))}
             </MainListSortable>
             {slim ?
                 <div>
-                    <PoppableText menu={HEADER_MENU(dispatch)}>
-                        <MoreOutlined /> 共 {zone_order.length} 门课程
-                    </PoppableText>
+                    {!term &&
+                        <PoppableText menu={HEADER_MENU(dispatch)}>
+                            <MoreOutlined /> 共 {zone_order.length} 门课程
+                        </PoppableText>
+                    }
                 </div> :
                 <div className="zone-header-container">
                     <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))} className="section-header-zone">

@@ -26,24 +26,17 @@
     overflow-x: hidden;
 }
 
+.app-large .side-header-layout-header {
+    float: left;
+    width: @xl-side-width;
+}
+.app-large .side-header-layout-main {
+    margin-left: @xl-side-width;
+}
+
 @media screen and (min-width: @xl-breakpoint) {
     .xl-only {
         display: unset;
-    }
-/*
-// cause bug on firefox
-    .side-header-layout::after {
-        clear: both;
-        content: "";
-        display: block;
-    }
-*/
-    .side-header-layout-header {
-        float: left;
-        width: @xl-side-width;
-    }
-    .side-header-layout-main {
-        margin-left: @xl-side-width;
     }
 
     .should-highlight {

@@ -34,7 +34,7 @@ export function TodoViewFx(props) {
         tasks ? Object.values(tasks).filter((t)=>t.completeness==='done') : []
     ),[tasks]);
 
-    const todo_max_lines=dflt(settings.todo_max_lines,3);
+    const todo_max_lines=dflt(settings.todo_max_lines,5);
 
     let todo_ui, compl_ui, todo_cnt;
 

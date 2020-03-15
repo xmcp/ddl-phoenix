@@ -3,7 +3,6 @@ import {useSelector, useDispatch, useStore} from 'react-redux';
 import {Popover} from 'antd';
 
 import {set_fancy_search, set_slim_main_toggle} from '../state/actions';
-import {forceCheck} from 'react-lazyload';
 
 import './FancySearch.less';
 import {SearchOutlined, QuestionCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
@@ -19,8 +18,6 @@ export function FancySearchCtrl(props) {
     const input_elem=useRef(null);
 
     useEffect(()=>{
-        forceCheck(); // otherwise some zones may be invisible
-
         if(modal_visible) // no fancy search when modal is shown
             return;
 

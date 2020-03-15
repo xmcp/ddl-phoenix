@@ -41,13 +41,7 @@ function AppSlim(props) {
             dispatch(set_slim_main_toggle(true));
     },[term]);
 
-    // check lazyload upon main_toggle change
-    useEffect(()=>{
-        setTimeout(forceCheck,SLIM_MGMT_TRAINSITION_MS);
-    },[main_toggle]);
-
     const [tab,set_tab]=useState(0);
-    const carousel_ref=useRef(null);
 
     function tab_onchange(e) {
         set_tab(e.target.value);
@@ -55,14 +49,6 @@ function AppSlim(props) {
     function on_swipe(_dir) {
         set_tab(1-tab);
     }
-
-    // update carousel upon tab change
-    useEffect(()=>{
-        if(carousel_ref.current) {
-            carousel_ref.current.goTo(tab,false); // 2nd arg: dontAnimate
-            setTimeout(forceCheck,1);
-        }
-    },[tab]);
 
     return (
         <div className="app-slim">
