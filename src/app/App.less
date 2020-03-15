@@ -71,14 +71,17 @@
 }
 
 .slim-todo-overflower {
-    margin-top: @header-height + 1.5rem;
-    min-height: calc(var(--viewport-height) - @header-height - 5.5rem);
+    margin-top: 1.5rem;
+    min-height: calc(var(--viewport-height) - @header-height - 7rem);
 }
 
+.slim-todo-tab-margin-top {
+    height: @header-height + 1.5rem;
+}
 .slim-todo-tab-container {
     text-align: center;
-    padding-top: 1em;
-    padding-bottom: 1em;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     position: sticky;
     z-index: @header-z-index - 1;
     background-color: fade(@body-background,80%);

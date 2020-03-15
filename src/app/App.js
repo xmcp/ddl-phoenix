@@ -65,7 +65,8 @@ function AppSlim(props) {
     return (
         <div className="app-slim">
             <TodoViewFx expanded={true} set_expanded={null}>{(todo_ui,compl_ui,todo_cnt)=>(
-                <div className="">
+                <div>
+                    <div className="slim-todo-tab-margin-top" />
                     <div className="slim-todo-tab-container">
                         <Radio.Group value={tab} onChange={tab_onchange}>
                             <Radio.Button value={0}>

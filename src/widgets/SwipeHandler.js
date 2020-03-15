@@ -2,7 +2,7 @@ import React, {useRef} from 'react';
 import PropTypes from 'prop-types';
 
 const SWIPE_THRESHOLD_PX_SQ=50*50;
-const SWIPE_THRESHOLD_TAN=.6;
+const SWIPE_THRESHOLD_TAN=.4;
 
 export function SwipeHandler(props) {
     const state=useRef({possible: false, start_x: 0, start_y: 0});
