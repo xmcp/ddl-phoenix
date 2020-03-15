@@ -229,22 +229,24 @@ function ProjectView(props) {
                         }
                     </ClickableText>
                 }
-                <MainListSortable
-                    scope="task" id={props.pid} subs={tasks_to_display}
-                    key={expanded} // https://github.com/SortableJS/react-sortablejs/issues/118
-                    underlying={{
-                        tag: "span",
-                        direction: 'horizontal',
-                        disabled: !expanded,
-                    }}
-                >
-                    {tasks_to_display.map((tid)=>(
-                        <TaskView
-                            key={tid} tid={tid} external={project.external} todo_style={false}
-                            can_sort={expanded && !project.external} popup_container_ref={popup_container_ref}
-                        />
-                    ))}
-                </MainListSortable>
+                <span className={expanded ? '' : 'js-can-scrollx'}>
+                    <MainListSortable
+                        scope="task" id={props.pid} subs={tasks_to_display}
+                        key={expanded} // https://github.com/SortableJS/react-sortablejs/issues/118
+                        underlying={{
+                            tag: "span",
+                            direction: 'horizontal',
+                            disabled: !expanded,
+                        }}
+                    >
+                        {tasks_to_display.map((tid)=>(
+                            <TaskView
+                                key={tid} tid={tid} external={project.external} todo_style={false}
+                                can_sort={expanded && !project.external} popup_container_ref={popup_container_ref}
+                            />
+                        ))}
+                    </MainListSortable>
+                </span>
                 {tasks_to_display.length===0 &&
                     <span className="task-empty-label">
                         无待办任务 &nbsp;

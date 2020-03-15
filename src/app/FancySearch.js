@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import {Popover} from 'antd';
 
-import {set_fancy_search, set_slim_main_toggle} from '../state/actions';
+import {set_fancy_search} from '../state/actions';
 
 import './FancySearch.less';
 import {SearchOutlined, QuestionCircleOutlined, CloseCircleOutlined} from '@ant-design/icons';
@@ -42,7 +42,7 @@ export function FancySearchCtrl(props) {
             }
 
             // skip if we are in other inputs
-            if(['input', 'textarea'].indexOf(e.target.tagName.toLowerCase())!==-1)
+            if(['input', 'textarea'].indexOf(e.target.tagName.toLowerCase())!==-1 && e.target.getAttribute('type')!=='radio')
                 return;
 
             if(e.ctrlKey || e.altKey || e.metaKey)
@@ -55,9 +55,6 @@ export function FancySearchCtrl(props) {
                 if(term!==null) { // close fancy search bar
                     e.preventDefault();
                     dispatch(set_fancy_search('set',null));
-                } else if(store.local.is_slim && store.local.slim_main_toggle) { // close slim mgmt
-                    e.preventDefault();
-                    dispatch(set_slim_main_toggle(false));
                 }
             } else if(/^[a-z0-9]$/.test(k)) {
                 e.preventDefault();

@@ -11,8 +11,7 @@ import {
     do_refresh,
     get_token,
     do_reset_splash_index,
-    set_fancy_search,
-    set_slim_main_toggle
+    set_fancy_search
 } from '../state/actions';
 
 import './AppHeader.less';
@@ -93,7 +92,7 @@ export function AppHeader(props) {
                     </div>
                 }
                 {slim ?
-                    <ClickableText onClick={()=>dispatch(set_slim_main_toggle(false))}>
+                    <ClickableText onClick={null}>
                         <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
                         <span className="l-only">不咕计划</span>
                     </ClickableText> :

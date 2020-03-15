@@ -104,10 +104,3 @@ export function set_is_slim(s) {
         is_slim: s,
     };
 }
-
-export function set_slim_main_toggle(t) {
-    return {
-        type: 'set_slim_main_toggle',
-        toggle: t,
-    };
-}

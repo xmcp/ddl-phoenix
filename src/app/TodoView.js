@@ -81,7 +81,7 @@ export function TodoViewFx(props) {
         todo_ui=(
             <div>
                 {todo_tasks_sorted.map((t)=>(
-                    <LazyLoad key={t.id} offset={0} placeholder={<div className="todo-lazyload-placeholder" />} overflow={true} once={true}>
+                    <LazyLoad key={t.id} offset={0} placeholder={<div className="todo-lazyload-placeholder" />} once={true}>
                         <TodoTaskView task={t} />
                     </LazyLoad>
                 ))}
@@ -109,7 +109,7 @@ export function TodoViewFx(props) {
         compl_ui=(
             <div>
                 {compl_tasks_sorted.map((t)=>(
-                    <LazyLoad key={t.id} offset={0} placeholder={<div className="todo-lazyload-placeholder" />} overflow={true} once={true}>
+                    <LazyLoad key={t.id} offset={0} placeholder={<div className="todo-lazyload-placeholder" />} once={true}>
                         <TodoTaskView key={t.id} task={t} />
                     </LazyLoad>
                 ))}

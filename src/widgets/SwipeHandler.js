@@ -10,7 +10,7 @@ export function SwipeHandler(props) {
     function on_touch_start(e) {
         if(e.touches.length===1) { // first touch
             let t=e.touches[0];
-            state.current.possible=true;
+            state.current.possible=(!e.target.closest('.js-can-scrollx'));
             state.current.start_x=t.screenX;
             state.current.start_y=t.screenY;
         } else {

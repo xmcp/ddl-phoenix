@@ -14,7 +14,7 @@ import {PosFixer} from '../widgets/PosFixer';
 import {FancySearchCtrl} from './FancySearch';
 
 import moment from 'moment';
-import {do_refresh, set_is_slim, set_slim_main_toggle} from '../state/actions';
+import {do_refresh} from '../state/actions';
 import {moment_to_day} from '../functions';
 import {forceCheck} from 'react-lazyload';
 
@@ -27,67 +27,79 @@ const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
 const TODO_TASK_BADGE_STYLE={backgroundColor: '#fff', color: '#777', boxShadow: '0 0 0 1px #777 inset'};
 
+function numfix(v,mi,ma) {
+    return v>ma ? ma : (v<mi ? mi : v);
+}
+
+function MgmtView(props) {
+    return (
+        <div className="app-main">
+            <div className="slim-padding-x">
+                <StickyMsgsView />
+            </div>
+            <MainListView />
+        </div>
+    );
+}
+
 function AppSlim(props) {
     const dispatch=useDispatch();
     const term=useSelector((state)=>state.local.fancy_search_term);
-    const main_toggle=useSelector((state)=>state.local.slim_main_toggle);
 
-    // update toggle upon fancy search
+    // go to mgmt tab upon fancy search
     useEffect(()=>{
         if(term)
-            dispatch(set_slim_main_toggle(true));
+            set_tab(2);
     },[term]);
 
-    const [tab,set_tab]=useState(0);
+    const [tab,set_tab]=useState(1);
 
     function tab_onchange(e) {
         set_tab(e.target.value);
     }
-    function on_swipe(_dir) {
-        set_tab(1-tab);
+    function on_swipe(dir) {
+        if(term) return;
+        set_tab(numfix(tab-dir,0,2));
     }
 
     return (
         <div className="app-slim">
-            <div className="skip-header">
-                <TodoViewFx expanded={true} set_expanded={null}>{(todo_ui,compl_ui,todo_cnt)=>(
-                    <div className="app-main">
-                        <div className="slim-todo-tab-container">
-                            <Radio.Group value={tab} onChange={tab_onchange}>
-                                <Radio.Button value={0}>
-                                    待办 <Badge count={todo_cnt} showZero={true} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
-                                </Radio.Button>
-                                <Radio.Button value={1}>
-                                    已完成
-                                </Radio.Button>
-                            </Radio.Group>
-                        </div>
-                        <SwipeHandler onSwipe={on_swipe}>
-                            <SwitchTransition mode="out-in">
-                                <CSSTransition key={tab} timeout={75} classNames="slim-todo-anim">
-                                    <div className="slim-todo-overflower">
-                                        {tab===0 ? todo_ui : compl_ui}
-                                    </div>
-                                </CSSTransition>
-                            </SwitchTransition>
-                        </SwipeHandler>
+            <TodoViewFx expanded={true} set_expanded={null}>{(todo_ui,compl_ui,todo_cnt)=>(
+                <div className="">
+                    <div className="slim-todo-tab-container">
+                        <Radio.Group value={tab} onChange={tab_onchange}>
+                            <Radio.Button value={0}>
+                                已完成
+                            </Radio.Button>
+                            <Radio.Button value={1}>
+                                待办 <Badge count={todo_cnt} showZero={true} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} />
+                            </Radio.Button>
+                            <Radio.Button value={2}>
+                                管理任务
+                            </Radio.Button>
+                        </Radio.Group>
                     </div>
-                )}</TodoViewFx>
-                <div className={'slim-mgmt-panel'+(main_toggle ? ' slim-mgmt-panel-on' : '')}>
-                    <div className="slim-mgmt-panel-handle" onClick={()=>dispatch(set_slim_main_toggle(!main_toggle))}>
-                        {main_toggle ? <CaretDownOutlined /> : <CaretUpOutlined />}
-                        &nbsp;管理任务
-                    </div>
-                    <div className="slim-mgmt-panel-body">
-                        <div className="slim-mgmt-top-padding" />
-                        <div className="app-main">
-                            <StickyMsgsView />
-                            <MainListView />
-                        </div>
-                        <Footer />
-                    </div>
+                    <SwipeHandler onSwipe={on_swipe}>
+                        <SwitchTransition mode="out-in">
+                            <CSSTransition key={tab} timeout={75} classNames="slim-todo-anim">
+                                <div className="slim-todo-overflower">
+                                    {tab===0 ?
+                                        <div className="app-main slim-padding-x">
+                                            {compl_ui}
+                                        </div> :
+                                    tab===1 ?
+                                        <div className="app-main slim-padding-x">
+                                            {todo_ui}
+                                        </div> :
+                                        <MgmtView />
+                                    }
+                                    <Footer />
+                                </div>
+                            </CSSTransition>
+                        </SwitchTransition>
+                    </SwipeHandler>
                 </div>
-            </div>
+            )}</TodoViewFx>
         </div>
     )
 }
