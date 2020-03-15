@@ -6,7 +6,14 @@ import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
 import {TimeStr} from '../widgets/TimeStr';
 
-import {show_modal, do_refresh, get_token, do_reset_splash_index, set_fancy_search} from '../state/actions';
+import {
+    show_modal,
+    do_refresh,
+    get_token,
+    do_reset_splash_index,
+    set_fancy_search,
+    set_slim_main_toggle
+} from '../state/actions';
 
 import './AppHeader.less';
 import fire_bird_logo from '../fire_bird_bw.png';
@@ -24,11 +31,25 @@ import {
     SearchOutlined
 } from '@ant-design/icons';
 
+export function HEADER_MENU(dispatch) {
+    return [
+        {
+            children: (<span><PlusOutlined /> 新建课程</span>),
+            onClick: ()=>dispatch(show_modal('add','zone',null)),
+        },
+        {
+            children: (<span><AppstoreOutlined /> 整理课程</span>),
+            onClick: ()=>dispatch(show_modal('reorder','zone',null)),
+        },
+    ];
+}
+
 export function AppHeader(props) {
     const dispatch=useDispatch();
 
     const loading=useSelector((state)=>state.local.loading);
     const user=useSelector((state)=>state.user);
+    const slim=useSelector((state)=>state.local.is_slim);
 
     return (
         <div className="header-row">
@@ -71,22 +92,18 @@ export function AppHeader(props) {
                         </Dropdown>
                     </div>
                 }
-                <PoppableText className="header-highlight" menu={[
-                    {
-                        children: (<span><PlusOutlined /> 新建课程</span>),
-                        onClick: ()=>dispatch(show_modal('add','zone',null)),
-                    },
-                    {
-                        children: (<span><AppstoreOutlined /> 整理课程</span>),
-                        onClick: ()=>dispatch(show_modal('reorder','zone',null)),
-                    },
-                ]}>
-                    <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" title="美术协力 @Meguchi" />
-                    <span className="no-xs">
-                        <MoreOutlined />
-                        <span className="l-only"> 不咕计划</span>
-                    </span>
-                </PoppableText>
+                {slim ?
+                    <ClickableText onClick={()=>dispatch(set_slim_main_toggle(false))}>
+                        <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
+                    </ClickableText> :
+                    <PoppableText className="header-highlight" menu={HEADER_MENU(dispatch)}>
+                        <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
+                        <span className="no-xs">
+                            <MoreOutlined />
+                            <span className="l-only"> 不咕计划</span>
+                        </span>
+                    </PoppableText>
+                }
                 &nbsp;
                 <ClickableText onClick={()=>dispatch(set_fancy_search('set',''))} className="header-highlight">
                     <SearchOutlined />

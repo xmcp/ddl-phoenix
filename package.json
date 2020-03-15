@@ -20,6 +20,7 @@
     "react-scripts": "3.3.0",
     "react-sortablejs": "^2.0.10",
     "react-timeago": "^4.4.0",
+    "react-transition-group": "^4.3.0",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "resize-observer-polyfill": "^1.5.1"

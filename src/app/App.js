@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Tabs, Badge, Button, Radio} from 'antd';
+import {SwitchTransition, CSSTransition} from 'react-transition-group';
 
 import {Modals} from '../modals/Modals';
 import {AppHeader} from './AppHeader';
@@ -20,9 +21,10 @@ import {forceCheck} from 'react-lazyload';
 import './App.less';
 import './task_colors.less';
 import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
+import {SwipeHandler} from '../widgets/SwipeHandler';
 
 const LG_BREAKPOINT=800; // px
-const SLIM_MGMT_TRAINSITION_MS=100;
+const SLIM_MGMT_TRAINSITION_MS=150;
 
 const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
 
@@ -41,7 +43,7 @@ function AppSlim(props) {
 
     // check lazyload upon main_toggle change
     useEffect(()=>{
-        setTimeout(forceCheck,SLIM_MGMT_TRAINSITION_MS+20);
+        setTimeout(forceCheck,SLIM_MGMT_TRAINSITION_MS);
     },[main_toggle]);
 
     const [tab,set_tab]=useState(0);
@@ -49,6 +51,9 @@ function AppSlim(props) {
 
     function tab_onchange(e) {
         set_tab(e.target.value);
+    }
+    function on_swipe(_dir) {
+        set_tab(1-tab);
     }
 
     // update carousel upon tab change
@@ -74,9 +79,15 @@ function AppSlim(props) {
                                 </Radio.Button>
                             </Radio.Group>
                         </div>
-                        <div className="slim-carousel-overflower">
-                            {tab===0 ? todo_ui : compl_ui}
-                        </div>
+                        <SwipeHandler onSwipe={on_swipe}>
+                            <SwitchTransition mode="out-in">
+                                <CSSTransition key={tab} timeout={75} classNames="slim-todo-anim">
+                                    <div className="slim-todo-overflower">
+                                        {tab===0 ? todo_ui : compl_ui}
+                                    </div>
+                                </CSSTransition>
+                            </SwitchTransition>
+                        </SwipeHandler>
                     </div>
                 )}</TodoViewFx>
                 <div className={'slim-mgmt-panel'+(main_toggle ? ' slim-mgmt-panel-on' : '')}>

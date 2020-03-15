@@ -9,24 +9,46 @@ import {show_modal, do_update_completeness, do_interact} from '../state/actions'
 import moment from 'moment';
 
 import './TaskView.less';
-import {EditOutlined} from '@ant-design/icons';
+import {EditOutlined, CloseOutlined} from '@ant-design/icons';
 import BulbOutlined from '@ant-design/icons/lib/icons/BulbOutlined';
 import CloseCircleOutlined from '@ant-design/icons/lib/icons/CloseCircleOutlined';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
 const STABLIZE_THRESHOLD_MS=100;
 
+// stolen from react-lazyload, modified by xmcp
+function scroll_parents(node) {
+    let excludeStaticParent=(node.style.position==='absolute');
+    let overflowRegex=/(scroll|auto)/;
+    let parent=node;
+    let res=[node.ownerDocument||node.documentElement||document.documentElement];
+
+    while (parent) {
+        if (!parent.parentNode) {
+            return res;
+        }
+
+        let style = window.getComputedStyle(parent);
+        let position = style.position;
+        let overflowX = style['overflow-x'];
+        let overflowY = style['overflow-y'];
+
+        if (position === 'static' && excludeStaticParent) {
+            parent = parent.parentNode;
+            continue;
+        }
+
+        if (overflowRegex.test(overflowX) || overflowRegex.test(overflowY)) {
+            res.push(parent);
+        }
+
+        parent = parent.parentNode;
+    }
+
+    return node.ownerDocument || node.documentElement || document.documentElement;
+}
+
 function WithDueTooltip(props) {
-    /*
-    let ctype=colortype(props.task);
-    let ctype_name=completeness_name(ctype);
-
-        <p>
-            {props.task.complete_timestamp ? (friendly_date(props.task.complete_timestamp)+' ') : ''}
-            {ctype_name}
-        </p>
-     */
-
     let tooltip_text=(
         <div className="due-tooltip">
             {props.task.due ?
@@ -88,13 +110,14 @@ function TaskDetails(props) {
 
     return (
         <div className="task-details">
+            <div className="task-details-close-btn" onClick={props.hide}><CloseOutlined /></div>
             <div
                 className={'task-details-statline '+(props.external ? '' : 'task-details-statline-link')}
                 onClick={props.external ? null : ()=>{props.hide(); dispatch(show_modal('update','task',props.tid))}}
             >
                 <p>
                     {!props.external &&
-                        <a style={{float: 'right'}}><EditOutlined /></a>
+                        <a><EditOutlined />&nbsp;</a>
                     }
                     {props.task.status==='placeholder' &&
                         '未布置，'
@@ -158,6 +181,7 @@ export function TaskView(props) {
     const last_touch_end_ts=useRef(-STABLIZE_THRESHOLD_MS);
     const last_click_ts=useRef(-STABLIZE_THRESHOLD_MS);
     const last_vis_change_ts=useRef(-STABLIZE_THRESHOLD_MS);
+    const ui_elem=useRef(null);
 
     function on_touch_end() {
         last_touch_end_ts.current=(+new Date());
@@ -166,13 +190,35 @@ export function TaskView(props) {
         last_click_ts.current=(+new Date());
     }
 
+    // close popover on fancy search input
     useEffect(()=>{
         set_card_mode(0);
     },[term]);
+
+    // close popover on search
     useEffect(()=>{
        if(is_sorting)
            set_card_mode(0);
     },[is_sorting]);
+
+    // close popover on parent scrolling
+    useEffect(()=>{
+        if(card_mode===2 && ui_elem.current) {
+            let parent_elems=scroll_parents(ui_elem.current);
+            function on_scroll() {
+                set_card_mode(0);
+            }
+            console.log('popover closer bind scroll',parent_elems);
+            parent_elems.forEach((elem)=>{
+                elem.addEventListener('scroll',on_scroll,{passive: true});
+            });
+            return ()=>{
+                parent_elems.forEach((elem)=>{
+                    elem.removeEventListener('scroll',on_scroll,{passive: true});
+                });
+            };
+        }
+    },[card_mode]);
 
     function may_set_card_mode(m) {
         if((+new Date())-last_vis_change_ts.current>STABLIZE_THRESHOLD_MS) {
@@ -210,7 +256,7 @@ export function TaskView(props) {
     let ctype=colortype(task);
     return useMemo(()=>(
         props.todo_style ?
-            <div key={ctype} onTouchEndCapture={on_touch_end}>
+            <div key={ctype} onTouchEndCapture={on_touch_end} ref={ui_elem}>
                 <Popover
                     title="任务属性" trigger="click" placement="bottom"
                     content={<TaskDetails tid={props.tid} external={props.external} task={task} hide={()=>on_popover_visible_change(false)} />}
@@ -220,7 +266,7 @@ export function TaskView(props) {
                 >
                     <div className={'task-badge todo-task-view task-color-'+ctype} onClick={on_click}>
                         <div className="todo-task-ddl-part">
-                            <IconForColorType type={ctype} className="task-badge-icon" />
+                            <IconForColorType type={ctype} className="task-badge-icon todo-task-icon-left" />
                             <span className={(task.completeness!=='done' && task.due && task.due<=today_ts) ? 'task-ddl-already-dued' : ''}>
                                 {
                                     task.completeness==='done' ?
@@ -232,12 +278,13 @@ export function TaskView(props) {
                             </span>
                         </div>
                         <div className="todo-task-name-part">
+                            <IconForColorType type={ctype} className="task-badge-icon todo-task-icon-right" />
                             <ItemBreadcrumb scope="task" id={props.tid} />
                         </div>
                     </div>
                 </Popover>
             </div> :
-            <span key={ctype} onTouchEndCapture={on_touch_end}>
+            <span key={ctype} onTouchEndCapture={on_touch_end} ref={ui_elem}>
                 <WithDueTooltip
                     task={task} className={'task-view '+(props.can_sort?' reorder-handle reorder-handle-task':'')}
                     visible={card_mode>=1} onVisibleChange={on_tooltip_visible_change}

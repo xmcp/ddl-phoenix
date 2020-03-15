@@ -5,6 +5,7 @@ import copy from 'copy-to-clipboard';
 import LazyLoad from 'react-lazyload';
 
 import {TaskView} from './TaskView';
+import {HEADER_MENU} from './AppHeader';
 import {SideHeaderLayout} from '../widgets/Layout';
 import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
@@ -13,6 +14,7 @@ import {IconForColorType} from '../widgets/IconForColorType';
 
 import {scope_name, next_scope, colortype, dflt} from '../functions';
 import {show_modal, do_update_completeness} from '../state/actions';
+import {test_term} from '../logic/fancy_search_core';
 
 import './MainListView.less';
 import {
@@ -28,7 +30,6 @@ import {
     HourglassOutlined,
     MoreOutlined
 } from '@ant-design/icons';
-import {test_term} from '../logic/fancy_search_core';
 
 function SectionHeader(props) {
     const dispatch=useDispatch();
@@ -273,6 +274,7 @@ function ZoneView(props) {
 export function MainListView(props) {
     const dispatch=useDispatch();
     const zone_order=useSelector((state)=>state.zone_order);
+    const slim=useSelector((state)=>state.local.is_slim);
 
     return (
         <div>
@@ -289,11 +291,18 @@ export function MainListView(props) {
                     <ZoneView key={zid} zid={zid} />
                 ))}
             </MainListSortable>
-            <div className="zone-header-container">
-                <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))} className="section-header-zone">
-                    <PlusOutlined /> 新建课程
-                </ClickableText>
-            </div>
+            {slim ?
+                <div>
+                    <PoppableText menu={HEADER_MENU(dispatch)}>
+                        <MoreOutlined /> 共 {zone_order.length} 门课程
+                    </PoppableText>
+                </div> :
+                <div className="zone-header-container">
+                    <ClickableText onClick={()=>dispatch(show_modal('add','zone',null))} className="section-header-zone">
+                        <PlusOutlined /> 新建课程
+                    </ClickableText>
+                </div>
+            }
         </div>
     );
 }

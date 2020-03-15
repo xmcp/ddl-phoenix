@@ -11,13 +11,9 @@ export function Footer(props) {
     return (
         <div className="footer center">
             <p>
-                Project <b>Fire Bird!</b> by @xmcp,
-                inspired by <a href="https://bgm.tv" target="_blank" rel="noopener noreferrer">番組計画</a>
-            </p>
-            <p>
-                基于&nbsp;
+                Project <b>Fire Bird!</b> 基于&nbsp;
                 <a href="https://www.gnu.org/licenses/gpl-3.0.zh-cn.html" target="_blank" rel="noopener noreferrer">GPLv3</a>
-                &nbsp;协议在 <a href="https://github.com/pkuhelper-web/phoenix" target="_blank" rel="noopener noreferrer">GitHub</a> 开源
+                &nbsp;在 <a href="https://github.com/pkuhelper-web/phoenix" target="_blank" rel="noopener noreferrer">GitHub</a> 开源
             </p>
             <p>Phoenix {process.env.REACT_APP_BUILD_INFO||'---'},  Bee {backend_info||'---'}, Sister {SISTER_API_VER}</p>
         </div>

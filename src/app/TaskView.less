@@ -33,6 +33,11 @@
     width: 300px;
 }
 
+.task-details-close-btn {
+    float: right;
+    padding: .75em 1em .5em 1em;
+}
+
 .task-details-custom-popover .ant-popover-title {
     display: none;
 }
@@ -45,7 +50,7 @@
 .task-details-statline {
     padding: .75em 1em .5em 1em;
 }
-.task-details-statline-link:hover {
+.task-details-statline-link:hover, .task-details-close-btn:hover {
     background-color: #f3f3f3;
     cursor: pointer;
 }
@@ -161,20 +166,33 @@
         1px -1px 1px red, 1px 0 1px red, 1px 1px 1px red;
 }
 
-@media screen and (min-width: @xl-breakpoint) {
-    .todo-task-view {
-        display: flex !important;
-    }
+.app-slim .todo-task-icon-left {
+    display: inline;
+}
+.app-slim .todo-task-icon-right {
+    display: none;
+}
+.app-large .todo-task-icon-left {
+    display: none;
+}
+.app-large .todo-task-icon-right {
+    display: inline;
+}
 
-    .todo-task-ddl-part {
-        flex: 0 0 165px;
-        text-align: right;
-    }
-    .todo-task-ddl-part>span {
-        padding: 0 .25em;
-    }
-    .todo-task-name-part {
-        padding-left: .5em;
-        flex: 1 1 0;
-    }
+.app-large .todo-task-view {
+    display: flex !important;
+}
+
+.app-large .todo-task-ddl-part {
+    flex: 0 0 180px;
+    text-align: right;
+}
+
+.app-large .todo-task-ddl-part > span {
+    padding: 0 .25em;
+}
+
+.app-large .todo-task-name-part {
+    padding-left: .5em;
+    flex: 1 1 0;
 }
