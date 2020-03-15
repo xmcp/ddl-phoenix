@@ -344,7 +344,7 @@ export function MainListView(props) {
                     <ZoneView key={zid} zid={zid} collapsible={slim} />
                 ))}
             </MainListSortable>
-            {slim ?
+            {zone_order.length ?
                 <div>
                     {!term &&
                         <PoppableText menu={HEADER_MENU(dispatch)}>
