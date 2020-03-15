@@ -310,7 +310,7 @@ function ZoneView(props) {
                     </CSSTransition> :
                     projects_ui
                 }
-                {project_order_disp.length===0 &&
+                {project_order_disp.length===0 && !(props.collapsible && !expanded) &&
                     <div className="project-header-container">
                         <ClickableText onClick={()=>dispatch(show_modal('add','project',props.zid))} className="section-header-project">
                             <PlusOutlined /> 新建类别
