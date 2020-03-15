@@ -26,11 +26,11 @@ import {
     GiftOutlined,
     WifiOutlined,
     VerticalAlignMiddleOutlined,
-    DragOutlined,
     HourglassOutlined,
     MoreOutlined,
     UpOutlined,
-    DownOutlined
+    DownOutlined,
+    ExpandAltOutlined
 } from '@ant-design/icons';
 
 function SectionHeader(props) {
@@ -216,7 +216,7 @@ function ProjectView(props) {
                         <VerticalAlignMiddleOutlined /> <span className="task-collapse-label">收起</span>
                     </ClickableText> :
                     <ClickableText onClick={()=>set_expanded(true)} className="have-hover-bg task-collapse-widget">
-                        <DragOutlined />
+                        <ExpandAltOutlined />
                         {cnt.done>0 &&
                             <Badge count={cnt.done} {...task_collapse_badge_style} title={'已完成'+cnt.done+'项'}>
                                 <IconForColorType type="done" />
@@ -305,7 +305,7 @@ function ZoneView(props) {
                 }
             >
                 {props.collapsible ?
-                    <CSSTransition in={expanded} timeout={600} classNames="zone-collapse-anim">
+                    <CSSTransition in={expanded} timeout={500} classNames="zone-collapse-anim">
                         {expanded ? projects_ui : <div />}
                     </CSSTransition> :
                     projects_ui

@@ -95,6 +95,7 @@ export function AppHeader(props) {
                 {slim ?
                     <ClickableText onClick={()=>dispatch(set_slim_main_toggle(false))}>
                         <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />
+                        <span className="l-only">不咕计划</span>
                     </ClickableText> :
                     <PoppableText className="header-highlight" menu={HEADER_MENU(dispatch)}>
                         <img src={fire_bird_logo} className="header-logo-img" alt="fire bird logo" />

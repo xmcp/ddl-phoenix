@@ -3,16 +3,14 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Tooltip, Popover, Radio} from 'antd';
 
 import {IconForColorType} from '../widgets/IconForColorType';
+import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
 import {colortype, completeness_name, friendly_date, moment_to_day} from '../functions';
 import {show_modal, do_update_completeness, do_interact} from '../state/actions';
 import moment from 'moment';
 
 import './TaskView.less';
-import {EditOutlined, CloseOutlined} from '@ant-design/icons';
-import BulbOutlined from '@ant-design/icons/lib/icons/BulbOutlined';
-import CloseCircleOutlined from '@ant-design/icons/lib/icons/CloseCircleOutlined';
-import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
+import {EditOutlined, BulbOutlined, CloseOutlined, CloseCircleOutlined} from '@ant-design/icons';
 
 const STABLIZE_THRESHOLD_MS=100;
 
@@ -190,18 +188,18 @@ export function TaskView(props) {
         last_click_ts.current=(+new Date());
     }
 
-    // close popover on fancy search input
+    // close popover upon fancy search input
     useEffect(()=>{
         set_card_mode(0);
     },[term]);
 
-    // close popover on search
+    // close popover upon sorting
     useEffect(()=>{
        if(is_sorting)
            set_card_mode(0);
     },[is_sorting]);
 
-    // close popover on parent scrolling
+    // close popover upon parent scrolling
     useEffect(()=>{
         if(card_mode===2 && ui_elem.current) {
             let parent_elems=scroll_parents(ui_elem.current);

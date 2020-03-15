@@ -53,7 +53,7 @@ export function ModalSettings(props) {
                     最多的待办任务数量：
                     <InputNumber value={todo_max_lines} onChange={set_todo_max_lines} min={1} max={99} />
                     <br />
-                    <small>超过此数量的待办任务会被折叠</small>
+                    <small>在电脑端界面中，超过此数量的待办任务会被折叠</small>
                 </p>
             </div>
         </Modal>
