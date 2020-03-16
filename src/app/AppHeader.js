@@ -107,7 +107,7 @@ export function AppHeader(props) {
                 &nbsp;
                 <ClickableText onClick={()=>dispatch(set_fancy_search('set',''))} className="header-highlight">
                     <SearchOutlined />
-                    &nbsp;筛选
+                    &nbsp;转到
                 </ClickableText>
                 &nbsp;
                 <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())} className="header-highlight">

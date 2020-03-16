@@ -14,7 +14,7 @@ Object.keys(dictNotoneOrigin).forEach((k)=>{
 export function FancySearchHelp(props) {
     return (
         <div>
-            <p>通过拼音筛选课程和类别。按 ESC 清除筛选。</p>
+            <p>通过拼音筛选课程和类别。按 ESC 取消。</p>
             <br />
             <p>例如，要想找到 “马原 > MOOC作业”，可以输入：</p>
             <ul>

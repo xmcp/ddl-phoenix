@@ -87,7 +87,7 @@ export function FancySearchCtrl(props) {
                 <span style={{float: 'right'}}>
                     {!!term &&
                         <Popover
-                            title="快速筛选" content={<FancySearchHelp />} trigger="click"
+                            title="快速跳转" content={<FancySearchHelp />} trigger="click"
                             placement="topRight" getPopupContainer={()=>container_elem.current}
                         >
                             <span style={{cursor: 'pointer'}}>
@@ -101,7 +101,7 @@ export function FancySearchCtrl(props) {
                 </span>
                 &nbsp;<SearchOutlined /> &nbsp;
                 <input
-                    value={term} onChange={handle_input} ref={input_elem} placeholder="筛选课程或类别"
+                    value={term} onChange={handle_input} ref={input_elem} placeholder="跳转到课程或类别"
                     onBlur={()=>{if(term==='') dispatch(set_fancy_search('set',null))}}
                 />
             </div>
