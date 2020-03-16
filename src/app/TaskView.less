@@ -33,22 +33,29 @@
     width: 300px;
 }
 
-.task-details-close-btn {
-    float: right;
-    padding: .75em 1em .5em 1em;
+.task-details-custom-popover {
+    padding-top: 0;
 }
-
+.task-details-custom-popover .ant-popover-arrow {
+    display: none;
+}
 .task-details-custom-popover .ant-popover-title {
     display: none;
 }
-
 .task-details-custom-popover .ant-popover-inner-content {
     padding: unset;
     margin: unset;
 }
 
+.task-details-close-btn {
+    float: right;
+    padding: .5em 1em .5em 1em;
+    border-top-right-radius: 4px;
+}
 .task-details-statline {
-    padding: .75em 1em .5em 1em;
+    padding: .5em 1em .5em 1em;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
 }
 .task-details-statline-link:hover, .task-details-close-btn:hover {
     background-color: #f3f3f3;

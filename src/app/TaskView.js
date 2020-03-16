@@ -58,7 +58,7 @@ function WithDueTooltip(props) {
 
     return (
         <Tooltip
-            title={tooltip_text} trigger="hover" className={props.className||null}
+            title={tooltip_text} trigger="hover" className={props.className||null} align={{offset: [0,2]}}
             visible={props.visible} onVisibleChange={props.onVisibleChange}
             overlayClassName="pointer-event-none" autoAdjustOverflow={false}
             mouseEnterDelay={0} mouseLeaveDelay={0}
