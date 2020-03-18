@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Modal, Input, Checkbox, Popover, Row, Col, Radio, Calendar} from 'antd';
+import {Button, Modal, Input, Checkbox, Popover, Row, Col, Calendar, Switch, Slider} from 'antd';
 
 import {close_modal_if_success, SharingHelp} from './modal_common';
 import {IconForColorType} from '../widgets/IconForColorType';
@@ -36,6 +36,7 @@ export function ModalUpdate(props) {
     const [desc,set_desc]=useState('');
     const [status, set_status]=useState('');
     const [due_quicktype, set_due_quicktype]=useState(init_quicktype(null));
+    const [due_hour, set_due_hour]=useState(0);
 
     const quicktype_ref=useRef(null);
 
@@ -50,6 +51,7 @@ export function ModalUpdate(props) {
             set_desc(item.desc||'');
             set_status(item.status||'active');
             set_due_quicktype(init_quicktype(item.due || null));
+            set_due_hour(moment.unix(item.due).hour());
         }
     }, [modal, item, dispatch]);
 
@@ -60,7 +62,7 @@ export function ModalUpdate(props) {
             ...(modal.scope==='task' ? {
                 status: status,
                 desc: desc||null,
-                due: due_quicktype.moment===null ? null : due_quicktype.moment.unix(),
+                due: due_quicktype.moment===null ? null : (due_quicktype.moment.unix()+due_hour*3600),
             } : {}),
             ...(modal.scope==='project' ? {
                 shared: shared,
@@ -184,19 +186,15 @@ export function ModalUpdate(props) {
                             />
                         </p>
                         <br />
-                        <Radio.Group value={status} onChange={(e) => set_status(e.target.value)}>
-                            <Radio.Button value="placeholder">
-                                <IconForColorType type="placeholder" /> 占位
-                            </Radio.Button>
-                            <Radio.Button value="active">
-                                <IconForColorType type="todo" /> 已布置
-                            </Radio.Button>
-                        </Radio.Group>
                         <p>
-                            <br />
-                            <b>
-                                {due_quicktype.moment===null ? '无截止日期' : friendly_date(due_quicktype.moment.unix(), false)+' 截止'}
-                            </b>
+                            <Switch
+                                size="small" className="modal-update-custom-switch"
+                                checked={status==='active'} onChange={(c)=>set_status(c?'active':'placeholder')}
+                            />
+                            <b onClick={()=>set_status(status==='active'?'placeholder':'active')}> {status==='active' ? '已布置' : '未布置'} </b>
+                            {due_quicktype.moment===null ? '无截止日期' :
+                                friendly_date(due_quicktype.moment.unix(), false)+(due_hour?(' '+due_hour+'点'):'')+' 截止'
+                            }
                             {due_quicktype.moment!==null &&
                                 <a onClick={() => {
                                     set_due_quicktype(set_moment(null))
@@ -204,15 +202,24 @@ export function ModalUpdate(props) {
                                     &nbsp; <CloseCircleOutlined /> &nbsp;
                                 </a>
                             }
-                            {due_quicktype.placeholder &&
-                                <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
-                                    <a>
-                                        &nbsp;{due_quicktype.placeholder}&nbsp;
-                                        <QuestionCircleOutlined />
-                                    </a>
-                                </Popover>
-                            }
                         </p>
+                        {!!due_quicktype.moment &&
+                            <>
+                                <Slider
+                                    value={due_hour===0?7:due_hour} onChange={(t)=>set_due_hour(t===7?0:t)}
+                                    tooltipVisible={false} className="modal-update-custom-slider"
+                                    min={7} max={23} marks={{7:'', 8:'8', 10:'10', 13:'13', 15:'15', 18:'18', 23:'23'}}
+                                />
+                            </>
+                        }
+                        {due_quicktype.placeholder &&
+                            <Popover title="日期输入方式" content={<QuicktypeHelp />} placement="bottom" trigger="click">
+                                <p><a>
+                                    &nbsp;{due_quicktype.placeholder}&nbsp;
+                                    <QuestionCircleOutlined />
+                                </a></p>
+                            </Popover>
+                        }
                         <br />
                     </Col>
                     <Col xs={24} md={12}>

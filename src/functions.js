@@ -41,24 +41,31 @@ export function colortype(task) {
         return task.completeness;
 }
 
-export function moment_to_day(m) {
+export function moment_to_day(m,keep_hour=false) {
     if(m===null) return null;
-    return m.utcOffset(TIMEZONE).hour(0).minute(0).second(0).millisecond(0);
+    m=m.utcOffset(TIMEZONE).minute(0).second(0).millisecond(0);
+    if(!keep_hour) m=m.hour(0);
+    return m;
 }
 
 export function days_to(m,ref) {
     return Math.round(moment.duration(m.diff(ref)).asDays());
 }
 
-export function friendly_date(ts,use_rel=true) {
-    let date=moment_to_day(moment.unix(ts));
-    if(!date)
+export function friendly_date(ts,use_rel=true,always_hour=false) {
+    let mom=moment.unix(ts);
+    if(!mom)
         return '???';
+
+    let hour=mom.hour();
+    let date=moment_to_day(mom); // this will clear h,m,s of mom
 
     let today=moment_to_day(moment());
     let days_to_due=days_to(date,today);
 
     let ret='';
+
+    let weekday_txt=' (周'+('日一二三四五六日'.charAt(date.day()))+')';
 
     if(use_rel && -7<=days_to_due && days_to_due<=7) { // rel format
         ret+={
@@ -78,6 +85,9 @@ export function friendly_date(ts,use_rel=true) {
             6: '6天后',
             7: '7天后',
         }[days_to_due];
+        ret+=weekday_txt;
+        if(hour)
+            ret+=(' '+hour+'点')
     } else { // abs format
         if(date.year()===today.year())
             ret+='';
@@ -89,9 +99,10 @@ export function friendly_date(ts,use_rel=true) {
             ret+=date.year()+'年';
         ret+=(date.month()+1)+'月';
         ret+=date.date()+'日';
+        ret+=weekday_txt;
+        if(always_hour && hour)
+            ret+=(' '+hour+'点');
     }
-
-    ret+=' (周'+('日一二三四五六日'.charAt(date.day()))+')';
 
     return ret;
 }

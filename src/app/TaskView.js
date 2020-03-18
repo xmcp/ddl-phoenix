@@ -50,7 +50,7 @@ function WithDueTooltip(props) {
     let tooltip_text=(
         <div className="due-tooltip">
             {props.task.due ?
-                (friendly_date(props.task.due, false)+' 截止') :
+                (friendly_date(props.task.due,true)+' 截止') :
                 '无截止日期'
             }
         </div>
@@ -124,7 +124,7 @@ function TaskDetails(props) {
                         '未布置，'
                     }
                     {props.task.due ?
-                        (friendly_date(props.task.due, false)+' 截止') :
+                        (friendly_date(props.task.due,false,true)+' 截止') :
                         '无截止日期'
                     }
                 </p>
@@ -252,7 +252,7 @@ export function TaskView(props) {
         }
     }
 
-    let today_ts=moment_to_day(moment()).unix();
+    let today_last_ts=moment().endOf('day').unix();
 
     let ctype=colortype(task);
     return useMemo(()=>(
@@ -268,7 +268,7 @@ export function TaskView(props) {
                     <div className={'task-badge todo-task-view task-color-'+ctype} onClick={on_click}>
                         <div className="todo-task-ddl-part">
                             <IconForColorType type={ctype} className="task-badge-icon todo-task-icon-left" />
-                            <span className={(task.completeness!=='done' && task.due && task.due<=today_ts) ? 'task-ddl-already-dued' : ''}>
+                            <span className={(task.completeness!=='done' && task.due && task.due<=today_last_ts) ? 'task-ddl-already-dued' : ''}>
                                 {
                                     task.completeness==='done' ?
                                         (friendly_date(task.complete_timestamp,true)+' 完成') :

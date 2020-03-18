@@ -109,13 +109,23 @@ export function reduce(state=INIT_STATE,action) {
             };
 
         case 'network_failure':
-            return {
-                ...state,
-                local: {
-                    ...state.local,
-                    loading: loading_status('error',state.local.loading.last_update_time),
-                },
-            };
+            if(state.error==='PHOENIX_NO_DATA')
+                return {
+                    ...state,
+                    local: {
+                        ...state.local,
+                        loading: loading_status('error',state.local.loading.last_update_time),
+                    },
+                    error: 'PHOENIX_NO_NETWORK',
+                };
+            else
+                return {
+                    ...state,
+                    local: {
+                        ...state.local,
+                        loading: loading_status('error',state.local.loading.last_update_time),
+                    },
+                };
 
         case 'update_token':
             return {

@@ -28,7 +28,7 @@ export function TodoViewFx(props) {
     const settings=useSelector((state)=>state.user.settings);
     const tasks=useSelector((state)=>state.task);
     const todo_tasks=useMemo(()=>(
-        tasks ? Object.values(tasks).filter((t)=>t.status==='active' && t.completeness!=='done') : []
+        tasks ? Object.values(tasks).filter((t)=>t.completeness!=='done' && (t.status==='active'||t.completeness!=='todo')) : []
     ),[tasks]);
     const compl_tasks=useMemo(()=>(
         tasks ? Object.values(tasks).filter((t)=>t.completeness==='done') : []

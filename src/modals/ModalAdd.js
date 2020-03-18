@@ -150,9 +150,17 @@ export function ModalAdd(props) {
                 <div>
                     <br />
                     <DatePicker
-                        onChange={(m) => set_task_due_first(m ? moment_to_day(m) : null)} value={task_due_first}
+                        onChange={(m)=>set_task_due_first(m ? moment_to_day(m,true) : null)} value={task_due_first}
                         allowClear={true} placeholder="设置截止日期"
-                        format="YYYY-MM-DD (ddd)"
+                        format="YYYY-MM-DD (dd) H点"
+                        showTime={{
+                            format: 'H点',
+                            disabledHours: ()=>[1,2,3,4,5,6,7],
+                            hideDisabledOptions: true,
+                            allowClear: true,
+                            defaultValue: moment('0','H'),
+                        }}
+                        inputReadOnly={true}
                     />
                     {!!task_due_first && is_multiple_names &&
                         <span>

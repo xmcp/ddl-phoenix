@@ -9,7 +9,7 @@ import {WithFooter} from '../app/Footer';
 
 import {do_refresh, get_token, close_modal, set_is_slim} from '../state/actions';
 
-import {LoadingOutlined, RobotOutlined, BugOutlined, GithubOutlined} from '@ant-design/icons';
+import {LoadingOutlined, RobotOutlined, BugOutlined, GithubOutlined, WifiOutlined} from '@ant-design/icons';
 
 const LG_BREAKPOINT_PX=800;
 
@@ -65,7 +65,7 @@ function Root(props) {
         </WithFooter>
     );
 
-    let refresh_btn=(
+    let retry_btn=(
         <Button key="refresh" type="primary" onClick={()=>dispatch(do_refresh())}>重试</Button>
     );
 
@@ -101,6 +101,17 @@ function Root(props) {
         return LOADING_UI;
     else if(error==='PHOENIX_NO_TOKEN')
         return (<AskTokenPage on_got_token={on_got_token} />);
+    else if(error==='PHOENIX_NO_NETWORK')
+        return (
+            <WithFooter>
+                <Result
+                    icon={<WifiOutlined />}
+                    status="error"
+                    title="网络错误"
+                    extra={[retry_btn]}
+                />
+            </WithFooter>
+        );
     else if(error==='SISTER_VER_MISMATCH')
         return (
             <WithFooter>
@@ -124,7 +135,7 @@ function Root(props) {
                     title="后端异常（这是 Bug）"
                     subTitle={error_msg}
                     extra={[
-                        refresh_btn,
+                        retry_btn,
                         <Button key="report-bug" href="https://github.com/pkuhelper-web/bee/issues" target="_blank">
                             <GithubOutlined /> 反馈给开发者
                         </Button>,
@@ -142,7 +153,7 @@ function Root(props) {
                 <Result
                     status="error"
                     title={error_msg}
-                    extra={[refresh_btn]}
+                    extra={[retry_btn]}
                 />
             </WithFooter>
         );
@@ -153,7 +164,7 @@ function Root(props) {
                     status="error"
                     title={error_msg}
                     subTitle={'未知错误 '+error}
-                    extra={[refresh_btn]}
+                    extra={[retry_btn]}
                 />
             </WithFooter>
         );
