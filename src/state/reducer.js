@@ -92,7 +92,7 @@ export function reduce(state=INIT_STATE,action) {
                 ...state,
                 local: {
                     ...state.local,
-                    loading: loading_status('loading',state.local.loading.last_update_time),
+                    loading: loading_status(action.is_post ? 'updating' : 'loading',state.local.loading.last_update_time),
                 }
             };
 

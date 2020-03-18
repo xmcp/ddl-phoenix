@@ -1,6 +1,6 @@
 import React, {useMemo, useState, useRef, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {Tooltip, Popover, Radio} from 'antd';
+import {Tooltip, Popover, Radio, message} from 'antd';
 
 import {IconForColorType} from '../widgets/IconForColorType';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
@@ -77,8 +77,11 @@ function TaskDetails(props) {
     function update_compl(compl) {
         dispatch(do_update_completeness([props.tid],compl))
             .then((success)=>{
-                if(success)
+                if(success) {
+                    if(compl==='done')
+                        message.success('已完成 '+props.task.name,2);
                     props.hide();
+                }
             })
     }
 

@@ -25,14 +25,24 @@ export function sister_fetch(endpoint,data,token) {
         });
 }
 
+function make_nonce() {
+    return (+new Date())+'-'+Math.floor(Math.random()*1000);
+}
+
+let refresh_nonce=make_nonce();
+
 export function sister_call(endpoint,data=undefined,completed_callback=undefined) {
     return (dispatch,getState)=>{
         let state=getState();
-        if(state.local.loading.status==='loading') return Promise.resolve();
+        if(state.local.loading.status==='updating') return Promise.resolve();
 
         dispatch({
             type: 'start_loading',
+            is_post: (data!==undefined),
         });
+
+        let cur_nonce=make_nonce();
+        refresh_nonce=cur_nonce;
 
         return sister_fetch(endpoint,data,state.local.token)
             .then(get_json)
@@ -41,6 +51,10 @@ export function sister_call(endpoint,data=undefined,completed_callback=undefined
                 return {error: 'PHOENIX_NETWORK_FAILURE'};
             })
             .then((json)=>{
+                // current refresh is replaced by a later one
+                if(refresh_nonce!==cur_nonce)
+                    return false;
+
                 let cmd={};
                 if(completed_callback)
                     cmd=completed_callback()||{};

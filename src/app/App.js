@@ -128,7 +128,10 @@ function AppLarge(props) {
                                     tabBarExtraContent={!todo_expanded ? null : (
                                         <Button onClick={()=>set_todo_expanded(false)}><CaretUpOutlined /> 收起</Button>
                                     )}
-                                    onChange={()=>setTimeout(forceCheck,1)}
+                                    onChange={()=>{
+                                        set_todo_expanded(false);
+                                        setTimeout(forceCheck,1);
+                                    }}
                                 >
                                     <Tabs.TabPane key="todo" tab={<span><Badge count={todo_cnt} showZero={true} className="todo-task-badge" style={TODO_TASK_BADGE_STYLE} /> 待办</span>}>
                                         {todo_ui}

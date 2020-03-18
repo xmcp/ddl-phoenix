@@ -27,7 +27,8 @@ import {
     ExclamationCircleOutlined,
     LogoutOutlined,
     UndoOutlined,
-    SearchOutlined
+    SearchOutlined,
+    CloudUploadOutlined
 } from '@ant-design/icons';
 
 export function HEADER_MENU(dispatch) {
@@ -113,16 +114,17 @@ export function AppHeader(props) {
                 <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())} className="header-highlight">
                     {{
                         loading: <LoadingOutlined />,
+                        updating: <CloudUploadOutlined />,
                         done: <SyncOutlined className="header-refresh-icon" />,
                         error: <ExclamationCircleOutlined className="header-refresh-icon" />,
                     }[loading.status]}
                     &nbsp;
-                    {loading.status==='loading' ? '正在更新' :
+                    {loading.status==='loading' ? '正在更新' : (loading.status==='updating' ? '正在上传' :
                         <span>
                             <TimeStr time={loading.last_update_time} />
                             <span className="l-only">&nbsp;更新</span>
                         </span>
-                    }
+                    )}
                 </ClickableText>
             </div>
         </div>
