@@ -86,10 +86,12 @@ function AppSlim(props) {
                                 <div className="slim-todo-overflower">
                                     {tab===0 ?
                                         <div className="app-main slim-padding-x">
+                                            <StickyMsgsView />
                                             {compl_ui}
                                         </div> :
                                     tab===1 ?
                                         <div className="app-main slim-padding-x">
+                                            <StickyMsgsView />
                                             {todo_ui}
                                         </div> :
                                         <MgmtView />
