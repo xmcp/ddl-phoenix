@@ -1,11 +1,14 @@
 import {message} from 'antd';
 
-import {sister_call} from './sister';
+import {sister_call, SISTER_DATA_VER} from './sister';
+import {load} from '../logic/offline_cache';
 
-export function get_token() {
+export function init_token() {
+    let token=localStorage['TOKEN'];
     return {
         type: 'update_token',
-        token: localStorage['TOKEN'],
+        token: token,
+        init_sister: load(SISTER_DATA_VER,token),
     };
 }
 

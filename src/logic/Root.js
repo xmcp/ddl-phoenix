@@ -7,7 +7,7 @@ import {WelcomePage, AskTokenPage} from '../welcome/WelcomePage';
 import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
 
-import {do_refresh, get_token, close_modal, set_is_slim} from '../state/actions';
+import {do_refresh, init_token, close_modal, set_is_slim} from '../state/actions';
 
 import {LoadingOutlined, RobotOutlined, BugOutlined, GithubOutlined, WifiOutlined} from '@ant-design/icons';
 
@@ -19,7 +19,7 @@ function Root(props) {
 
     // init process
     useEffect(()=>{
-        dispatch(get_token());
+        dispatch(init_token());
     },[dispatch]);
     useEffect(()=>{
         if(token)
@@ -71,7 +71,7 @@ function Root(props) {
 
     function on_got_token(token) {
         localStorage['TOKEN']=token;
-        dispatch(get_token());
+        dispatch(init_token());
     }
 
     function force_reload() {

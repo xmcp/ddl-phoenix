@@ -1,6 +1,7 @@
 import {message} from 'antd';
 
 import {shallowEqual} from 'react-redux';
+import {save} from '../logic/offline_cache';
 
 const EMPTY_MODAL={
     visible: false,
@@ -97,6 +98,8 @@ export function reduce(state=INIT_STATE,action) {
             };
 
         case 'refresh_received':
+            if(action.sister.backend && action.sister.backend.cache_data_ver && state.local.token)
+                save(action.sister.backend.cache_data_ver,state.local.token,action.sister);
             return {
                 ...shallow_merge(action.sister,state,['zone','project','task'],'id'),
                 local: {
@@ -134,7 +137,8 @@ export function reduce(state=INIT_STATE,action) {
                     token: action.token,
                     loading: loading_status('done',null),
                 },
-                error: action.token ? 'PHOENIX_NO_DATA' : 'PHOENIX_NO_TOKEN',
+                error: action.init_sister ? null : (action.token ? 'PHOENIX_NO_DATA' : 'PHOENIX_NO_TOKEN'),
+                ...(action.init_sister||{}),
             };
 
         case 'show_modal':

@@ -9,7 +9,7 @@ import {TimeStr} from '../widgets/TimeStr';
 import {
     show_modal,
     do_refresh,
-    get_token,
+    init_token,
     do_reset_splash_index,
     set_fancy_search
 } from '../state/actions';
@@ -79,7 +79,7 @@ export function AppHeader(props) {
                                 <a onClick={()=>{
                                     if(window.confirm('将会注销网页版 PKU Helper')) {
                                         delete localStorage['TOKEN'];
-                                        dispatch(get_token());
+                                        dispatch(init_token());
                                     }
                                 }}>
                                     <LogoutOutlined /> 注销 PKU Helper
