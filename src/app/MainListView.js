@@ -307,7 +307,7 @@ function ZoneView(props) {
                 }
             >
                 {props.collapsible ?
-                    <CSSTransition in={expanded} timeout={500} classNames="zone-collapse-anim">
+                    <CSSTransition in={expanded} timeout={100} classNames="zone-collapse-anim">
                         {expanded ? projects_ui : <div />}
                     </CSSTransition> :
                     projects_ui
