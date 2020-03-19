@@ -51,7 +51,7 @@ export function ModalUpdate(props) {
             set_desc(item.desc||'');
             set_status(item.status||'active');
             set_due_quicktype(init_quicktype(item.due || null));
-            set_due_hour(moment.unix(item.due).hour());
+            set_due_hour(item.due ? moment.unix(item.due).hour() : 0);
         }
     }, [modal, item, dispatch]);
 
