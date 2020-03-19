@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Menu, Dropdown} from 'antd';
+import {Menu, Dropdown, Badge} from 'antd';
 
 import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
@@ -28,7 +28,8 @@ import {
     LogoutOutlined,
     UndoOutlined,
     SearchOutlined,
-    CloudUploadOutlined
+    CloudUploadOutlined,
+    AppstoreAddOutlined
 } from '@ant-design/icons';
 
 export function HEADER_MENU(dispatch) {
@@ -51,44 +52,100 @@ export function AppHeader(props) {
     const user=useSelector((state)=>state.user);
     const slim=useSelector((state)=>state.local.is_slim);
 
+    let [pwa_prompt_event,set_pwa_prompt_event]=useState(null);
+    let [pwa_invited,set_pwa_invited]=useState(()=>localStorage['PHOENIX_PWA_INVITED']==='1');
+
+    // pwa
+    useEffect(()=>{
+        function handler(e) {
+            console.log('pwa: received before install prompt');
+            set_pwa_prompt_event(e);
+        }
+        if(!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+            console.log('pwa: not installed');
+            window.addEventListener('beforeinstallprompt',handler);
+            return ()=>{
+                window.removeEventListener('beforeinstallprompt',handler);
+            };
+        } else {
+            console.log('pwa: already installed');
+        }
+    },[]);
+
+    function install_pwa() {
+        if(pwa_prompt_event)
+            pwa_prompt_event.prompt();
+    }
+    function did_invite_pwa() {
+        if(pwa_prompt_event && !pwa_invited) {
+            console.log('pwa: did invite')
+            localStorage['PHOENIX_PWA_INVITED']='1';
+            set_pwa_invited(true);
+        }
+    }
+
     return (
         <div className="header-row">
             <div className="width-container">
                 {!!user &&
                     <div className="pull-right">
-                        <Dropdown trigger={['click']} className="header-highlight" overlay={<Menu>
-                            <Menu.Item disabled={true}>
-                                当前用户：{user.name}
-                            </Menu.Item>
-                            <Menu.Item disabled={true}>
-                                用户组：Ring {user.ring}
-                            </Menu.Item>
-                            <Menu.Divider />
-                            <Menu.Item>
-                                <a onClick={()=>dispatch(show_modal('settings',null,null))}>
-                                    <SettingOutlined /> 设置
-                                </a>
-                            </Menu.Item>
-                            <Menu.Divider />
-                            <Menu.Item>
-                                <a onClick={()=>dispatch(do_reset_splash_index())}>
-                                    <UndoOutlined /> 重新显示欢迎页面
-                                </a>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <a onClick={()=>{
-                                    if(window.confirm('将会注销网页版 PKU Helper')) {
-                                        delete localStorage['TOKEN'];
-                                        dispatch(init_token());
-                                    }
-                                }}>
-                                    <LogoutOutlined /> 注销 PKU Helper
-                                </a>
-                            </Menu.Item>
-                        </Menu>}>
-                            <ClickableText>
-                                &nbsp; <UserOutlined /> &nbsp;
-                            </ClickableText>
+                        <Dropdown
+                            trigger={['click']} className="header-highlight"
+                            overlay={<Menu>
+                                {!!pwa_prompt_event &&
+                                    <Menu.Item key="pwa-prompt">
+                                        <a onClick={install_pwa}>
+                                            <Badge dot={true}>
+                                                <AppstoreAddOutlined />
+                                            </Badge>
+                                            &nbsp;安装到桌面
+                                        </a>
+                                    </Menu.Item>
+                                }
+                                <Menu.Item key="settings">
+                                    <a onClick={()=>dispatch(show_modal('settings',null,null))}>
+                                        <SettingOutlined /> 设置
+                                    </a>
+                                </Menu.Item>
+                                <Menu.Divider />
+                                <Menu.Item key="user.name" disabled={true}>
+                                    当前用户：{user.name}
+                                </Menu.Item>
+                                <Menu.Item key="user.ring" disabled={true}>
+                                    用户组：Ring {user.ring}
+                                </Menu.Item>
+                                <Menu.Divider />
+                                <Menu.Item key="reset_splash">
+                                    <a onClick={()=>dispatch(do_reset_splash_index())}>
+                                        <UndoOutlined /> 重新显示欢迎页面
+                                    </a>
+                                </Menu.Item>
+                                <Menu.Item key="logoff">
+                                    <a onClick={()=>{
+                                        if(window.confirm('将会注销网页版 PKU Helper')) {
+                                            delete localStorage['TOKEN'];
+                                            dispatch(init_token());
+                                        }
+                                    }}>
+                                        <LogoutOutlined /> 注销 PKU Helper
+                                    </a>
+                                </Menu.Item>
+                            </Menu>}
+                            onVisibleChange={(v)=>{
+                                if(v)
+                                    did_invite_pwa();
+                            }}
+                        >
+                            {!pwa_invited && pwa_prompt_event ?
+                                <ClickableText>
+                                    &nbsp; <Badge dot={true}>
+                                        <UserOutlined />
+                                    </Badge> &nbsp;
+                                </ClickableText> :
+                                <ClickableText>
+                                    &nbsp; <UserOutlined /> &nbsp;
+                                </ClickableText>
+                            }
                         </Dropdown>
                     </div>
                 }
