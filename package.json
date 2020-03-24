@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.0.0",
-    "antd": "^4.0.0",
+    "antd": "^4.0.4",
     "babel-plugin-import": "^1.13.0",
     "copy-to-clipboard": "^3.2.0",
     "customize-cra": "^0.9.1",

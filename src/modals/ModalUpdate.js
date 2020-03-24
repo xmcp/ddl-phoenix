@@ -187,10 +187,10 @@ export function ModalUpdate(props) {
                         <br />
                         <p>
                             <Switch
-                                size="small" className="modal-update-custom-switch"
+                                 className="modal-update-custom-switch"
                                 checked={status==='active'} onChange={(c)=>set_status(c?'active':'placeholder')}
-                            />
-                            <b onClick={()=>set_status(status==='active'?'placeholder':'active')}> {status==='active' ? '已布置' : '未布置'} </b>
+                                checkedChildren="已布置" unCheckedChildren="未布置"
+                            /> &nbsp;
                             {due_quicktype.moment===null ? '无截止日期' :
                                 friendly_date(due_quicktype.moment.unix(), false)+(due_hour?(' '+due_hour+'点'):'')+' 截止'
                             }

@@ -95,7 +95,7 @@ function SectionHeader(props) {
             }
         ]),
         {
-            children: (<span><EditOutlined /> 编辑{csname} “{props.item.name}”</span>),
+            children: (<span><EditOutlined /> 编辑此{csname} / 删除</span>),
             onClick: ()=>dispatch(show_modal('update',cs,props.id)),
         },
     ];
