@@ -3,7 +3,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Button, Modal, Input, Checkbox, Popover, Row, Col, Calendar, Switch, Slider} from 'antd';
 
 import {close_modal_if_success, SharingHelp} from './modal_common';
-import {IconForColorType} from '../widgets/IconForColorType';
 
 import moment from 'moment';
 import {init_quicktype, set_moment, is_quicktype_char, proc_input, QuicktypeHelp} from '../logic/date_quicktype';

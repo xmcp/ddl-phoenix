@@ -61,7 +61,7 @@ export function ModalAdd(props) {
                 }
             }
         }
-    }, [modal]);
+    }, [modal,store_getter]);
 
     function do_post(ns) {
         if(disable_post_state.current) return;

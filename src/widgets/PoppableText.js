@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect} from 'react';
 import {Dropdown, Menu} from 'antd';
 import PropTypes from 'prop-types';
 import {useSelector} from 'react-redux';
-import {dflt} from '../functions';
 
 const STABLIZE_THRESHOLD_MS=100;
 

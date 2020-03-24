@@ -41,7 +41,7 @@ function Root(props) {
         return ()=>{
             window.removeEventListener('resize',on_resize,{passive: true});
         };
-    },[]);
+    },[dispatch]);
 
     const error=useSelector((state)=>state.error);
     const error_msg=useSelector((state)=>state.error_msg);

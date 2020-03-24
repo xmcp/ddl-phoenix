@@ -5,7 +5,7 @@ import {Tooltip, Popover, Radio, message} from 'antd';
 import {IconForColorType} from '../widgets/IconForColorType';
 import {ItemBreadcrumb} from '../widgets/ItemBreadcrumb';
 
-import {colortype, completeness_name, friendly_date, moment_to_day} from '../functions';
+import {colortype, completeness_name, friendly_date} from '../functions';
 import {show_modal, do_update_completeness, do_interact} from '../state/actions';
 import moment from 'moment';
 
@@ -304,5 +304,5 @@ export function TaskView(props) {
                     </Popover>
                 </WithDueTooltip>
             </span>
-    ),[props.todo_style,task,card_mode,ctype,props.tid,props.can_sort,props.external]);
+    ),[props.todo_style,task,card_mode,ctype,props.tid,props.can_sort,props.external,props.popup_container_ref]);
 }

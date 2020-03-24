@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {useSelector, useDispatch, useStore} from 'react-redux';
 import {Popover} from 'antd';
 
@@ -66,7 +66,7 @@ export function FancySearchCtrl(props) {
         return ()=>{
             document.removeEventListener('keydown',on_keypress,{passive: false, capture: true});
         }
-    },[modal_visible]);
+    },[modal_visible,dispatch,store_getter]);
 
     useEffect(()=>{
         if(input_elem.current) {

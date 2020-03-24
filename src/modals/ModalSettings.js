@@ -20,7 +20,7 @@ export function ModalSettings(props) {
     useEffect(() => {
         set_collapse_all_past(dflt(settings.collapse_all_past, false));
         set_todo_max_lines(dflt(settings.todo_max_lines,5));
-    }, [modal, settings.collapse_all_past]);
+    }, [modal, settings.collapse_all_past, settings.todo_max_lines]);
 
     if(modal.type!=='settings') return (<Modal visible={false} />);
 

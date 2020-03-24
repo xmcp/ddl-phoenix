@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {Tabs, Badge, Button, Radio} from 'antd';
 import {SwitchTransition, CSSTransition} from 'react-transition-group';
@@ -20,7 +20,7 @@ import {forceCheck} from 'react-lazyload';
 
 import './App.less';
 import './task_colors.less';
-import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
+import {CaretUpOutlined} from '@ant-design/icons';
 import {SwipeHandler} from '../widgets/SwipeHandler';
 
 const AUTO_REFRESH_THRESHOLD_MS=10*60*1000; // 10min
@@ -43,7 +43,6 @@ function MgmtView(props) {
 }
 
 function AppSlim(props) {
-    const dispatch=useDispatch();
     const term=useSelector((state)=>state.local.fancy_search_term);
 
     // go to mgmt tab upon fancy search
