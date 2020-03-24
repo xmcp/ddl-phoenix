@@ -1,0 +1,57 @@
+.tutorial-large-fg, .tutorial-large-bg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-origin: border-box;
+    pointer-events: none;
+}
+
+.tutorial-large-fg {
+    background-position: center center;
+    background-size: 900px 639px;
+    background-repeat: no-repeat;
+}
+
+.tutorial-large-bg {
+    background-position: center center;
+    background-size: 2100px 1595px;
+    background-repeat: no-repeat;
+}
+
+.tutorial-container {
+    position: relative;
+    height: var(--viewport-height);
+}
+
+.tutorial-large-btn {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 2rem;
+}
+
+.tutorial-slim-img {
+    width: 100%;
+    max-width: 600px;
+    height: calc(var(--viewport-height) - 11rem);
+    min-height: 300px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin: auto;
+}
+
+.tutorial-custom-carousel .slick-dots {
+    filter: invert(1) opacity(.6);
+    padding-left: 0;
+}
+
+.tutorial-slim-heading {
+    text-align: center;
+    font-size: 1.5em;
+    padding: 1rem 0;
+    opacity: .6;
+}
+
+.tutorial-slim-btn {
+    text-align: center;
+}

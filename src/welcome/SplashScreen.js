@@ -3,6 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Result, Button, Checkbox, Radio} from 'antd';
 
 import {WithFooter} from '../app/Footer';
+import {Tutorial} from './Tutorial';
 
 import {do_splash_callback} from '../state/actions';
 
@@ -146,6 +147,8 @@ export function SplashScreen(props) {
         return (<SplashAnnounceChecker index={splash.index} handout={splash.handout} />);
     else if(splash.type==='announce')
         return (<SplashAnnounce index={splash.index} handout={splash.handout} />);
+    else if(splash.type==='tutorial_1')
+        return (<Tutorial index={splash.index} handout={splash.handout} />);
     else if(splash.type==='select_single')
         return (<SplashSelectSingle index={splash.index} handout={splash.handout} />);
     else if(splash.type==='select_multiple')
