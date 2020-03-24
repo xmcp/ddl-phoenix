@@ -8,6 +8,7 @@ import {SplashScreen} from '../welcome/SplashScreen';
 import {WithFooter} from '../app/Footer';
 
 import {do_refresh, init_token, close_modal, set_is_slim} from '../state/actions';
+import {force_reload} from '../functions';
 
 import {LoadingOutlined, RobotOutlined, BugOutlined, GithubOutlined, WifiOutlined} from '@ant-design/icons';
 
@@ -72,21 +73,6 @@ function Root(props) {
     function on_got_token(token) {
         localStorage['TOKEN']=token;
         dispatch(init_token());
-    }
-
-    function force_reload() {
-        if('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations()
-                .then((registrations)=>{
-                    for(let registration of registrations) {
-                        console.log('unregister',registration);
-                        registration.unregister();
-                    }
-                });
-        }
-        setTimeout(()=>{
-            window.location.reload(true);
-        },200);
     }
 
     if(error===null)

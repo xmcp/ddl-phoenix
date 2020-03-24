@@ -9,6 +9,7 @@ import {do_splash_callback} from '../state/actions';
 
 import './SplashScreen.less';
 import {RobotOutlined} from '@ant-design/icons';
+import {force_reload} from '../functions';
 
 function SplashAnnounceChecker(props) {
     const dispatch=useDispatch();
@@ -162,7 +163,7 @@ export function SplashScreen(props) {
                     title="无法显示页面"
                     subTitle={'不支持 '+splash.name+' (#'+splash.index+', '+splash.type+')'}
                     extra={[
-                        <Button onClick={()=>window.location.reload(true)}>刷新页面</Button>
+                        <Button onClick={force_reload}>刷新页面</Button>
                     ]}
                 />
             </WithFooter>

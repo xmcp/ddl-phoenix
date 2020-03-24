@@ -2,6 +2,21 @@ import moment from 'moment';
 
 export const TIMEZONE='+08:00';
 
+export function force_reload() {
+    if('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations()
+            .then((registrations)=>{
+                for(let registration of registrations) {
+                    console.log('unregister',registration);
+                    registration.unregister();
+                }
+            });
+    }
+    setTimeout(()=>{
+        window.location.reload(true);
+    },200);
+}
+
 export function scope_name(scope) {
     return {
         zone: '课程',
