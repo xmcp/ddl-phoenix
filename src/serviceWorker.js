@@ -1,3 +1,9 @@
+import React from 'react';
+
+import {message} from 'antd';
+
+import {BulbOutlined} from '@ant-design/icons';
+
 // This optional code is used to register a service worker.
 // register() is not called by default.
 
@@ -66,6 +72,15 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
+              message.info({
+                content: '发现新版本，下次访问时将更新',
+                duration: 3,
+                icon: (<BulbOutlined />),
+              });
+              setTimeout(()=>{
+                installingWorker.postMessage({type: 'SKIP_WAITING'});
+              },1000);
+
               // At this point, the updated precached content has been fetched,
               // but the previous service worker will still serve the older
               // content until all client tabs are closed.
