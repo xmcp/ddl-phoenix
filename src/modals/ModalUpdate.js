@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Button, Modal, Input, Checkbox, Popover, Row, Col, Calendar, Switch, Slider} from 'antd';
+import {Button, Modal, Input, Popover, Row, Col, Calendar, Switch, Slider, Select} from 'antd';
 
 import {close_modal_if_success, SharingHelp} from './modal_common';
 
@@ -30,7 +30,8 @@ export function ModalUpdate(props) {
     const [name, set_name]=useState('');
     const [delete_confirmed, set_delete_confirmed]=useState(false);
     // project
-    const [shared, set_shared]=useState(false);
+    const [share_mode, set_share_mode]=useState('no');
+    const [share_name, set_share_name]=useState('');
     // task
     const [desc,set_desc]=useState('');
     const [status, set_status]=useState('');
@@ -46,7 +47,8 @@ export function ModalUpdate(props) {
         } else {
             set_name(item.name);
             set_delete_confirmed(false);
-            set_shared(!!item.share_hash);
+            set_share_mode(item.share_name ? 'public' : (item.share_hash ? 'hash' : 'no'));
+            set_share_name(item.share_name||'');
             set_desc(item.desc||'');
             set_status(item.status||'active');
             set_due_quicktype(init_quicktype(item.due || null));
@@ -64,7 +66,8 @@ export function ModalUpdate(props) {
                 due: due_quicktype.moment===null ? null : (due_quicktype.moment.unix()+due_hour*3600),
             } : {}),
             ...(modal.scope==='project' ? {
-                shared: shared,
+                shared: share_mode!=='no',
+                share_name: share_mode==='public' ? share_name : null,
             } : {}),
         }))
             .then(close_modal_if_success(dispatch));
@@ -151,10 +154,11 @@ export function ModalUpdate(props) {
             centered={modal.scope==='task' && window.innerHeight<=750}
             onCancel={() => dispatch(close_modal())}
             onOk={do_post}
+            okText="保存"
             destroyOnClose={true}
         >
             <div>
-                <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={shared}>
+                <Button type="danger" className="modal-btnpair-btn" onClick={do_delete} disabled={share_mode!=='no'}>
                     {delete_confirmed ? '删除' : <DeleteOutlined />}
                 </Button>
                 <Input
@@ -164,13 +168,36 @@ export function ModalUpdate(props) {
                 />
             </div>
             {modal.scope==='project' && !item.external &&
-                <p>
+                <div>
                     <br />
-                    <Checkbox checked={shared} onChange={(e) => set_shared(e.target.checked)}>分享给其他用户</Checkbox>
-                    <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
-                        <a><QuestionCircleOutlined /></a>
-                    </Popover>
-                </p>
+                    <div>
+                        <Select value={share_mode} onChange={set_share_mode}>
+                            <Select.Option value="no">不分享</Select.Option>
+                            <Select.Option value="hash">私密分享</Select.Option>
+                            <Select.Option value="public">公开分享</Select.Option>
+                        </Select>
+                        &nbsp;&nbsp;
+                        {share_mode==='no' ?
+                            <Popover title="用户间分享" content={<SharingHelp />} trigger="click" placement="bottom">
+                                <a><QuestionCircleOutlined /></a>
+                            </Popover> :
+                         share_mode==='hash' ?
+                             <span>保存后在菜单中选择“复制分享ID”并发给别人</span> :
+                         share_mode==='public' ?
+                             <span>所有人都可以通过下面的名称搜索到此列表</span> :
+                             ''
+                        }
+                    </div>
+                    {share_mode==='public' &&
+                        <div>
+                            <br />
+                            <Input
+                                value={share_name} onChange={(e)=>set_share_name(e.target.value)} onPressEnter={do_post}
+                                placeholder="填写完整名称，如 “2020春信科概率统计A（概统A）作业”"
+                            />
+                        </div>
+                    }
+                </div>
             }
             {modal.scope==='task' && <br />}
             {modal.scope==='task' &&

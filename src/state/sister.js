@@ -5,7 +5,7 @@ import {get_json} from '../infrastructure/functions';
 // without trailing slash
 const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
 //const SISTER_ROOT='http://192.168.0.193:5000';
-export const SISTER_API_VER='3d1';
+export const SISTER_API_VER='4';
 export const SISTER_DATA_VER='3d';
 
 function token_param(start_symbol,token) {
@@ -15,7 +15,7 @@ function token_param(start_symbol,token) {
 export function sister_fetch(endpoint,data,token) {
     let url=SISTER_ROOT+endpoint+'?sister_ver='+encodeURIComponent(SISTER_API_VER)+token_param('&',token);
     if(data===undefined)
-        return fetch(url);
+        return fetch(url).then(get_json);
     else
         return fetch(url, {
             method: 'POST',
@@ -23,7 +23,7 @@ export function sister_fetch(endpoint,data,token) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-        });
+        }).then(get_json);
 }
 
 function make_nonce() {
@@ -46,7 +46,6 @@ export function sister_call(endpoint,data=undefined,completed_callback=undefined
         refresh_nonce=cur_nonce;
 
         return sister_fetch(endpoint,data,state.local.token)
-            .then(get_json)
             .catch((e)=>{
                 message.error('加载失败：'+e,2);
                 return {error: 'PHOENIX_NETWORK_FAILURE'};
