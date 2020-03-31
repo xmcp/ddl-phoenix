@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Menu, Dropdown, Badge} from 'antd';
+import {Menu, Dropdown, Badge, message} from 'antd';
 
 import {PoppableText} from '../widgets/PoppableText';
 import {ClickableText} from '../widgets/ClickableText';
@@ -57,18 +57,26 @@ export function AppHeader(props) {
 
     // pwa
     useEffect(()=>{
-        function handler(e) {
+        function handler_receive(e) {
             console.log('pwa: received before install prompt');
             set_pwa_prompt_event(e);
         }
+        function handler_success() {
+            message.success('安装成功',2);
+        }
+
         if(!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
-            console.log('pwa: not installed');
-            window.addEventListener('beforeinstallprompt',handler);
+            console.log('pwa: bind to before install prompt');
+
+            window.addEventListener('beforeinstallprompt',handler_receive);
+            window.addEventListener('appinstalled',handler_success);
+
             return ()=>{
-                window.removeEventListener('beforeinstallprompt',handler);
+                window.removeEventListener('beforeinstallprompt',handler_receive);
+                window.removeEventListener('appinstalled',handler_success);
             };
         } else {
-            console.log('pwa: already installed');
+            console.log('pwa: already using');
         }
     },[]);
 
@@ -168,7 +176,10 @@ export function AppHeader(props) {
                     &nbsp;转到
                 </ClickableText>
                 &nbsp;
-                <ClickableText key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())} className="header-highlight">
+                <ClickableText
+                    key={+loading.last_update_time} onClick={()=>dispatch(do_refresh())}
+                    className={'header-highlight'+(loading.status==='error' ? ' header-error' : '')}
+                >
                     {{
                         loading: <LoadingOutlined />,
                         updating: <CloudUploadOutlined />,

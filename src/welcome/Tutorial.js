@@ -61,7 +61,7 @@ function TutorialSlim(props) {
         <div>
             <h1 className="tutorial-slim-heading">欢迎使用「不咕计划」</h1>
             <Carousel
-                ref={carousel_elem} className="tutorial-custom-carousel" infinite={false} speed={200}
+                ref={carousel_elem} className="tutorial-custom-carousel" infinite={false} speed={200} draggable={true}
                 afterChange={(to)=>set_carousel_pos(to)} onEdge={(dir)=>{if(dir==='left') done();}}
             >
                 <TutorialSlimPage img={tutorial_slim_1} />

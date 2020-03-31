@@ -78,8 +78,12 @@ function TaskDetails(props) {
         dispatch(do_update_completeness([props.tid],compl))
             .then((success)=>{
                 if(success) {
-                    if(compl==='done')
-                        message.success('已完成 '+props.task.name,2);
+                    message.open({
+                        content: completeness_name(compl)+'了 '+props.task.name,
+                        duration: 2,
+                        icon: (<IconForColorType type={compl} />),
+                        key: '_compl_update_msg',
+                    });
                     props.hide();
                 }
             })

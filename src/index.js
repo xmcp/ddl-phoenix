@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {createStore, applyMiddleware} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
-import {ConfigProvider} from 'antd';
+import {ConfigProvider, Alert} from 'antd';
 
 import Root from './logic/Root';
 
@@ -25,7 +25,9 @@ moment.locale('zh-cn');
 ReactDOM.render(
     <Provider store={store}>
         <ConfigProvider autoInsertSpaceInButton={false} locale={zhCN}>
-            <Root />
+            <Alert.ErrorBoundary>
+                <Root />
+            </Alert.ErrorBoundary>
         </ConfigProvider>
     </Provider>
     ,document.getElementById('root')
