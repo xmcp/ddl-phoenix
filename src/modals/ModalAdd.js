@@ -28,9 +28,14 @@ function get_delta_days(ts_a,ts_b) {
 }
 
 function MarketProjView(props) {
+    const already_added_projs=useSelector((state)=>state.project);
+
     let name=props.chosen[props.proj.share_hash];
     if(name===undefined) name=null;
+
     let tasks=props.res.tasks_o[props.proj.pid]||[];
+
+    let already_added=!!(already_added_projs[props.proj.pid]);
 
     function set_name(n) {
         props.set_chosen(Object.assign({},props.chosen,{
@@ -41,8 +46,9 @@ function MarketProjView(props) {
     return (
         <div className="market-project-widget">
             <p className="market-project-name-line">
-                <Checkbox checked={name!==null} onChange={(e)=>set_name(e.target.checked ? props.proj.name : null)}>
+                <Checkbox checked={name!==null} onChange={(e)=>set_name(e.target.checked ? props.proj.name : null)} disabled={already_added}>
                     {name===null && <b>{props.proj.share_name}</b>}
+                    {already_added && '（已添加）'}
                 </Checkbox>
                 {name!==null &&
                     <Input

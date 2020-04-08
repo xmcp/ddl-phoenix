@@ -59,6 +59,7 @@ export function AppHeader(props) {
     useEffect(()=>{
         function handler_receive(e) {
             console.log('pwa: received before install prompt');
+            window._phoenix_pwa_event=e;
             set_pwa_prompt_event(e);
         }
         function handler_success() {
@@ -66,6 +67,11 @@ export function AppHeader(props) {
         }
 
         if(!window.matchMedia('(display-mode: standalone)').matches && !window.navigator.standalone) {
+            if(window._phoenix_pwa_event) {
+                console.log('pwa: restore event');
+                set_pwa_prompt_event(window._phoenix_pwa_event);
+            }
+
             console.log('pwa: bind to before install prompt');
 
             window.addEventListener('beforeinstallprompt',handler_receive);
