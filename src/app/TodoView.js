@@ -11,7 +11,7 @@ import {moment_to_day, days_to, dflt} from '../functions';
 import './TodoView.less';
 import {InboxOutlined, CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons';
 
-const INF=1e50; // as sort key
+const INF=366*1000; // as sort key
 
 function TodoTaskView(props) {
     const project_external=useSelector((state)=>state.project[props.task.parent_id].external);
@@ -40,22 +40,17 @@ export function TodoViewFx(props) {
 
     let today=moment_to_day(moment());
     function get_task_order(t) {
+        let d=(t.due===null ? INF : days_to(moment_to_day(moment.unix(t.due)),today));
+        let mode_delta=0;
+
         // highlight
         if(t.completeness==='highlight')
-            return -INF;
-
-        let d=(t.due===null ? null : days_to(moment_to_day(moment.unix(t.due)),today));
-
+            mode_delta=-2*INF;
         // ignored && not going to due
-        if(t.completeness==='ignored' && (d===null || d>0))
-            return +2*INF;
+        if(t.completeness==='ignored' && d>0)
+            mode_delta=2*INF;
 
-        // no due
-        if(d===null)
-            return +INF;
-
-        // normal
-        return d;
+        return d+mode_delta;
     }
 
     let todo_tasks_sorted=todo_tasks.slice().sort((a,b)=>(
