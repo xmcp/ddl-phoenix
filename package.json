@@ -8,6 +8,7 @@
     "babel-plugin-import": "^1.13.0",
     "copy-to-clipboard": "^3.2.0",
     "customize-cra": "^0.9.1",
+    "js-file-download": "^0.4.12",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "moment": "latest",

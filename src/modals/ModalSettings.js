@@ -1,18 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, Checkbox, InputNumber} from 'antd';
+import {Modal, Checkbox, InputNumber, Button} from 'antd';
+import fileDownload from 'js-file-download';
 
 import {close_modal_if_success} from './modal_common';
 
 import {dflt} from '../functions';
 import {do_update_settings, close_modal} from '../state/actions';
 
-import {SettingOutlined} from '@ant-design/icons';
+import {SettingOutlined, CloudDownloadOutlined, CloudUploadOutlined} from '@ant-design/icons';
 
 export function ModalSettings(props) {
     const dispatch=useDispatch();
     const modal=useSelector((state)=>state.local.modal);
     const settings=useSelector((state)=>state.user.settings);
+    const all_state=useSelector((state)=>state);
 
     const [collapse_all_past, set_collapse_all_past]=useState(false);
     const [todo_max_lines, set_todo_max_lines]=useState(3);
@@ -30,6 +32,11 @@ export function ModalSettings(props) {
             todo_max_lines: todo_max_lines,
         }))
             .then(close_modal_if_success(dispatch));
+    }
+
+    function do_export_data() {
+        let exported=JSON.stringify({...all_state, local: null});
+        fileDownload(exported,'all_data.json');
     }
 
     return (
@@ -54,6 +61,17 @@ export function ModalSettings(props) {
                     <InputNumber value={todo_max_lines} onChange={set_todo_max_lines} min={1} max={99} />
                     <br />
                     <small>在电脑端界面中，超过此数量的待办任务会被折叠</small>
+                </p>
+                <br />
+                <p>
+                    <b>个人数据：</b>
+                    <Button onClick={do_export_data}>
+                        <CloudDownloadOutlined /> 导出
+                    </Button>
+                    &nbsp;
+                    <Button disabled>
+                        <CloudUploadOutlined /> 导入（即将上线）
+                    </Button>
                 </p>
             </div>
         </Modal>
