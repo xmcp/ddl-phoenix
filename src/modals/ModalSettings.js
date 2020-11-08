@@ -1,18 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {Modal, Checkbox, InputNumber, Button} from 'antd';
+import {Modal, Checkbox, InputNumber, Button, Upload, message} from 'antd';
 import fileDownload from 'js-file-download';
 
 import {close_modal_if_success} from './modal_common';
 
 import {dflt} from '../functions';
-import {do_update_settings, close_modal} from '../state/actions';
+import {sister_fetch} from '../state/sister';
+import {do_update_settings, close_modal, do_refresh} from '../state/actions';
 
 import {SettingOutlined, CloudDownloadOutlined, CloudUploadOutlined} from '@ant-design/icons';
 
 export function ModalSettings(props) {
     const dispatch=useDispatch();
     const modal=useSelector((state)=>state.local.modal);
+    const token=useSelector((state)=>state.local.token);
     const settings=useSelector((state)=>state.user.settings);
     const all_state=useSelector((state)=>state);
 
@@ -37,6 +39,37 @@ export function ModalSettings(props) {
     function do_export_data() {
         let exported=JSON.stringify({...all_state, local: null});
         fileDownload(exported,'all_data.json');
+    }
+
+    function do_import_data(file) {
+        let reader=new FileReader();
+        reader.onload=(e)=>{
+            let json;
+            try {
+                json=JSON.parse(e.target.result);
+            } catch(e) {
+                alert('解析错误：'+e);
+                return;
+            }
+
+            sister_fetch('/add/whole_import',{data:json},token)
+                .then((json)=>{
+                    if(json.error)
+                        alert('导入错误：'+json.error);
+                    else {
+                        message.success('导入成功');
+                        dispatch(close_modal());
+                        dispatch(do_refresh());
+                    }
+                })
+                .catch((e)=>{
+                    alert('网络错误：'+e);
+                });
+        };
+        reader.onerror=()=>{
+            alert('读取文件错误');
+        }
+        reader.readAsText(file,'utf-8');
     }
 
     return (
@@ -69,9 +102,9 @@ export function ModalSettings(props) {
                         <CloudDownloadOutlined /> 导出
                     </Button>
                     &nbsp;
-                    <Button disabled>
-                        <CloudUploadOutlined /> 导入（即将上线）
-                    </Button>
+                    <Upload accept=".json" beforeUpload={(file)=>{do_import_data(file); return false;}} showUploadList={false}>
+                        <Button><CloudUploadOutlined /> 导入</Button>
+                    </Upload>
                 </p>
             </div>
         </Modal>

@@ -5,7 +5,7 @@ import {get_json} from '../infrastructure/functions';
 // without trailing slash
 const SISTER_ROOT='https://pkuhelper.pku.edu.cn/ddl/backend';
 //const SISTER_ROOT='http://192.168.0.193:5000';
-export const SISTER_API_VER='4';
+export const SISTER_API_VER='4a';
 export const SISTER_DATA_VER='4';
 
 function token_param(start_symbol,token) {
